@@ -6,8 +6,10 @@ import {
   Image,
   ScrollView,
   TextInput,
+  Alert,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
+import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 
 export default function LeftImage({ route, navigation }) {
   const {
@@ -24,37 +26,86 @@ export default function LeftImage({ route, navigation }) {
     images: initialImages,
   } = route.params;
 
-  const partKey = "LeftImage";
+  const partKey = "leftImage"; // 🔹 lowercase to match rearImage
   const [images, setImages] = useState(initialImages || {});
   const [urlInput, setUrlInput] = useState("");
 
-  const handleAddUrl = () => {
+  // 📌 Pick from Gallery
+  const handlePickFromGallery = async () => {
+    try {
+      const result = await launchImageLibrary({ mediaType: "photo", quality: 1 });
+      if (!result.didCancel && result.assets?.length > 0) {
+        setImages((prev) => ({
+          ...prev,
+          [partKey]: {
+            original: result.assets[0].uri,
+            analyzed: undefined,
+            damages: [],
+          },
+        }));
+      }
+    } catch (err) {
+      console.log("Gallery pick failed", err);
+    }
+  };
+
+  // 📌 Capture from Camera
+  const handleImageCapture = async () => {
+    try {
+      const result = await launchCamera({
+        mediaType: "photo",
+        quality: 1,
+        saveToPhotos: true,
+      });
+      if (!result.didCancel && result.assets?.length > 0) {
+        setImages((prev) => ({
+          ...prev,
+          [partKey]: {
+            original: result.assets[0].uri,
+            analyzed: undefined,
+            damages: [],
+          },
+        }));
+      }
+    } catch (err) {
+      console.log("Camera capture failed", err);
+    }
+  };
+
+  // 📌 Add from URL
+  const handleAddFromUrl = () => {
     if (!urlInput.trim()) {
-      alert("Please enter a valid image URL.");
+      Alert.alert("Invalid URL", "Please enter a valid image URL.");
       return;
     }
     setImages((prev) => ({
       ...prev,
-      [partKey]: { original: urlInput, analyzed: undefined, damages: [] },
+      [partKey]: {
+        original: urlInput.trim(),
+        analyzed: undefined,
+        damages: [],
+      },
     }));
     setUrlInput("");
   };
 
+  // 📌 Analyze Mock
   const handleAnalyze = () => {
     if (!images[partKey]?.original) {
-      alert("No original image to analyze.");
+      Alert.alert("No Image", "Please add an image first.");
       return;
     }
     setImages((prev) => ({
       ...prev,
       [partKey]: {
         ...prev[partKey],
-        analyzed: images[partKey].original.replace(".jpg", "_annotated.jpg"),
-        damages: [{ description: "Dent on bumper", type: "dent" }],
+        analyzed: images[partKey].original,
+        damages: [{ description: "Scratch on left door", type: "scratch" }],
       },
     }));
   };
 
+  // 📌 Delete
   const handleDelete = () => {
     setImages((prev) => ({
       ...prev,
@@ -64,17 +115,12 @@ export default function LeftImage({ route, navigation }) {
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      {/* Scrollable content */}
-      <ScrollView
-        style={tw`flex-1 px-4 pt-10`}
-        contentContainerStyle={tw`pb-32`} // extra space for bottom button
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={tw`flex-1 px-4 pt-10`} contentContainerStyle={tw`pb-32`}>
         <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
           Left Image
         </Text>
 
-        {/* Original & Analyzed */}
+        {/* Show Original + Analyzed */}
         <View style={tw`flex-row justify-between mb-4`}>
           <View style={tw`flex-1 mr-2`}>
             <Text style={tw`font-semibold`}>Original</Text>
@@ -102,42 +148,48 @@ export default function LeftImage({ route, navigation }) {
           </View>
         </View>
 
-        {/* Damages */}
-        <Text style={tw`font-semibold mb-1`}>Damages</Text>
-        {images[partKey]?.damages?.length > 0 ? (
-          images[partKey].damages.map((d, i) => (
-            <Text key={i} style={tw`text-gray-700`}>
-              {d.description} ({d.type})
-            </Text>
-          ))
-        ) : (
-          <Text style={tw`text-gray-500`}>No Damages</Text>
-        )}
+        {/* Add Image by URL */}
+        <View style={tw`mt-4`}>
+          <TextInput
+            style={tw`border border-gray-300 rounded-lg p-3`}
+            placeholder="Enter Image URL"
+            value={urlInput}
+            onChangeText={setUrlInput}
+          />
+          <TouchableOpacity
+            style={tw`bg-indigo-600 p-3 rounded-lg mt-2`}
+            onPress={handleAddFromUrl}
+          >
+            <Text style={tw`text-white text-center`}>Add Image by URL</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* Input + Add */}
-        <TextInput
-          placeholder="Enter image URL"
-          value={urlInput}
-          onChangeText={setUrlInput}
-          style={tw`border border-gray-400 rounded-lg px-3 py-2 mt-4`}
-        />
+        {/* Gallery Button */}
         <TouchableOpacity
-          style={tw`bg-purple-500 p-2 rounded-lg mt-2`}
-          onPress={handleAddUrl}
+          style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
+          onPress={handlePickFromGallery}
         >
-          <Text style={tw`text-white text-center`}>Add Image (via URL)</Text>
+          <Text style={tw`text-white text-center`}>Pick from Gallery</Text>
         </TouchableOpacity>
 
-        {/* Actions */}
+        {/* Camera Button */}
+        <TouchableOpacity
+          style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
+          onPress={handleImageCapture}
+        >
+          <Text style={tw`text-white text-center`}>Capture from Camera</Text>
+        </TouchableOpacity>
+
+        {/* Analyze + Delete */}
         <View style={tw`flex-row justify-between mt-4`}>
           <TouchableOpacity
-            style={tw`bg-red-500 p-2 rounded-lg flex-1 mr-2`}
+            style={tw`bg-red-500 p-3 rounded-lg flex-1 mr-2`}
             onPress={handleAnalyze}
           >
             <Text style={tw`text-white text-center`}>Analyze</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={tw`bg-red-500 p-2 rounded-lg flex-1 ml-2`}
+            style={tw`bg-red-500 p-3 rounded-lg flex-1 ml-2`}
             onPress={handleDelete}
           >
             <Text style={tw`text-white text-center`}>Delete</Text>
@@ -145,7 +197,7 @@ export default function LeftImage({ route, navigation }) {
         </View>
       </ScrollView>
 
-      {/* Fixed Next button */}
+      {/* Next */}
       <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white`}>
         <TouchableOpacity
           style={tw`bg-green-700 p-3 rounded-lg`}

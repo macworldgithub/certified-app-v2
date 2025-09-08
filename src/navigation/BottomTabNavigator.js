@@ -23,7 +23,7 @@ const TabBarIcon = ({ focused, color, size, iconName }) => (
 );
 
 const TabBarLabel = ({ color, children }) => (
-  <Text style={[tw`text-xs font-medium mt-1`, { color }]}>{children}</Text>
+  <Text style={[tw`text-xs font-medium mt-1 `, { color }]}>{children}</Text>
 );
 
 const CustomTabBarButton = ({ children, onPress }) => (
@@ -61,7 +61,7 @@ const BottomTabNavigator = () => {
           <TabBarLabel color={color}>{children}</TabBarLabel>
         ),
         tabBarStyle: [
-          tw`bg-white border-t border-gray-200 pb-8 pt-1`,
+          tw`bg-white border-t border-gray-200 pt-2`,
           {
             shadowColor: '#000',
             shadowOffset: { width: 0, height: -2 },
