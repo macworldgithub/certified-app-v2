@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'tailwind-react-native-classnames';
 
 import Home from '../Screens/Home';
-import Inspection from '../Screens/Inspection';
+import InspectionDetails from '../Screens/InspectionDetails';
 import Profile from '../Screens/Profile';
 import VehicleReport from "./../Screens/VehicleReport";
 
@@ -76,7 +76,7 @@ const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ title: 'Home' }} />
-      <Tab.Screen name="Inspection" component={Inspection} options={{ title: 'Inspection' }} />
+      <Tab.Screen name="Inspection" component={InspectionDetails} options={{ title: 'Inspection' }} />
       <Tab.Screen name="Report" component={VehicleReport} options={{ title: 'Report' }} />
       <Tab.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
     </Tab.Navigator>

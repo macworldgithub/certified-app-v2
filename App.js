@@ -26,11 +26,15 @@ import FrontImage from './src/Screens/FrontImage';
 import LeftImage from './src/Screens/LeftImage';
 import RightImage from './src/Screens/RightImage';
 import RearImage from './src/Screens/RearImage';
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
+
 enableScreens();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+        <Provider store={store}>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NavigationContainer>
@@ -62,5 +66,6 @@ export default function App() {
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+    </Provider>
   );
 }
