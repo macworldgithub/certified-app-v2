@@ -31,7 +31,7 @@ export default function Signup() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://192.168.100.197:5000/auth/signup", {
+      const response = await fetch("http://192.168.0.105:5000/auth/signup", {
         method: "POST",
         headers: {
           Accept: "*/*",

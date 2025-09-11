@@ -14,11 +14,14 @@ import { FontAwesome, Feather } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
+import { useDispatch } from "react-redux";
+import { setAuthData } from "../redux/slices/authSlice"; 
 
 const Signin = () => {
   const navigation = useNavigation();
-
+ const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -57,7 +60,7 @@ const Signin = () => {
     console.log("📦 Payload for /auth/login:", payload);
 
     const res = await axios.post(
-      "http://192.168.100.197:5000/auth/login",
+      "http://192.168.0.105:5000/auth/login",
       payload
     );
 
@@ -87,11 +90,32 @@ const Signin = () => {
       return;
     }
 
-    if (status === "LOGIN_SUCCESS") {
-      Alert.alert("Success", message);
-      navigation.replace("MainTabs");
-      return;
-    }
+    // if (status === "LOGIN_SUCCESS") {
+    //   Alert.alert("Success", message);
+    //   navigation.replace("MainTabs");
+    //   return;
+    // }
+
+if (status === "LOGIN_SUCCESS") {
+  const { token, user } = res.data;
+
+  try {
+    // Redux update
+    dispatch(setAuthData({ token, user }));
+
+    // AsyncStorage update
+    await AsyncStorage.setItem("authToken", token);
+    await AsyncStorage.setItem("userData", JSON.stringify(user));
+
+    console.log("✅ User data saved:", { token, user });
+  } catch (storageErr) {
+    console.error("❌ AsyncStorage Save Error:", storageErr);
+  }
+
+  Alert.alert("Success", message);
+  navigation.replace("MainTabs");
+  return;
+}
 
     Alert.alert("Login Failed", message || "Unknown error occurred.");
   } catch (err) {
@@ -190,7 +214,8 @@ const Signin = () => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPass")}>
-            <Text style={tw`text-sm text-green-500 font-semibold`}>
+            <Text style={tw`text-sm text-green-500 font-semibold`}
+            onPress={() => navigation.navigate("ForgotPass")}>
               Forgot Password
             </Text>
           </TouchableOpacity>

@@ -26,6 +26,8 @@ import FrontImage from './src/Screens/FrontImage';
 import LeftImage from './src/Screens/LeftImage';
 import RightImage from './src/Screens/RightImage';
 import RearImage from './src/Screens/RearImage';
+import LogoutAllOTPVerify from './src/Screens/LogoutAllOTPVerify';
+import Profile from './src/Screens/Profile';
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 
@@ -61,6 +63,8 @@ export default function App() {
             <Stack.Screen name='LeftImage' component={LeftImage} />
             <Stack.Screen name='RightImage' component={RightImage} />
             <Stack.Screen name='RearImage' component={RearImage} />
+            <Stack.Screen name='LogoutAllOTPVerify' component={LogoutAllOTPVerify} />
+            <Stack.Screen name='Profile' component={Profile} />
             {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>

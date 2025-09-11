@@ -10,18 +10,15 @@ import {
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import * as Device from "expo-device";
+import axios from "axios";
 
-const OTPVerification = () => {
+export default function VerifyResetOTP({ route, navigation }) {
+  const { email } = route.params;
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
-  const navigation = useNavigation();
-  const route = useRoute();
 
-  const { email, nextStep } = route.params || {};
-
+  // handle input change
   const handleChange = (text, index) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -31,7 +28,8 @@ const OTPVerification = () => {
     }
   };
 
-  const handleVerify = async () => {
+  // verify OTP
+  const handleVerifyOTP = async () => {
     const enteredOtp = otp.join("");
     if (enteredOtp.length < 6) {
       Alert.alert("Error", "Please enter all 6 digits");
@@ -40,71 +38,34 @@ const OTPVerification = () => {
 
     try {
       setLoading(true);
+      const response = await axios.post(
+        "http://192.168.0.105:5000/auth/verify-reset-password-otp",
+        { email, otp: enteredOtp }
+      );
 
-      const deviceId =
-        Device.osInternalBuildId?.toString() ||
-        Device.modelId?.toString() ||
-        Device.deviceName ||
-        "unknown-device-id";
-
-      let url = "http://192.168.0.105:5000/auth/verify-signup";
-      let payload = { email, otp: enteredOtp };
-
-      if (nextStep === "/auth/verify-otp") {
-        url = "http://192.168.0.105:5000/auth/verify-otp"; 
-        payload = { email, otp: enteredOtp, deviceId };
-      }
-
-      console.log("📦 OTP Payload:", payload);
-      console.log("🌍 OTP URL:", url);
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "*/*",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      console.log("✅ OTP Response:", data);
-
-      if (
-        response.ok &&
-        (data.status === "EMAIL_VERIFIED" || data.status === "OTP_VERIFIED")
-      ) {
-        Alert.alert("Success", data.message || "OTP Verified successfully!");
-        navigation.replace("MainTabs");
+      if (response.status === 201) {
+        Alert.alert("Success", "OTP verified successfully!");
+        navigation.navigate("ResetPassword", { email });
       } else {
-        Alert.alert("Error", data.message || "Invalid OTP. Please try again.");
+        Alert.alert("Error", "Invalid OTP. Please try again.");
       }
     } catch (error) {
-      console.error("❌ OTP Verification error:", error);
-      Alert.alert("Error", "Unable to verify OTP. Please try again.");
+      console.error("❌ VerifyResetOTP error:", error.response?.data || error.message);
+      Alert.alert("Error", "Invalid or expired OTP.");
     } finally {
       setLoading(false);
     }
   };
-  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={tw`flex-1 bg-white`}
     >
-      {/* Back Button */}
-      <TouchableOpacity
-        style={tw`absolute top-10 left-4 z-10`}
-        onPress={() => navigation.goBack()}
-      >
-        <Icon name="arrow-left" size={24} color="#000" />
-      </TouchableOpacity>
-
       {/* OTP UI */}
       <View style={tw`flex-1 justify-start items-center mt-20 px-6`}>
-        <Text style={tw`text-xl font-bold mb-2`}>OTP Verification</Text>
+        <Text style={tw`text-xl font-bold mb-2`}>Verify Reset OTP</Text>
         <Text style={tw`text-center text-gray-600 mb-6`}>
-          Enter the 6-digit code sent to {email || "your email"}
+          Enter the 6-digit code sent to {email}
         </Text>
 
         <View style={tw`flex-row justify-between w-full px-2 mb-6 mr-8`}>
@@ -127,16 +88,14 @@ const OTPVerification = () => {
         {/* Verify Button */}
         <TouchableOpacity
           style={tw`bg-green-600 w-full py-3 rounded-xl mb-4`}
-          onPress={handleVerify}
+          onPress={handleVerifyOTP}
           disabled={loading}
         >
           <Text style={tw`text-white text-center font-semibold text-base`}>
-            {loading ? "Verifying..." : "Verify"}
+            {loading ? "Verifying..." : "Verify OTP"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>      
       </View>
     </KeyboardAvoidingView>
   );
-};
-
-export default OTPVerification;
+}
