@@ -12,6 +12,7 @@ import tw from "tailwind-react-native-classnames";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import API_BASE_URL from "../../utils/config";
 
 export default function LogoutAllOTPVerify() {
   const [otp, setOtp] = useState("");
@@ -35,7 +36,7 @@ export default function LogoutAllOTPVerify() {
       }
 
       const res = await axios.post(
-        "http://192.168.0.105:5000/user/logout-all/verify",
+        `${API_BASE_URL}/user/logout-all/verify`,
         { otp },
         {
           headers: {

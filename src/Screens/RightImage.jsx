@@ -10,39 +10,51 @@ import {
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { setImages } from "../redux/slices/inspectionSlice";
 
-export default function RightImage({ route, navigation }) {
+export default function RightImage({ navigation }) {
+  const dispatch = useDispatch();
   const {
     vin,
     make,
-    carModel,
+    model,
     year,
     engineNumber,
-    mileAge,
+    mileage,
     overallRating,
     city,
     owner,
     inspectorEmail,
-    images: initialImages,
-  } = route.params;
+    images,
+  } = useSelector((state) => state.inspection);
 
-  const partKey = "rightImage"; // 🔹 lowercase
-  const [images, setImages] = useState(initialImages || {});
+  const partKey = "rightImage";
   const [urlInput, setUrlInput] = useState("");
+
+  // 📌 Helper to update redux images
+  const updateImage = (data) => {
+    dispatch(
+      setImages({
+        ...images,
+        [partKey]: {
+          ...(images?.[partKey] || {}),
+          ...data,
+        },
+      })
+    );
+  };
 
   // 📌 Pick from Gallery
   const handlePickFromGallery = async () => {
     try {
       const result = await launchImageLibrary({ mediaType: "photo", quality: 1 });
       if (!result.didCancel && result.assets?.length > 0) {
-        setImages((prev) => ({
-          ...prev,
-          [partKey]: {
-            original: result.assets[0].uri,
-            analyzed: undefined,
-            damages: [],
-          },
-        }));
+        updateImage({
+          original: result.assets[0].uri,
+          analyzed: undefined,
+          damages: [],
+        });
       }
     } catch (err) {
       console.log("Gallery pick failed", err);
@@ -58,14 +70,11 @@ export default function RightImage({ route, navigation }) {
         saveToPhotos: true,
       });
       if (!result.didCancel && result.assets?.length > 0) {
-        setImages((prev) => ({
-          ...prev,
-          [partKey]: {
-            original: result.assets[0].uri,
-            analyzed: undefined,
-            damages: [],
-          },
-        }));
+        updateImage({
+          original: result.assets[0].uri,
+          analyzed: undefined,
+          damages: [],
+        });
       }
     } catch (err) {
       console.log("Camera capture failed", err);
@@ -78,39 +87,29 @@ export default function RightImage({ route, navigation }) {
       Alert.alert("Invalid URL", "Please enter a valid image URL.");
       return;
     }
-    setImages((prev) => ({
-      ...prev,
-      [partKey]: {
-        original: urlInput.trim(),
-        analyzed: undefined,
-        damages: [],
-      },
-    }));
+    updateImage({
+      original: urlInput.trim(),
+      analyzed: undefined,
+      damages: [],
+    });
     setUrlInput("");
   };
 
   // 📌 Analyze Mock
   const handleAnalyze = () => {
-    if (!images[partKey]?.original) {
+    if (!images?.[partKey]?.original) {
       Alert.alert("No Image", "Please add an image first.");
       return;
     }
-    setImages((prev) => ({
-      ...prev,
-      [partKey]: {
-        ...prev[partKey],
-        analyzed: images[partKey].original,
-        damages: [{ description: "Dent on right fender", type: "dent" }],
-      },
-    }));
+    updateImage({
+      analyzed: images[partKey].original,
+      damages: [{ description: "Dent on right fender", type: "dent" }],
+    });
   };
 
   // 📌 Delete
   const handleDelete = () => {
-    setImages((prev) => ({
-      ...prev,
-      [partKey]: { original: undefined, analyzed: undefined, damages: [] },
-    }));
+    updateImage({ original: undefined, analyzed: undefined, damages: [] });
   };
 
   return (
@@ -124,7 +123,7 @@ export default function RightImage({ route, navigation }) {
         <View style={tw`flex-row justify-between mb-4`}>
           <View style={tw`flex-1 mr-2`}>
             <Text style={tw`font-semibold`}>Original</Text>
-            {images[partKey]?.original ? (
+            {images?.[partKey]?.original ? (
               <Image
                 source={{ uri: images[partKey].original }}
                 style={tw`w-full h-32 rounded-lg mt-2`}
@@ -136,7 +135,7 @@ export default function RightImage({ route, navigation }) {
           </View>
           <View style={tw`flex-1 ml-2`}>
             <Text style={tw`font-semibold`}>Analyzed</Text>
-            {images[partKey]?.analyzed ? (
+            {images?.[partKey]?.analyzed ? (
               <Image
                 source={{ uri: images[partKey].analyzed }}
                 style={tw`w-full h-32 rounded-lg mt-2`}
@@ -201,21 +200,7 @@ export default function RightImage({ route, navigation }) {
       <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white`}>
         <TouchableOpacity
           style={tw`bg-green-700 p-3 rounded-lg`}
-          onPress={() =>
-            navigation.navigate("BodyChecklist", {
-              vin,
-              make,
-              carModel,
-              year,
-              engineNumber,
-              mileAge,
-              overallRating,
-              city,
-              owner,
-              inspectorEmail,
-              images,
-            })
-          }
+          onPress={() => navigation.navigate("BodyChecklist")}
         >
           <Text style={tw`text-white text-center font-bold`}>Next</Text>
         </TouchableOpacity>

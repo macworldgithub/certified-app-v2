@@ -126,7 +126,7 @@ export default function Engineverify({ navigation }) {
         style={tw`bg-green-700 p-3 rounded-lg mt-6`}
         onPress={handleNext}
       >
-        <Text style={tw`text-white text-center font-bold text-md`}>
+        <Text style={tw`text-white text-center font-bold`}>
           Next
         </Text>
       </TouchableOpacity>

@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import { useDispatch } from "react-redux";
 import { setAuthData } from "../redux/slices/authSlice"; 
+import API_BASE_URL from "../../utils/config";
 
 const Signin = () => {
   const navigation = useNavigation();
@@ -60,7 +61,7 @@ const Signin = () => {
     console.log("📦 Payload for /auth/login:", payload);
 
     const res = await axios.post(
-      "http://192.168.0.105:5000/auth/login",
+      `${API_BASE_URL}:5000/auth/login`,
       payload
     );
 

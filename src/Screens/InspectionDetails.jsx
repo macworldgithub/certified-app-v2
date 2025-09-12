@@ -97,9 +97,8 @@ export default function InspectionDetails({ navigation }) {
   const [year, setYear] = useState(savedYear || "");
 
   const handleNext = () => {
-    // Redux store me save karna
+
     dispatch(setInspectionDetails({ vin, make, model, year }));
-    // Next screen pe move karna
     navigation.navigate("Engineverify");
   };
 

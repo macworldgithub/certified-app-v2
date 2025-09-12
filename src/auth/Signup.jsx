@@ -11,6 +11,7 @@ import {
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
+import API_BASE_URL from "../../utils/config";
 
 export default function Signup() {
   const navigation = useNavigation();
@@ -31,7 +32,7 @@ export default function Signup() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://192.168.0.105:5000/auth/signup", {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           Accept: "*/*",

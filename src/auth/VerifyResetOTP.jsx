@@ -11,6 +11,7 @@ import {
 import tw from "tailwind-react-native-classnames";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
+import API_BASE_URL from "../../utils/config";
 
 export default function VerifyResetOTP({ route, navigation }) {
   const { email } = route.params;
@@ -39,7 +40,7 @@ export default function VerifyResetOTP({ route, navigation }) {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://192.168.0.105:5000/auth/verify-reset-password-otp",
+        `${API_BASE_URL}/auth/verify-reset-password-otp`,
         { email, otp: enteredOtp }
       );
 

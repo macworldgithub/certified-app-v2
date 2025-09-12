@@ -10,39 +10,51 @@ import {
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { setImages } from "../redux/slices/inspectionSlice";
 
-export default function RearImage({ route, navigation }) {
+export default function RearImage({ navigation }) {
+  const dispatch = useDispatch();
+
+  // 🔹 Redux se data
   const {
     vin,
     make,
     carModel,
     year,
     engineNumber,
-    mileAge,
+    mileage,
     overallRating,
     city,
     owner,
     inspectorEmail,
-    images: initialImages,
-  } = route.params;
+    images: savedImages,
+  } = useSelector((state) => state.inspection);
 
-  const partKey = "rearImage"; // 🔹 lowercase to match frontImage
-  const [images, setImages] = useState(initialImages || {});
+  const partKey = "rearImage";
+  const [images, setLocalImages] = useState(savedImages || {});
   const [urlInput, setUrlInput] = useState("");
+
+  // helper: update redux + local
+  const saveImagesToRedux = (updatedImages) => {
+    setLocalImages(updatedImages);
+    dispatch(setImages(updatedImages));
+  };
 
   // 📌 Pick from Gallery
   const handlePickFromGallery = async () => {
     try {
       const result = await launchImageLibrary({ mediaType: "photo", quality: 1 });
       if (!result.didCancel && result.assets?.length > 0) {
-        setImages((prev) => ({
-          ...prev,
+        const updated = {
+          ...images,
           [partKey]: {
             original: result.assets[0].uri,
             analyzed: undefined,
             damages: [],
           },
-        }));
+        };
+        saveImagesToRedux(updated);
       }
     } catch (err) {
       console.log("Gallery pick failed", err);
@@ -58,14 +70,15 @@ export default function RearImage({ route, navigation }) {
         saveToPhotos: true,
       });
       if (!result.didCancel && result.assets?.length > 0) {
-        setImages((prev) => ({
-          ...prev,
+        const updated = {
+          ...images,
           [partKey]: {
             original: result.assets[0].uri,
             analyzed: undefined,
             damages: [],
           },
-        }));
+        };
+        saveImagesToRedux(updated);
       }
     } catch (err) {
       console.log("Camera capture failed", err);
@@ -78,14 +91,15 @@ export default function RearImage({ route, navigation }) {
       Alert.alert("Invalid URL", "Please enter a valid image URL.");
       return;
     }
-    setImages((prev) => ({
-      ...prev,
+    const updated = {
+      ...images,
       [partKey]: {
         original: urlInput.trim(),
         analyzed: undefined,
         damages: [],
       },
-    }));
+    };
+    saveImagesToRedux(updated);
     setUrlInput("");
   };
 
@@ -95,22 +109,24 @@ export default function RearImage({ route, navigation }) {
       Alert.alert("No Image", "Please add an image first.");
       return;
     }
-    setImages((prev) => ({
-      ...prev,
+    const updated = {
+      ...images,
       [partKey]: {
-        ...prev[partKey],
+        ...images[partKey],
         analyzed: images[partKey].original,
         damages: [{ description: "Dent on bumper", type: "dent" }],
       },
-    }));
+    };
+    saveImagesToRedux(updated);
   };
 
   // 📌 Delete
   const handleDelete = () => {
-    setImages((prev) => ({
-      ...prev,
+    const updated = {
+      ...images,
       [partKey]: { original: undefined, analyzed: undefined, damages: [] },
-    }));
+    };
+    saveImagesToRedux(updated);
   };
 
   return (
@@ -120,7 +136,7 @@ export default function RearImage({ route, navigation }) {
           Rear Image
         </Text>
 
-        {/* Show Original + Analyzed */}
+        {/* Original + Analyzed */}
         <View style={tw`flex-row justify-between mb-4`}>
           <View style={tw`flex-1 mr-2`}>
             <Text style={tw`font-semibold`}>Original</Text>
@@ -201,21 +217,7 @@ export default function RearImage({ route, navigation }) {
       <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white`}>
         <TouchableOpacity
           style={tw`bg-green-700 p-3 rounded-lg`}
-          onPress={() =>
-            navigation.navigate("LeftImage", {
-              vin,
-              make,
-              carModel,
-              year,
-              engineNumber,
-              mileAge,
-              overallRating,
-              city,
-              owner,
-              inspectorEmail,
-              images,
-            })
-          }
+          onPress={() => navigation.navigate("LeftImage")}
         >
           <Text style={tw`text-white text-center font-bold`}>Next</Text>
         </TouchableOpacity>

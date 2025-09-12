@@ -8,12 +8,14 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import tw from "tailwind-react-native-classnames";
+import { useDispatch, useSelector } from "react-redux";
+import { setOperational, resetInspection } from "../redux/slices/inspectionSlice";
 
-export default function OperationalChecklist({ navigation, route }) {
-  const { vin, make, carModel, year, engineNumber, mileAge, overallRating, inspectorEmail, body, electrical, fluids } = route.params;
+export default function OperationalChecklist({ navigation }) {
+  const dispatch = useDispatch();
+  const inspectionData = useSelector((state) => state.inspection);
 
-  // ✅ Operational State
-  const [operational, setOperational] = useState({
+  const [operational, setOperationalState] = useState({
     start: { success: "", crankTimeSeconds: "", notes: "" },
     steering: { freePlayMm: "", pull: "", alignmentRecommended: "", notes: "" },
     suspension: { condition: "", noises: "", bounceTestResult: "", notes: "" },
@@ -62,6 +64,12 @@ export default function OperationalChecklist({ navigation, route }) {
       {content}
     </View>
   );
+const handleSubmit = () => {
+  dispatch(setOperational(operational));
+  // console.log("Full Inspection Data:", { ...inspectionData, operational });
+  navigation.navigate("Home"); 
+};
+
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-3`}>
@@ -146,18 +154,7 @@ export default function OperationalChecklist({ navigation, route }) {
         {renderDropdown("Immobilizer Present", operational.keys.immobilizerPresent, (v) => setOperational({ ...operational, keys: { ...operational.keys, immobilizerPresent: v } }), ["Yes","No","Unknown"])}
         {renderInput("Notes", operational.keys.notes, (v) => setOperational({ ...operational, keys: { ...operational.keys, notes: v } }))}
       </>)}
-
-      {/* ✅ Submit Button */}
-      <TouchableOpacity
-        style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`}
-        onPress={() => {
-          console.log("Final Operational Data:", operational);
-          navigation.navigate("VehicalReport", {
-            vin, make, carModel, year, engineNumber, mileAge, overallRating,
-            inspectorEmail, body, electrical, fluids, operational
-          });
-        }}
-      >
+      <TouchableOpacity style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`} onPress={handleSubmit}>
         <Text style={tw`text-white text-center font-semibold text-base`}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>

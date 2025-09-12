@@ -12,6 +12,7 @@ import tw from "tailwind-react-native-classnames";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as Device from "expo-device";
+import API_BASE_URL from "../../utils/config";
 
 const OTPVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -47,11 +48,11 @@ const OTPVerification = () => {
         Device.deviceName ||
         "unknown-device-id";
 
-      let url = "http://192.168.0.105:5000/auth/verify-signup";
+      let url = `${API_BASE_URL}/auth/verify-signup`;
       let payload = { email, otp: enteredOtp };
 
       if (nextStep === "/auth/verify-otp") {
-        url = "http://192.168.0.105:5000/auth/verify-otp"; 
+        url = `${API_BASE_URL}/auth/verify-otp`;
         payload = { email, otp: enteredOtp, deviceId };
       }
 
@@ -86,7 +87,7 @@ const OTPVerification = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}

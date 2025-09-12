@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import tw from "tailwind-react-native-classnames";
+import { useDispatch } from "react-redux";
+import { setFluids } from "../redux/slices/inspectionSlice";
 
-export default function EngineFluidsChecklist({ navigation, route }) {
-  const { vin, make, carModel, year, engineNumber, mileAge, overallRating, inspectorEmail, body, electrical } = route.params;
-
+export default function EngineFluidsChecklist({ navigation}) {
+  const dispatch = useDispatch();
   // ✅ Engine Fluids State
   const [engineFluids, setEngineFluids] = useState({
     engineOil: { level: "", condition: "", notes: "" },
@@ -45,13 +46,18 @@ export default function EngineFluidsChecklist({ navigation, route }) {
     </View>
   );
 
-  // ✅ Section Wrapper
   const renderSection = (title, content) => (
     <View style={tw`mb-4 p-3 border border-gray-200 rounded-lg bg-gray-50`}>
       <Text style={tw`text-base font-bold mb-2 text-green-700`}>{title}</Text>
       {content}
     </View>
   );
+  const handleNext = () => {
+    dispatch(setFluids(engineFluids));
+      // console.log("Engine Fluids to store:", engineFluids);
+    navigation.navigate("OperationalChecklist");
+  };
+
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-3`}>
@@ -100,24 +106,7 @@ export default function EngineFluidsChecklist({ navigation, route }) {
       </>)}
 
       {/* ✅ Next Button */}
-      <TouchableOpacity
-        style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`}
-        onPress={() =>
-          navigation.navigate("OperationalChecklist", {
-            vin,
-            make,
-            carModel,
-            year,
-            engineNumber,
-            mileAge,
-            overallRating,
-            inspectorEmail,
-            body,
-            electrical,
-            engineFluids,
-          })
-        }
-      >
+    <TouchableOpacity style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`} onPress={handleNext}>
         <Text style={tw`text-white text-center font-semibold text-base`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>

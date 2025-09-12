@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import axios from "axios";
+import API_BASE_URL from "../../utils/config";
 
 export default function ForgotPass({ navigation }) {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function ForgotPass({ navigation }) {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://192.168.0.105:5000/auth/send-reset-password-otp",
+        `${API_BASE_URL}/auth/send-reset-password-otp`,
         { email }
       );
 

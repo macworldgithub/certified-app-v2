@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import tw from "tailwind-react-native-classnames";
+import { useDispatch } from "react-redux";
+import { setElectrical } from "../redux/slices/inspectionSlice";
 
-export default function ElectricalChecklist({ navigation, route }) {
-  const { vin, make, carModel, year, engineNumber, mileAge, overallRating, inspectorEmail, body } = route.params;
-
+export default function ElectricalChecklist({ navigation}) {
+  const dispatch = useDispatch();
   // ✅ Electrical State
-  const [electrical, setElectrical] = useState({
+  const [electrical, setElectricalState] = useState({
     lights: { status: "", notes: "", failedBulbs: "", headlightAim: "" },
     battery: { voltage: "", ageMonths: "", condition: "", crankPerformance: "", notes: "" },
     instrumentCluster: { status: "", notes: "", errorCodes: "", warningIndicators: "" },
@@ -52,6 +53,12 @@ export default function ElectricalChecklist({ navigation, route }) {
       {content}
     </View>
   );
+const handleNext = () => {
+  dispatch(setElectrical(electrical)); // electrical data save karo
+  navigation.navigate("EngineFluidsChecklist");
+};
+
+
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-3`}>
@@ -106,23 +113,7 @@ export default function ElectricalChecklist({ navigation, route }) {
       </>)}
 
       {/* ✅ Next Button */}
-      <TouchableOpacity
-        style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`}
-        onPress={() =>
-          navigation.navigate("EngineFluidsChecklist", {
-            vin,
-            make,
-            carModel,
-            year,
-            engineNumber,
-            mileAge,
-            overallRating,
-            inspectorEmail,
-            body,
-            electrical,
-          })
-        }
-      >
+         <TouchableOpacity style={tw`bg-green-700 py-2 rounded-lg mt-4 mb-12`} onPress={handleNext}>
         <Text style={tw`text-white text-center font-semibold text-base`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
