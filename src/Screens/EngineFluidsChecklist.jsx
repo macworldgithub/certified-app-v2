@@ -54,7 +54,6 @@ export default function EngineFluidsChecklist({ navigation}) {
   );
   const handleNext = () => {
     dispatch(setFluids(engineFluids));
-      // console.log("Engine Fluids to store:", engineFluids);
     navigation.navigate("OperationalChecklist");
   };
 

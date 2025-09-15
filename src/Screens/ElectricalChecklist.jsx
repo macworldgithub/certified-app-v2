@@ -66,50 +66,50 @@ const handleNext = () => {
 
       {/* Lights */}
       {renderSection("Lights", <>
-        {renderDropdown("Status", electrical.lights.status, (v) => setElectrical({ ...electrical, lights: { ...electrical.lights, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
-        {renderInput("Notes", electrical.lights.notes, (v) => setElectrical({ ...electrical, lights: { ...electrical.lights, notes: v } }))}
-        {renderInput("Failed Bulbs", electrical.lights.failedBulbs, (v) => setElectrical({ ...electrical, lights: { ...electrical.lights, failedBulbs: v } }))}
-        {renderDropdown("Headlight Aim", electrical.lights.headlightAim, (v) => setElectrical({ ...electrical, lights: { ...electrical.lights, headlightAim: v } }), ["OK","NeedsAdjust","Unknown"])}
+        {renderDropdown("Status", electrical.lights.status, (v) => setElectricalState({ ...electrical, lights: { ...electrical.lights, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
+        {renderInput("Notes", electrical.lights.notes, (v) => setElectricalState({ ...electrical, lights: { ...electrical.lights, notes: v } }))}
+        {renderInput("Failed Bulbs", electrical.lights.failedBulbs, (v) => setElectricalState({ ...electrical, lights: { ...electrical.lights, failedBulbs: v } }))}
+        {renderDropdown("Headlight Aim", electrical.lights.headlightAim, (v) => setElectricalState({ ...electrical, lights: { ...electrical.lights, headlightAim: v } }), ["OK","NeedsAdjust","Unknown"])}
       </>)}
 
       {/* Battery */}
       {renderSection("Battery", <>
-        {renderInput("Voltage", electrical.battery.voltage, (v) => setElectrical({ ...electrical, battery: { ...electrical.battery, voltage: v } }), true)}
-        {renderInput("Age (Months)", electrical.battery.ageMonths, (v) => setElectrical({ ...electrical, battery: { ...electrical.battery, ageMonths: v } }), true)}
-        {renderDropdown("Condition", electrical.battery.condition, (v) => setElectrical({ ...electrical, battery: { ...electrical.battery, condition: v } }), ["Good","Fair","Poor","Damaged","NotApplicable"])}
-        {renderDropdown("Crank Performance", electrical.battery.crankPerformance, (v) => setElectrical({ ...electrical, battery: { ...electrical.battery, crankPerformance: v } }), ["Strong","Weak","Unknown"])}
-        {renderInput("Notes", electrical.battery.notes, (v) => setElectrical({ ...electrical, battery: { ...electrical.battery, notes: v } }))}
+        {renderInput("Voltage", electrical.battery.voltage, (v) => setElectricalState({ ...electrical, battery: { ...electrical.battery, voltage: v } }), true)}
+        {renderInput("Age (Months)", electrical.battery.ageMonths, (v) => setElectricalState({ ...electrical, battery: { ...electrical.battery, ageMonths: v } }), true)}
+        {renderDropdown("Condition", electrical.battery.condition, (v) => setElectricalState({ ...electrical, battery: { ...electrical.battery, condition: v } }), ["Good","Fair","Poor","Damaged","NotApplicable"])}
+        {renderDropdown("Crank Performance", electrical.battery.crankPerformance, (v) => setElectricalState({ ...electrical, battery: { ...electrical.battery, crankPerformance: v } }), ["Strong","Weak","Unknown"])}
+        {renderInput("Notes", electrical.battery.notes, (v) => setElectricalState({ ...electrical, battery: { ...electrical.battery, notes: v } }))}
       </>)}
 
       {/* Instrument Cluster */}
       {renderSection("Instrument Cluster", <>
-        {renderDropdown("Status", electrical.instrumentCluster.status, (v) => setElectrical({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
-        {renderInput("Notes", electrical.instrumentCluster.notes, (v) => setElectrical({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, notes: v } }))}
-        {renderInput("Error Codes", electrical.instrumentCluster.errorCodes, (v) => setElectrical({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, errorCodes: v } }))}
-        {renderInput("Warning Indicators", electrical.instrumentCluster.warningIndicators, (v) => setElectrical({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, warningIndicators: v } }))}
+        {renderDropdown("Status", electrical.instrumentCluster.status, (v) => setElectricalState({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
+        {renderInput("Notes", electrical.instrumentCluster.notes, (v) => setElectricalState({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, notes: v } }))}
+        {renderInput("Error Codes", electrical.instrumentCluster.errorCodes, (v) => setElectricalState({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, errorCodes: v } }))}
+        {renderInput("Warning Indicators", electrical.instrumentCluster.warningIndicators, (v) => setElectricalState({ ...electrical, instrumentCluster: { ...electrical.instrumentCluster, warningIndicators: v } }))}
       </>)}
 
       {/* Air Conditioning */}
       {renderSection("Air Conditioning", <>
-        {renderDropdown("Status", electrical.airConditioning.status, (v) => setElectrical({ ...electrical, airConditioning: { ...electrical.airConditioning, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
-        {renderInput("Notes", electrical.airConditioning.notes, (v) => setElectrical({ ...electrical, airConditioning: { ...electrical.airConditioning, notes: v } }))}
-        {renderInput("Temperature Drop (°C)", electrical.airConditioning.temperatureDropC, (v) => setElectrical({ ...electrical, airConditioning: { ...electrical.airConditioning, temperatureDropC: v } }), true)}
-        {renderDropdown("Compressor Noise", electrical.airConditioning.compressorNoise, (v) => setElectrical({ ...electrical, airConditioning: { ...electrical.airConditioning, compressorNoise: v } }), ["None","Mild","Severe","Unknown"])}
+        {renderDropdown("Status", electrical.airConditioning.status, (v) => setElectricalState({ ...electrical, airConditioning: { ...electrical.airConditioning, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
+        {renderInput("Notes", electrical.airConditioning.notes, (v) => setElectricalState({ ...electrical, airConditioning: { ...electrical.airConditioning, notes: v } }))}
+        {renderInput("Temperature Drop (°C)", electrical.airConditioning.temperatureDropC, (v) => setElectricalState({ ...electrical, airConditioning: { ...electrical.airConditioning, temperatureDropC: v } }), true)}
+        {renderDropdown("Compressor Noise", electrical.airConditioning.compressorNoise, (v) => setElectricalState({ ...electrical, airConditioning: { ...electrical.airConditioning, compressorNoise: v } }), ["None","Mild","Severe","Unknown"])}
       </>)}
 
       {/* Central Locking */}
       {renderSection("Central Locking", <>
-        {renderDropdown("Status", electrical.centralLocking.status, (v) => setElectrical({ ...electrical, centralLocking: { ...electrical.centralLocking, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
-        {renderInput("Notes", electrical.centralLocking.notes, (v) => setElectrical({ ...electrical, centralLocking: { ...electrical.centralLocking, notes: v } }))}
-        {renderDropdown("Coverage", electrical.centralLocking.coverage, (v) => setElectrical({ ...electrical, centralLocking: { ...electrical.centralLocking, coverage: v } }), ["AllDoors","SomeDoors","None","NotPresent"])}
+        {renderDropdown("Status", electrical.centralLocking.status, (v) => setElectricalState({ ...electrical, centralLocking: { ...electrical.centralLocking, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
+        {renderInput("Notes", electrical.centralLocking.notes, (v) => setElectricalState({ ...electrical, centralLocking: { ...electrical.centralLocking, notes: v } }))}
+        {renderDropdown("Coverage", electrical.centralLocking.coverage, (v) => setElectricalState({ ...electrical, centralLocking: { ...electrical.centralLocking, coverage: v } }), ["AllDoors","SomeDoors","None","NotPresent"])}
       </>)}
 
       {/* Windows */}
       {renderSection("Windows", <>
-        {renderDropdown("Status", electrical.windows.status, (v) => setElectrical({ ...electrical, windows: { ...electrical.windows, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
-        {renderInput("Notes", electrical.windows.notes, (v) => setElectrical({ ...electrical, windows: { ...electrical.windows, notes: v } }))}
-        {renderDropdown("Avg Up/Down Speed", electrical.windows.avgUpDownSpeed, (v) => setElectrical({ ...electrical, windows: { ...electrical.windows, avgUpDownSpeed: v } }), ["Fast","Normal","Slow","Unknown"])}
-        {renderDropdown("Binding", electrical.windows.binding, (v) => setElectrical({ ...electrical, windows: { ...electrical.windows, binding: v } }), ["Yes","No","Unknown"])}
+        {renderDropdown("Status", electrical.windows.status, (v) => setElectricalState({ ...electrical, windows: { ...electrical.windows, status: v } }), ["Working","Intermittent","NotWorking","NotPresent"])}
+        {renderInput("Notes", electrical.windows.notes, (v) => setElectricalState({ ...electrical, windows: { ...electrical.windows, notes: v } }))}
+        {renderDropdown("Avg Up/Down Speed", electrical.windows.avgUpDownSpeed, (v) => setElectricalState({ ...electrical, windows: { ...electrical.windows, avgUpDownSpeed: v } }), ["Fast","Normal","Slow","Unknown"])}
+        {renderDropdown("Binding", electrical.windows.binding, (v) => setElectricalState({ ...electrical, windows: { ...electrical.windows, binding: v } }), ["Yes","No","Unknown"])}
       </>)}
 
       {/* ✅ Next Button */}
