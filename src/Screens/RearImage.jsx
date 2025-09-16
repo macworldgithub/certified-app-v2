@@ -38,7 +38,7 @@ export default function RearImage({ navigation }) {
 
       // STEP 1: Analyze API call
       const analyzeResp = await axios.post(
-        "http://192.168.100.61:5000/inspections/analyze",
+        "http://192.168.100.95:5000/inspections/analyze",
         { key },
         {
           headers: {
@@ -98,7 +98,7 @@ export default function RearImage({ navigation }) {
 
       // STEP 1: Presigned URL le lo
       const presignedResp = await axios.post(
-        "http://192.168.100.61:5000/inspections/presigned",
+        "http://192.168.100.95:5000/inspections/presigned",
         { fileType },
         {
           headers: {

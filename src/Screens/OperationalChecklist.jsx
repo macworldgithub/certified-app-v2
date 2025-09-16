@@ -20,11 +20,12 @@ import { buildInspectionPayload } from "../../utils/buildInspectionPayload";
 export default function OperationalChecklist({ navigation }) {
   const dispatch = useDispatch();
   const inspectionData = useSelector((state) => state.inspection);
-
+  // console.log(inspectionData);
+  // console.log("mileage", inspectionData.inspectionDetails);
   const createInspection = async (inspectionPayload) => {
     try {
       const response = await axios.post(
-        "http://192.168.100.61:5000/inspections",
+        "http://192.168.100.95:5000/inspections",
         inspectionPayload,
         {
           headers: {
@@ -110,29 +111,45 @@ export default function OperationalChecklist({ navigation }) {
   const handleSubmit = async () => {
     try {
       dispatch(setOperational(operational));
+      // console.log("Testing", inspectionData.carModel);
+      // console.log("Testing", inspectionData.year);
 
       // ✅ Validate required data
-      if (!inspectionData.inspectionDetail || !inspectionData.engineVerify) {
+      if (
+        !inspectionData.vin ||
+        !inspectionData.make ||
+        !inspectionData.carModel ||
+        !inspectionData.year
+      ) {
         Alert.alert(
           "❌ Missing Data",
-          "Please fill Inspection Detail and Engine Verify before submitting."
+          "Please fill VIN, Make, Model, and Year before submitting."
         );
         return;
       }
-
+      // console.log("Mileage", inspectionData.inspectionDetail);
       const finalPayload = {
-        ...buildInspectionPayload({
-          inspectionDetail: inspectionData.inspectionDetail,
-          engineVerify: inspectionData.engineVerify,
-          frontImage: inspectionData.frontImage,
-          rearImage: inspectionData.rearImage,
-          leftImage: inspectionData.leftImage,
-          rightImage: inspectionData.rightImage,
-          bodyChecklist: inspectionData.bodyChecklist,
-          electricalChecklist: inspectionData.electricalChecklist,
-          engineFluidsChecklist: inspectionData.engineFluidsChecklist,
-          operationalChecklist: operational,
-        }),
+        vin: inspectionData.vin,
+        make: inspectionData.make,
+        carModel: inspectionData.carModel,
+        year: inspectionData.year,
+        engineNumber: inspectionData.engineNumber,
+        mileAge: inspectionData.mileAge,
+
+        // Images (object-based)
+        frontImage: inspectionData.images.frontImage,
+        rearImage: inspectionData.images.rearImage,
+        leftImage: inspectionData.images.leftImage,
+        rightImage: inspectionData.images.rightImage,
+
+        checklist: {
+          body: inspectionData.bodyChecklist,
+          electrical: inspectionData.electricalChecklist,
+          engineFluids: inspectionData.engineFluidsChecklist,
+          operational: inspectionData.operationalChecklist,
+          other: inspectionData.otherChecklist || {},
+        },
+
         inspectorEmail: "m.ahmed.fahim02@gmail.com", // ✅ hardcoded
       };
 

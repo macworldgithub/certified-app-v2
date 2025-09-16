@@ -1,26 +1,18 @@
-export const buildInspectionPayload = (inspectionData) => {
+export const buildInspectionPayload = (data) => {
   return {
-    inspectionDetail: {
-      vin: inspectionData.vin,
-      make: inspectionData.make,
-      carModel: inspectionData.model, // ✅ model → carModel
-      year: inspectionData.year,
-    },
-    engineVerify: {
-      engineNumber: inspectionData.engineNumber,
-      mileAge: inspectionData.mileage, // ✅ mileage → mileAge
-    },
-    images: {
-      front: inspectionData.images.front || null,
-      rear: inspectionData.images.rear || null,
-      left: inspectionData.images.left || null,
-      right: inspectionData.images.right || null,
-    },
-    bodyChecklist: inspectionData.body,
-    electricalChecklist: inspectionData.electrical,
-    engineFluidsChecklist: inspectionData.fluids,
-    operationalChecklist: inspectionData.operational,
-    rating: null,
-    email: "", // optional
+    vin: data.vin,
+    make: data.make,
+    carModel: data.carModel,
+    year: data.year,
+    engineNumber: data.engineNumber,
+    mileAge: data.mileAge,
+    frontImage: data.frontImage,
+    rearImage: data.rearImage,
+    leftImage: data.leftImage,
+    rightImage: data.rightImage,
+    bodyChecklist: data.bodyChecklist,
+    electricalChecklist: data.electricalChecklist,
+    engineFluidsChecklist: data.engineFluidsChecklist,
+    operationalChecklist: data.operationalChecklist,
   };
 };
