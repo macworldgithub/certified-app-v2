@@ -25,7 +25,7 @@ export default function OperationalChecklist({ navigation }) {
   const createInspection = async (inspectionPayload) => {
     try {
       const response = await axios.post(
-        "http://192.168.100.95:5000/inspections",
+        "http://192.168.18.11:5000/inspections",
         inspectionPayload,
         {
           headers: {
@@ -161,7 +161,7 @@ export default function OperationalChecklist({ navigation }) {
 
       dispatch(resetInspection());
       Alert.alert("✅ Success", "Inspection created successfully!");
-      navigation.navigate("Home");
+      navigation.navigate("AnalyzeScreen");
     } catch (err) {
       const errorMsg =
         err.response?.data?.message ||

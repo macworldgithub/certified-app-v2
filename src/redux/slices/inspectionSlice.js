@@ -18,6 +18,7 @@ const initialState = {
   electrical: {},
   fluids: {},
   operational: {},
+  analysis: null,
 };
 
 const inspectionSlice = createSlice({
@@ -34,7 +35,7 @@ const inspectionSlice = createSlice({
       state.engineNumber = action.payload.engineNumber;
       state.mileAge = action.payload.mileAge;
     },
-     setOverallRating: (state, action) => {
+    setOverallRating: (state, action) => {
       state.overallRating = action.payload;
     },
     setImages: (state, action) => {
@@ -51,6 +52,9 @@ const inspectionSlice = createSlice({
     },
     setOperational: (state, action) => {
       state.operational = action.payload;
+    },
+    setAnalysisData: (state, action) => {
+      state.analysis = action.payload;
     },
     resetInspection: () => initialState,
   },
