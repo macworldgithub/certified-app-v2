@@ -51,24 +51,33 @@ export default function InspectionDetails({ navigation }) {
           style={tw`border border-gray-300 rounded-lg px-3 py-2 mb-3`}
           placeholder="VIN Number"
           value={vin}
-          onChangeText={setVin}
+          placeholderTextColor="#9CA3AF" // Tailwind's gray-400
+          
+            onChangeText={(text) => {
+    if (text.length <= 17) setVin(text); // extra safeguard
+  }}
+  maxLength={17} // enforce VIN length
+  autoCapitalize="characters" // VINs are uppercase
         />
         <TextInput
           style={tw`border border-gray-300 rounded-lg px-3 py-2 mb-3`}
           placeholder="Make"
           value={make}
+          placeholderTextColor="#9CA3AF" // Tailwind's gray-400
           onChangeText={setMake}
         />
         <TextInput
           style={tw`border border-gray-300 rounded-lg px-3 py-2 mb-3`}
           placeholder="Model"
           value={carModel}
+          placeholderTextColor="#9CA3AF" // Tailwind's gray-400
           onChangeText={setModel}
         />
         <TextInput
           style={tw`border border-gray-300 rounded-lg px-3 py-2`}
           placeholder="Year"
           value={year}
+          placeholderTextColor="#9CA3AF" // Tailwind's gray-400
           onChangeText={setYear}
           keyboardType="numeric"
         />

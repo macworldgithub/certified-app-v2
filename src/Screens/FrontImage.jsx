@@ -15,10 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { setImages } from "../redux/slices/inspectionSlice";
 import mime from "mime";
 import axios from "axios";
+import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+import { API_BASE_URL_Prod } from "../../utils/config";
+import ImageViewing from "react-native-image-viewing";
 
 export default function FrontImage({ navigation }) {
   const dispatch = useDispatch();
   const { images: savedImages } = useSelector((state) => state.inspection);
+  const [previewVisible, setPreviewVisible] = useState(false);
+const [previewUri, setPreviewUri] = useState(null);
 
   const partKey = "frontImage";
   const [images, setLocalImages] = useState(savedImages || {});
@@ -32,13 +37,21 @@ export default function FrontImage({ navigation }) {
     dispatch(setImages(updatedImages));
   };
 
+   const handleBack = () => {
+  // Optionally clear or update redux if you want when going back
+  // dispatch(clearEngineDetails()); 
+
+  navigation.goBack();
+};
+
+
   // ✅ Analyze uploaded image
   const analyzeInspection = async (key) => {
     try {
       console.log("🔑 Passing key to analyze:", key);
 
       const analyzeResp = await axios.post(
-        "http://192.168.18.11:5000/inspections/analyze",
+        `${API_BASE_URL_Prod}/inspections/analyze`,
         { key },
         {
           headers: {
@@ -97,7 +110,7 @@ export default function FrontImage({ navigation }) {
 
       // STEP 1: Get presigned URL
       const presignedResp = await axios.post(
-        "http://192.168.18.11:5000/inspections/presigned",
+        `${API_BASE_URL_Prod}/inspections/presigned`,
         { fileType },
         {
           headers: {
@@ -235,37 +248,72 @@ export default function FrontImage({ navigation }) {
         style={tw`flex-1 px-4 pt-10`}
         contentContainerStyle={tw`pb-32`}
       >
+                 {/* Header */}
+    <View style={tw`flex-row items-center mb-6`}>
+      <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+        <Ionicons name="arrow-back" size={24} color="#065f46" /> 
+        {/* green-800 color */}
+      </TouchableOpacity>
+      <Text style={tw`text-lg font-bold text-green-800`}>
+        Vehicle Details
+      </Text>
+    </View>
         <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
           Front Image
         </Text>
 
         {/* Original + Analyzed */}
-        <View style={tw`flex-row justify-between mb-4`}>
-          <View style={tw`flex-1 mr-2`}>
-            <Text style={tw`font-semibold`}>Original</Text>
-            {images[partKey]?.original ? (
-              <Image
-                source={{ uri: images[partKey].original }}
-                style={tw`w-full h-32 rounded-lg mt-2`}
-                resizeMode="cover"
-              />
-            ) : (
-              <Text style={tw`text-gray-500 mt-2`}>No Original Image</Text>
-            )}
-          </View>
-          <View style={tw`flex-1 ml-2`}>
-            <Text style={tw`font-semibold`}>Analyzed</Text>
-            {images[partKey]?.analyzed ? (
-              <Image
-                source={{ uri: images[partKey].analyzed }}
-                style={tw`w-full h-32 rounded-lg mt-2`}
-                resizeMode="cover"
-              />
-            ) : (
-              <Text style={tw`text-gray-500 mt-2`}>No Analyzed Image</Text>
-            )}
-          </View>
-        </View>
+         <View style={tw`flex-row justify-between mb-4`}>
+      {/* Original */}
+      <View style={tw`flex-1 mr-2`}>
+        <Text style={tw`font-semibold`}>Original</Text>
+        {images[partKey]?.original ? (
+          <TouchableOpacity
+            onPress={() => {
+              setPreviewUri(images[partKey].original);
+              setPreviewVisible(true);
+            }}
+          >
+            <Image
+              source={{ uri: images[partKey].original }}
+              style={tw`w-full h-32 rounded-lg mt-2`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ) : (
+          <Text style={tw`text-gray-500 mt-2`}>No Original Image</Text>
+        )}
+      </View>
+
+      {/* Analyzed */}
+      <View style={tw`flex-1 ml-2`}>
+        <Text style={tw`font-semibold`}>Analyzed</Text>
+        {images[partKey]?.analyzed ? (
+          <TouchableOpacity
+            onPress={() => {
+              setPreviewUri(images[partKey].analyzed);
+              setPreviewVisible(true);
+            }}
+          >
+            <Image
+              source={{ uri: images[partKey].analyzed }}
+              style={tw`w-full h-32 rounded-lg mt-2`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ) : (
+          <Text style={tw`text-gray-500 mt-2`}>No Analyzed Image</Text>
+        )}
+      </View>
+
+      {/* Fullscreen Preview */}
+      <ImageViewing
+        images={[{ uri: previewUri }]}
+        imageIndex={0}
+        visible={previewVisible}
+        onRequestClose={() => setPreviewVisible(false)}
+      />
+    </View>
 
         {uploading && (
           <View style={tw`my-2`}>

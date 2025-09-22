@@ -33,7 +33,7 @@ export default function Onboarding({ navigation }) {
         }}
       >
         {/* Bottom content */}
-        <View style={{ marginBottom: 48 }}>
+        <View style={{ marginBottom: 48 ,paddingLeft: 10 ,paddingRight:10}}>
           {/* Title */}
           <Text
             style={{
@@ -43,7 +43,7 @@ export default function Onboarding({ navigation }) {
               lineHeight: 38,
             }}
           >
-            Inspect You Car{"\n"}With Ai
+            Inspect Your Car{"\n"}With AI
           </Text>
 
           {/* Subtitle */}

@@ -9,6 +9,7 @@ import {
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setEngineDetails } from "../redux/slices/inspectionSlice";
+import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
 
 export default function Engineverify({ navigation }) {
   const dispatch = useDispatch();
@@ -20,6 +21,13 @@ export default function Engineverify({ navigation }) {
 
   const [engineNumber, setEngineNo] = useState(savedEngineNo || "");
   const [mileAge, setMileage] = useState(savedMileage || "");
+
+  const handleBack = () => {
+  // Optionally clear or update redux if you want when going back
+  // dispatch(clearEngineDetails()); 
+
+  navigation.goBack();
+};
 
   const handleNext = () => {
     // Redux store me save karna
@@ -36,6 +44,17 @@ export default function Engineverify({ navigation }) {
       contentContainerStyle={tw`pb-20 px-4`}
       showsVerticalScrollIndicator={false}
     >
+
+          {/* Header */}
+    <View style={tw`flex-row items-center mb-6`}>
+      <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+        <Ionicons name="arrow-back" size={24} color="#065f46" /> 
+        {/* green-800 color */}
+      </TouchableOpacity>
+      <Text style={tw`text-lg font-bold text-green-800`}>
+        Inspect Details
+      </Text>
+    </View>
       {/* Header */}
       <View style={tw`flex-row justify-between items-center mb-6`}>
         <Text style={tw`text-lg font-bold text-green-800`}>
@@ -51,12 +70,15 @@ export default function Engineverify({ navigation }) {
           style={tw`border border-gray-300 rounded-lg px-3 py-2 mb-3`}
           placeholder="Engine Number"
           value={engineNumber}
+          placeholderTextColor="#9CA3AF"
           onChangeText={setEngineNo}
         />
         <TextInput
           style={tw`border border-gray-300 rounded-lg px-3 py-2 mb-3`}
           placeholder="Mileage (km)"
           value={mileAge}
+          placeholderTextColor="#9CA3AF"
+
           onChangeText={setMileage}
           keyboardType="numeric"
         />

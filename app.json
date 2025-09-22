@@ -2,6 +2,9 @@
   "expo": {
     "name": "certified-app-version2",
     "slug": "certified-app-version2",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }
