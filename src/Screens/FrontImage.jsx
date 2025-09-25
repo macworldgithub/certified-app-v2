@@ -18,6 +18,8 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
 import { API_BASE_URL_Prod } from "../../utils/config";
 import ImageViewing from "react-native-image-viewing";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
+
 
 export default function FrontImage({ navigation }) {
   const dispatch = useDispatch();
@@ -25,11 +27,17 @@ export default function FrontImage({ navigation }) {
   const [previewVisible, setPreviewVisible] = useState(false);
 const [previewUri, setPreviewUri] = useState(null);
 
+const inspection = useSelector((state) => state.inspection);
+
+console.log(inspection)
+
   const partKey = "frontImage";
   const [images, setLocalImages] = useState(savedImages || {});
   const [urlInput, setUrlInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const [analyzing, setAnalyzing] = useState(false);
 
   // ✅ Helper to update Redux + local state
   const saveImagesToRedux = (updatedImages) => {
@@ -86,6 +94,8 @@ const [previewUri, setPreviewUri] = useState(null);
       return;
     }
 
+    setAnalyzing(true);
+
     const analysis = await analyzeInspection(images[partKey].key);
     if (analysis) {
       const updated = {
@@ -97,6 +107,7 @@ const [previewUri, setPreviewUri] = useState(null);
         },
       };
       saveImagesToRedux(updated);
+      setAnalyzing(false);
     }
   };
 
@@ -243,9 +254,10 @@ const [previewUri, setPreviewUri] = useState(null);
   };
 
   return (
-    <View style={tw`flex-1 bg-white`}>
+    <SafeAreaWrapper>
+      <View style={tw`flex-1 bg-white`}>
       <ScrollView
-        style={tw`flex-1 px-4 pt-10`}
+        style={tw`flex-1 px-4 `}
         contentContainerStyle={tw`pb-32`}
       >
                  {/* Header */}
@@ -263,7 +275,7 @@ const [previewUri, setPreviewUri] = useState(null);
         </Text>
 
         {/* Original + Analyzed */}
-         <View style={tw`flex-row justify-between mb-4`}>
+    <View style={tw`flex-row justify-between mb-4`}>
       {/* Original */}
       <View style={tw`flex-1 mr-2`}>
         <Text style={tw`font-semibold`}>Original</Text>
@@ -321,6 +333,12 @@ const [previewUri, setPreviewUri] = useState(null);
             <ActivityIndicator size="small" color="#16a34a" />
           </View>
         )}
+        {analyzing && (
+          <View style={tw`my-2`}>
+            <Text>Analyzing...</Text>
+            <ActivityIndicator size="small" color="#16a34a" />
+          </View>
+        )}
 
         {/* Add Image by URL */}
         <View style={tw`mt-4`}>
@@ -354,23 +372,24 @@ const [previewUri, setPreviewUri] = useState(null);
 
         {/* Analyze + Delete */}
         <View style={tw`flex-row justify-between mt-4`}>
-          <TouchableOpacity
+          {inspection?.images?.frontImage?.original && <TouchableOpacity
             style={tw`bg-red-500 p-3 rounded-lg flex-1 mr-2`}
             onPress={handleAnalyze}
+            disabled={analyzing}
           >
             <Text style={tw`text-white text-center`}>Analyze</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity>}
+         {inspection?.images?.frontImage?.original &&  <TouchableOpacity
             style={tw`bg-red-500 p-3 rounded-lg flex-1 ml-2`}
             onPress={handleDelete}
           >
             <Text style={tw`text-white text-center`}>Delete</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </ScrollView>
 
       {/* Next */}
-      <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white`}>
+      <View style={tw`absolute bottom-0 left-0 right-0 p-4 mb-10 bg-white`}>
         <TouchableOpacity
           style={tw`bg-green-700 p-3 rounded-lg`}
           onPress={() => navigation.navigate("RearImage")}
@@ -379,5 +398,6 @@ const [previewUri, setPreviewUri] = useState(null);
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaWrapper>
   );
 }

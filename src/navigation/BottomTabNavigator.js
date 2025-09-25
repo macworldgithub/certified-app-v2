@@ -8,6 +8,7 @@ import Home from '../Screens/Home';
 import InspectionDetails from '../Screens/InspectionDetails';
 import Profile from '../Screens/Profile';
 import VehicleReport from "./../Screens/VehicleReport";
+import InspectionList from '../Screens/InspectionList';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +45,7 @@ const BottomTabNavigator = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === 'Home') iconName = 'home';
-          else if (route.name === 'Inspection') iconName = 'clipboard';
+          else if (route.name === 'InspectionList') iconName = 'clipboard';
           else if (route.name === 'Report') iconName = 'document-text';
           else if (route.name === 'Profile') iconName = 'person';
 
@@ -70,13 +71,13 @@ const BottomTabNavigator = () => {
             elevation: 10,
           },
         ],
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: '#2f855a',
         tabBarInactiveTintColor: '#8E8E93',
         headerShown: false,
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ title: 'Home' }} />
-      <Tab.Screen name="Inspection" component={InspectionDetails} options={{ title: 'Inspection' }} />
+      <Tab.Screen name="InspectionList" component={InspectionList} options={{ title: 'Inspection' }} />
       <Tab.Screen name="Report" component={VehicleReport} options={{ title: 'Report' }} />
       <Tab.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
     </Tab.Navigator>

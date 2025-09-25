@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
+import SafeAreaWrapper from '../components/SafeAreaWrapper';
 
 const inspectionsSummary = [
   { label: 'Inspection', value: 247 },
@@ -26,8 +27,9 @@ export default function Home() {
   const navigation = useNavigation();
 
   return (
-    <ScrollView
-      style={tw`flex-1 bg-white pt-10 px-2`}
+    <SafeAreaWrapper>
+      <ScrollView
+      style={tw`flex-1 bg-white  px-2`}
       contentContainerStyle={tw`pb-20 px-4`}
       showsVerticalScrollIndicator={true}
     >
@@ -62,8 +64,8 @@ export default function Home() {
           key={index}
           style={tw`flex-row items-center bg-white p-4 mt-2 rounded-xl shadow`}
           onPress={() => {
-            if (action.title === 'New Inspection') navigation.navigate('Inspection');
-            if (action.title === 'View Reports') navigation.navigate('VehicleReport');
+            if (action.title === 'New Inspection') navigation.navigate('InspectionDetails');
+            if (action.title === 'View Reports') navigation.navigate('Report');
             if (action.title === 'Transport') navigation.navigate('TransportActive');
           }}
         >
@@ -103,5 +105,7 @@ export default function Home() {
         </View>
       ))}
     </ScrollView>
+      
+      </SafeAreaWrapper>
   );
 }

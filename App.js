@@ -31,6 +31,7 @@ import AnalyzeScreen from './src/Screens/AnalyzeScreen';
 import Profile from './src/Screens/Profile';
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
+import InspectionList from './src/Screens/InspectionList';
 
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -67,6 +68,7 @@ export default function App() {
             <Stack.Screen name='LogoutAllOTPVerify' component={LogoutAllOTPVerify} />
             <Stack.Screen name='Profile' component={Profile} />
             <Stack.Screen name='AnalyzeScreen' component={AnalyzeScreen} />
+            <Stack.Screen name='InspectionList' component={InspectionList} />
             {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>

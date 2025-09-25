@@ -10,6 +10,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 import tw from "tailwind-react-native-classnames";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function VehicleReport() {
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -45,9 +46,10 @@ export default function VehicleReport() {
   ];
 
   return (
-    <View style={tw`flex-1 bg-white`}>
+    <SafeAreaWrapper>
+      <View style={tw`flex-1 bg-white`}>
       <ScrollView
-        style={tw`pt-10 px-2`}
+        style={tw` px-2`}
         contentContainerStyle={tw`pb-20 px-4`}
         showsVerticalScrollIndicator={true}
       >
@@ -187,5 +189,6 @@ export default function VehicleReport() {
         </View>
       </Modal>
     </View>
+    </SafeAreaWrapper>
   );
 }

@@ -4,6 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch } from "react-redux";
 import { setElectrical } from "../redux/slices/inspectionSlice";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function ElectricalChecklist({ navigation}) {
   const dispatch = useDispatch();
@@ -23,9 +24,9 @@ export default function ElectricalChecklist({ navigation}) {
       <Text style={tw`text-sm font-semibold mb-1`}>{label}</Text>
       <View style={tw`border border-gray-300 rounded-md`}>
         <Picker selectedValue={value} onValueChange={onChange}>
-          <Picker.Item label={`Select ${label}`} value="" />
+          <Picker.Item label={`Select ${label}`} value="" color="black"/>
           {options.map((opt) => (
-            <Picker.Item key={opt} label={opt} value={opt} />
+            <Picker.Item key={opt} label={opt} value={opt} color="black" />
           ))}
         </Picker>
       </View>
@@ -61,8 +62,9 @@ const handleNext = () => {
 
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-3`}>
-      <Text style={tw`text-xl font-bold mb-4 text-green-800 pt-6`}>Electrical Inspection</Text>
+ <SafeAreaWrapper>
+     <ScrollView style={tw`flex-1 bg-white p-3`}>
+      <Text style={tw`text-xl font-bold mb-4 text-green-800 `}>Electrical Inspection</Text>
 
       {/* Lights */}
       {renderSection("Lights", <>
@@ -117,5 +119,6 @@ const handleNext = () => {
         <Text style={tw`text-white text-center font-semibold text-base`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
+ </SafeAreaWrapper>
   );
 }

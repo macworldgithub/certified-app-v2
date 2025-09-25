@@ -16,6 +16,9 @@ import {
 } from "../redux/slices/inspectionSlice";
 import axios from "axios";
 import { buildInspectionPayload } from "../../utils/buildInspectionPayload";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import { API_BASE_URL_Prod } from "../../utils/config";
+
 
 export default function OperationalChecklist({ navigation }) {
   const dispatch = useDispatch();
@@ -25,7 +28,8 @@ export default function OperationalChecklist({ navigation }) {
   const createInspection = async (inspectionPayload) => {
     try {
       const response = await axios.post(
-        "http://192.168.18.11:5000/inspections",
+        // "http://192.168.18.11:5000/inspections",
+        `${API_BASE_URL_Prod}/inspections`,
         inspectionPayload,
         {
           headers: {
@@ -77,9 +81,9 @@ export default function OperationalChecklist({ navigation }) {
       <Text style={tw`text-sm font-semibold mb-1`}>{label}</Text>
       <View style={tw`border border-gray-300 rounded-md`}>
         <Picker selectedValue={value} onValueChange={onChange}>
-          <Picker.Item label={`Select ${label}`} value="" />
+          <Picker.Item label={`Select ${label}`} value="" color="black"/>
           {options.map((opt) => (
-            <Picker.Item key={opt} label={opt} value={opt} />
+            <Picker.Item key={opt} label={opt} value={opt} color="black"/>
           ))}
         </Picker>
       </View>
@@ -161,7 +165,7 @@ export default function OperationalChecklist({ navigation }) {
 
       dispatch(resetInspection());
       Alert.alert("✅ Success", "Inspection created successfully!");
-      navigation.navigate("AnalyzeScreen");
+      navigation.navigate("Home");
     } catch (err) {
       const errorMsg =
         err.response?.data?.message ||
@@ -173,8 +177,9 @@ export default function OperationalChecklist({ navigation }) {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-3`}>
-      <Text style={tw`text-xl font-bold mb-4 text-green-800 pt-6`}>
+   <SafeAreaWrapper>
+     <ScrollView style={tw`flex-1 bg-white p-3`}>
+      <Text style={tw`text-xl font-bold mb-4 text-green-800 `}>
         Operational Inspection
       </Text>
 
@@ -584,5 +589,6 @@ export default function OperationalChecklist({ navigation }) {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+   </SafeAreaWrapper>
   );
 }

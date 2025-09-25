@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
+
 const initialState = {
+  _id:"",
   vin: "",
   make: "",
   carModel: "",
@@ -56,6 +59,9 @@ const inspectionSlice = createSlice({
     setAnalysisData: (state, action) => {
       state.analysis = action.payload;
     },
+      setInspection(state, action) {
+      return { ...state, ...action.payload };
+    },
     resetInspection: () => initialState,
   },
 });
@@ -69,6 +75,7 @@ export const {
   setFluids,
   setOperational,
   resetInspection,
+  setInspection
 } = inspectionSlice.actions;
 
 export default inspectionSlice.reducer;

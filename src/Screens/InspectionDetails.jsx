@@ -9,6 +9,9 @@ import {
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionDetails } from "../redux/slices/inspectionSlice";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+
 
 export default function InspectionDetails({ navigation }) {
   const dispatch = useDispatch();
@@ -30,13 +33,31 @@ export default function InspectionDetails({ navigation }) {
     navigation.navigate("Engineverify");
   };
 
+     const handleBack = () => {
+  // Optionally clear or update redux if you want when going back
+  // dispatch(clearEngineDetails()); 
+
+  navigation.goBack();
+};
+
   return (
-    <ScrollView
-      style={tw`flex-1 bg-white pt-10 px-2`}
+    <SafeAreaWrapper>
+      <ScrollView
+      style={tw`flex-1 bg-white px-2`}
       contentContainerStyle={tw`pb-20 px-4`}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
+                   
+    <View style={tw`flex-row items-center mb-6`}>
+      <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+        <Ionicons name="arrow-back" size={24} color="#065f46" /> 
+        {/* green-800 color */}
+      </TouchableOpacity>
+      <Text style={tw`text-lg font-bold text-green-800`}>
+        Back
+      </Text>
+    </View>
       <View style={tw`flex-row justify-between items-center mb-6`}>
         <Text style={tw`text-lg font-bold text-green-800`}>
           Inspection Details
@@ -91,5 +112,6 @@ export default function InspectionDetails({ navigation }) {
         <Text style={tw`text-white text-center font-bold`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
+    </SafeAreaWrapper>
   );
 }

@@ -16,6 +16,11 @@ import { setImages } from "../redux/slices/inspectionSlice";
 import mime from "mime";
 import API_BASE_URL from "../../utils/config";
 import axios from "axios";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import { API_BASE_URL_Prod } from "../../utils/config";
+import ImageViewing from "react-native-image-viewing";
+
+
 
 export default function RearImage({ navigation }) {
   const dispatch = useDispatch();
@@ -26,6 +31,13 @@ export default function RearImage({ navigation }) {
   const [urlInput, setUrlInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+    const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewUri, setPreviewUri] = useState(null);
+    const [analyzing, setAnalyzing] = useState(false);
+
+    const inspection = useSelector((state) => state.inspection);
+    
+  
 
   const saveImagesToRedux = (updatedImages) => {
     setLocalImages(updatedImages);
@@ -38,7 +50,8 @@ export default function RearImage({ navigation }) {
 
       // STEP 1: Analyze API call
       const analyzeResp = await axios.post(
-        "http://192.168.18.11:5000/inspections/analyze",
+        
+        `${API_BASE_URL_Prod}/inspections/analyze`,
         { key },
         {
           headers: {
@@ -75,6 +88,9 @@ export default function RearImage({ navigation }) {
       return;
     }
 
+    setAnalyzing(true);
+
+
     const analysis = await analyzeInspection(images[partKey].key);
     if (analysis) {
       const updated = {
@@ -86,6 +102,7 @@ export default function RearImage({ navigation }) {
         },
       };
       saveImagesToRedux(updated);
+      setAnalyzing(false);
     }
   };
 
@@ -98,7 +115,8 @@ export default function RearImage({ navigation }) {
 
       // STEP 1: Presigned URL le lo
       const presignedResp = await axios.post(
-        "http://192.168.18.11:5000/inspections/presigned",
+      
+        `${API_BASE_URL_Prod}/inspections/presigned`,
         { fileType },
         {
           headers: {
@@ -227,46 +245,79 @@ export default function RearImage({ navigation }) {
   };
 
   return (
-    <View style={tw`flex-1 bg-white`}>
+  <SafeAreaWrapper>
+      <View style={tw`flex-1 bg-white`}>
       <ScrollView
-        style={tw`flex-1 px-4 pt-10`}
+        style={tw`flex-1 px-4 `}
         contentContainerStyle={tw`pb-32`}
       >
         <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
           Rear Image
         </Text>
 
-        {/* Original + Analyzed */}
-        <View style={tw`flex-row justify-between mb-4`}>
-          <View style={tw`flex-1 mr-2`}>
-            <Text style={tw`font-semibold`}>Original</Text>
-            {images[partKey]?.original ? (
-              <Image
-                source={{ uri: images[partKey].original }}
-                style={tw`w-full h-32 rounded-lg mt-2`}
-                resizeMode="cover"
-              />
-            ) : (
-              <Text style={tw`text-gray-500 mt-2`}>No Original Image</Text>
-            )}
-          </View>
-          <View style={tw`flex-1 ml-2`}>
-            <Text style={tw`font-semibold`}>Analyzed</Text>
-            {images[partKey]?.analyzed ? (
-              <Image
-                source={{ uri: images[partKey].analyzed }}
-                style={tw`w-full h-32 rounded-lg mt-2`}
-                resizeMode="cover"
-              />
-            ) : (
-              <Text style={tw`text-gray-500 mt-2`}>No Analyzed Image</Text>
-            )}
-          </View>
-        </View>
+         {/* Original + Analyzed */}
+    <View style={tw`flex-row justify-between mb-4`}>
+      {/* Original */}
+      <View style={tw`flex-1 mr-2`}>
+        <Text style={tw`font-semibold`}>Original</Text>
+        {images[partKey]?.original ? (
+          <TouchableOpacity
+            onPress={() => {
+              setPreviewUri(images[partKey].original);
+              setPreviewVisible(true);
+            }}
+          >
+            <Image
+              source={{ uri: images[partKey].original }}
+              style={tw`w-full h-32 rounded-lg mt-2`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ) : (
+          <Text style={tw`text-gray-500 mt-2`}>No Original Image</Text>
+        )}
+      </View>
+
+      {/* Analyzed */}
+      <View style={tw`flex-1 ml-2`}>
+        <Text style={tw`font-semibold`}>Analyzed</Text>
+        {images[partKey]?.analyzed ? (
+          <TouchableOpacity
+            onPress={() => {
+              setPreviewUri(images[partKey].analyzed);
+              setPreviewVisible(true);
+            }}
+          >
+            <Image
+              source={{ uri: images[partKey].analyzed }}
+              style={tw`w-full h-32 rounded-lg mt-2`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ) : (
+          <Text style={tw`text-gray-500 mt-2`}>No Analyzed Image</Text>
+        )}
+      </View>
+
+      {/* Fullscreen Preview */}
+      <ImageViewing
+        images={[{ uri: previewUri }]}
+        imageIndex={0}
+        visible={previewVisible}
+        onRequestClose={() => setPreviewVisible(false)}
+      />
+    </View>
 
         {uploading && (
           <View style={tw`my-2`}>
             <Text>Uploading...</Text>
+            <ActivityIndicator size="small" color="#16a34a" />
+          </View>
+        )}
+
+          {analyzing && (
+          <View style={tw`my-2`}>
+            <Text>Analyzing...</Text>
             <ActivityIndicator size="small" color="#16a34a" />
           </View>
         )}
@@ -302,24 +353,26 @@ export default function RearImage({ navigation }) {
         </TouchableOpacity>
 
         {/* Analyze + Delete */}
-        <View style={tw`flex-row justify-between mt-4`}>
-          <TouchableOpacity
+          <View style={tw`flex-row justify-between mt-4`}>
+          {inspection?.images?.rearImage?.original && <TouchableOpacity
             style={tw`bg-red-500 p-3 rounded-lg flex-1 mr-2`}
+            disabled={analyzing}
             onPress={handleAnalyze}
           >
             <Text style={tw`text-white text-center`}>Analyze</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity>}
+         {inspection?.images?.rearImage?.original &&  <TouchableOpacity
             style={tw`bg-red-500 p-3 rounded-lg flex-1 ml-2`}
             onPress={handleDelete}
+
           >
             <Text style={tw`text-white text-center`}>Delete</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </ScrollView>
 
       {/* Next */}
-      <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white`}>
+      <View style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white mb-10`}>
         <TouchableOpacity
           style={tw`bg-green-700 p-3 rounded-lg`}
           onPress={() => navigation.navigate("LeftImage")}
@@ -328,5 +381,6 @@ export default function RearImage({ navigation }) {
         </TouchableOpacity>
       </View>
     </View>
+  </SafeAreaWrapper>
   );
 }

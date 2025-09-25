@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
 export default function Profile() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoNotifications, setPromoNotifications] = useState(false);
@@ -54,8 +55,9 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView
-      style={tw`flex-1 bg-white pt-10`}
+    <SafeAreaWrapper>
+      <ScrollView
+      style={tw`flex-1 bg-white`}
       contentContainerStyle={tw`pb-20 px-2`}
       showsVerticalScrollIndicator={true}
     >
@@ -108,7 +110,7 @@ export default function Profile() {
       >
         <Text style={tw`text-yellow-600 font-semibold`}>Notifications</Text>
 
-        <View style={tw`flex-row items-center justify-between`}>
+        <View style={tw`flex-row items-center justify-between mb-2`}>
           <View style={tw`flex-row items-center`}>
             <Icon name="notifications-outline" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Push Notifications</Text>
@@ -155,5 +157,6 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaWrapper>
   );
 }

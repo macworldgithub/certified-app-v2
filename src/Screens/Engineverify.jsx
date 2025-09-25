@@ -10,6 +10,7 @@ import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setEngineDetails } from "../redux/slices/inspectionSlice";
 import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function Engineverify({ navigation }) {
   const dispatch = useDispatch();
@@ -39,8 +40,9 @@ export default function Engineverify({ navigation }) {
   };
 
   return (
-    <ScrollView
-      style={tw`flex-1 bg-white pt-10 px-2`}
+   <SafeAreaWrapper>
+     <ScrollView
+      style={tw`flex-1 bg-white px-2`}
       contentContainerStyle={tw`pb-20 px-4`}
       showsVerticalScrollIndicator={false}
     >
@@ -92,5 +94,6 @@ export default function Engineverify({ navigation }) {
         <Text style={tw`text-white text-center font-bold`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
+   </SafeAreaWrapper>
   );
 }
