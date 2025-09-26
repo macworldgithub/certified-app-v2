@@ -1,4 +1,4 @@
-package com.certifiedappversion2
+package com.anas1481.certifiedappversion2
 
 import android.os.Build
 import android.os.Bundle

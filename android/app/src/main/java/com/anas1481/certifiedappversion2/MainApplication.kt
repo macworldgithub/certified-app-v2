@@ -1,4 +1,4 @@
-package com.certifiedappversion2
+package com.anas1481.certifiedappversion2
 
 import android.app.Application
 import android.content.res.Configuration
