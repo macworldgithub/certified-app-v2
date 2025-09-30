@@ -5,6 +5,9 @@
     "version": "1.0.0",
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "android": {
+      "package": "com.anas1481.certifiedappversion2"
+    }
   }
 }

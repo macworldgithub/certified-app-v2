@@ -9,7 +9,9 @@ import {
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setEngineDetails } from "../redux/slices/inspectionSlice";
-import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+// import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function Engineverify({ navigation }) {

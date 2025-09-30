@@ -10,7 +10,7 @@ import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionDetails } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 export default function InspectionDetails({ navigation }) {

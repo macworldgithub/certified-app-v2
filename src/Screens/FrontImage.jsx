@@ -13,7 +13,9 @@ import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setImages } from "../redux/slices/inspectionSlice";
 import axios from "axios";
-import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+// import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import { API_BASE_URL_Prod } from "../../utils/config";
 import ImageViewing from "react-native-image-viewing";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
