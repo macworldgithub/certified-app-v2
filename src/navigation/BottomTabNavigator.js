@@ -9,6 +9,7 @@ import InspectionDetails from '../Screens/InspectionDetails';
 import Profile from '../Screens/Profile';
 import VehicleReport from "./../Screens/VehicleReport";
 import InspectionList from '../Screens/InspectionList';
+// import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -62,7 +63,7 @@ const BottomTabNavigator = () => {
           <TabBarLabel color={color}>{children}</TabBarLabel>
         ),
         tabBarStyle: [
-          tw`bg-white border-t border-gray-200 pt-2`,
+          tw`bg-white border-t border-gray-200 pb-2`,
           {
             shadowColor: '#000',
             shadowOffset: { width: 0, height: -2 },

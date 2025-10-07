@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Platform,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -54,7 +55,13 @@ export default function VehicleReport() {
         showsVerticalScrollIndicator={true}
       >
         {/* Header */}
-        <View style={tw`flex-row justify-between items-center mb-6`}>
+        {/* <View style={tw`flex-row justify-between items-center`}> */}
+         <View
+          style={[
+            tw`flex-row justify-between items-center mb-4`,
+            Platform.OS === "android" ? tw`pt-6` : tw`pt-0`,
+          ]}
+        >
           <Text style={tw`text-green-700 text-lg font-bold`}>
             Vehicles Reports
           </Text>

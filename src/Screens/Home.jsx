@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+} from "react-native";
 import tw from "tailwind-react-native-classnames";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
@@ -57,13 +64,25 @@ export default function Home() {
 
   return (
     <SafeAreaWrapper>
+      <StatusBar
+        barStyle={Platform.OS === "android" ? "dark-content" : "default"}
+        backgroundColor="#ffffff" // white background so icons visible
+        translucent={false} // false = reserve space for status bar
+      />
+
       <ScrollView
         style={tw`flex-1 bg-white  px-2`}
         contentContainerStyle={tw`pb-20 px-4`}
         showsVerticalScrollIndicator={true}
       >
         {/* Header */}
-        <View style={tw`flex-row justify-between items-center`}>
+        {/* <View style={tw`flex-row justify-between items-center`}> */}
+        <View
+          style={[
+            tw`flex-row justify-between items-center`,
+            Platform.OS === "android" ? tw`pt-6` : tw`pt-0`,
+          ]}
+        >
           <View>
             <Text style={tw`text-lg font-bold text-green-800`}>
               Certified Inspect
