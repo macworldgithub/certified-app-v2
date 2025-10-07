@@ -19,7 +19,7 @@ const initialState = {
   },
   body: {},
   electrical: {},
-  fluids: {},
+  engineFluids: {},
   operational: {},
   analysis: null,
 };

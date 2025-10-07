@@ -3,7 +3,7 @@ import mime from "mime";
 import { Alert } from "react-native"; 
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";  
 
-import { API_BASE_URL_Prod } from "./config";
+import  API_BASE_URL from "./config";
 
 
 export const uploadToS3 = async ({
@@ -22,7 +22,7 @@ export const uploadToS3 = async ({
 
     // STEP 1: Get presigned URL
     const presignedResp = await axios.post(
-      `${API_BASE_URL_Prod}/inspections/presigned`,
+      `${API_BASE_URL}/inspections/presigned`,
       { fileType },
       {
         headers: {
@@ -145,7 +145,7 @@ export const handleImageCapture = async ({
 
 const deleteFileFromS3 = async (key) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL_Prod}/inspections/file`, {
+    const response = await axios.delete(`${API_BASE_URL}/inspections/file`, {
       params: { key },
       headers: {
         Accept: "*/*",
@@ -225,7 +225,7 @@ export const handleDeleteFromS3 = async ({
   export  const signUrl = async (awsKey) => {
   try {
     const signResp = await axios.get(
-      `${API_BASE_URL_Prod}/inspections/signed-url`,
+      `${API_BASE_URL}/inspections/signed-url`,
       {
         params: { key: awsKey }, // ✅ sends key as query param
         headers: {
@@ -251,7 +251,7 @@ export const handleDeleteFromS3 = async ({
       console.log("🔑 Passing key to analyze:", key);
 
       const analyzeResp = await axios.post(
-        `${API_BASE_URL_Prod}/inspections/analyze`,
+        `${API_BASE_URL}/inspections/analyze`,
         { key },
         {
           headers: {

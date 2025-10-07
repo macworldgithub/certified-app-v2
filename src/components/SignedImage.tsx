@@ -4,7 +4,7 @@ import tw from "tailwind-react-native-classnames";
 
 import { signUrl } from "../../utils/inspectionFunctions";
 
-const SignedImage = ({ s3Key, onPress, style }) => {
+const SignedImage = ({ s3Key, onPress }) => {
   const [url, setUrl] = useState(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const SignedImage = ({ s3Key, onPress, style }) => {
       <View
         style={[
           tw`w-full h-32 rounded-lg mt-2 justify-center items-center bg-gray-100`,
-          style,
+          ,
         ]}
       >
         <ActivityIndicator />
@@ -43,7 +43,7 @@ const SignedImage = ({ s3Key, onPress, style }) => {
     <TouchableOpacity onPress={() => onPress?.(url)}>
       <Image
         source={{ uri: url }}
-        style={[tw`w-full h-32 rounded-lg mt-2`, style]}
+        style={[tw`w-full h-32 rounded-lg mt-2`]}
         resizeMode="cover"
       />
     </TouchableOpacity>
