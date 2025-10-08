@@ -9,7 +9,6 @@ import InspectionDetails from '../Screens/InspectionDetails';
 import Profile from '../Screens/Profile';
 import VehicleReport from "./../Screens/VehicleReport";
 import InspectionList from '../Screens/InspectionList';
-// import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 

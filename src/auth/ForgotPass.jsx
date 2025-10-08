@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import axios from "axios";
+import { Ionicons } from "@expo/vector-icons"; 
 import API_BASE_URL from "../../utils/config";
 
 export default function ForgotPass({ navigation }) {
@@ -36,9 +37,14 @@ export default function ForgotPass({ navigation }) {
 
   return (
     <View style={tw`flex-1 bg-white p-6`}>
-      <Text style={tw`text-2xl font-bold text-gray-800 mb-4 pt-8`}>
-        Forgot Password
-      </Text>
+      <View style={tw`flex-row items-center mb-6`}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={tw`text-2xl font-bold text-gray-800 ml-6`}>
+          Forgot Password
+        </Text>
+      </View>
 
       <Text style={tw`text-gray-800 mb-2`}>Enter your email address:</Text>
       <TextInput

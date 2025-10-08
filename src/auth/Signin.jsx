@@ -17,12 +17,12 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import { useDispatch } from "react-redux";
-import { setAuthData } from "../redux/slices/authSlice"; 
+import { setAuthData } from "../redux/slices/authSlice";
 import API_BASE_URL from "../../utils/config";
 
 const Signin = () => {
   const navigation = useNavigation();
- const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,105 +35,106 @@ const Signin = () => {
   };
 
   const handleSignin = async () => {
-  const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim();
 
-  if (!trimmedEmail || !password) {
-    Alert.alert("Missing Fields", "Please enter both email and password.");
-    return;
-  }
-
-  if (!isValidEmail(trimmedEmail)) {
-    Alert.alert("Invalid Email", "Please enter a valid email address.");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const deviceId =
-      Device.osInternalBuildId?.toString() ||
-      Device.modelId?.toString() ||
-      Device.deviceName ||
-      "unknown-device-id";
-
-    const payload = { email: trimmedEmail, password, deviceId };
-
-    console.log("📦 Payload for /auth/login:", payload);
-
-    const res = await axios.post(
-      `${API_BASE_URL}:5000/auth/login`,
-      payload
-    );
-
-    console.log("✅ Response:", res.data);
-
-    const { status, message, nextStep, email: userEmail } = res.data;
-
-    if (status === "EMAIL_NOT_VERIFIED") {
-      // User ne signup kiya but email verify nahi hui
-      Alert.alert("Email Not Verified", message);
-      navigation.navigate("OTPVerification", {
-        email: userEmail,
-        nextStep, // /auth/verify-signup
-        deviceId,
-      });
+    if (!trimmedEmail || !password) {
+      Alert.alert("Missing Fields", "Please enter both email and password.");
       return;
     }
 
-    if (status === "OTP_REQUIRED") {
-      // Naya device, OTP chahiye
-      Alert.alert("Device Verification", message);
-      navigation.navigate("OTPVerification", {
-        email: userEmail,
-        nextStep, // /auth/verify-device
-        deviceId,
-      });
+    if (!isValidEmail(trimmedEmail)) {
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
       return;
     }
 
-    // if (status === "LOGIN_SUCCESS") {
-    //   Alert.alert("Success", message);
-    //   navigation.replace("MainTabs");
-    //   return;
-    // }
+    setLoading(true);
 
-if (status === "LOGIN_SUCCESS") {
-  const { token, user } = res.data;
+    try {
+      const deviceId =
+        Device.osInternalBuildId?.toString() ||
+        Device.modelId?.toString() ||
+        Device.deviceName ||
+        "unknown-device-id";
 
-  try {
-    // Redux update
-    dispatch(setAuthData({ token, user }));
+      const payload = { email: trimmedEmail, password, deviceId };
 
-    // AsyncStorage update
-    await AsyncStorage.setItem("authToken", token);
-    await AsyncStorage.setItem("userData", JSON.stringify(user));
+      console.log("📦 Payload for /auth/login:", payload);
 
-    console.log("✅ User data saved:", { token, user });
-  } catch (storageErr) {
-    console.error("❌ AsyncStorage Save Error:", storageErr);
-  }
+      // const res = await axios.post(`${API_BASE_URL}:5000/auth/login`, payload);
+      const res = await axios.post(`${API_BASE_URL}/auth/login`, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-  Alert.alert("Success", message);
-  navigation.replace("MainTabs");
-  return;
-}
+      console.log("✅ Response:", res.data);
 
-    Alert.alert("Login Failed", message || "Unknown error occurred.");
-  } catch (err) {
-    console.error("❌ Signin Error:", err.response?.data || err.message);
-    const status = err.response?.status;
-    const errorMsg =
-      err.response?.data?.message || "Something went wrong. Please try again.";
+      const { status, message, nextStep, email: userEmail } = res.data;
 
-    if (status === 401) {
-      Alert.alert("Invalid Credentials", errorMsg);
-    } else {
-      Alert.alert("Login Error", errorMsg);
+      if (status === "EMAIL_NOT_VERIFIED") {
+        // User ne signup kiya but email verify nahi hui
+        Alert.alert("Email Not Verified", message);
+        navigation.navigate("OTPVerification", {
+          email: userEmail,
+          nextStep, // /auth/verify-signup
+          deviceId,
+        });
+        return;
+      }
+
+      if (status === "OTP_REQUIRED") {
+        // Naya device, OTP chahiye
+        Alert.alert("Device Verification", message);
+        navigation.navigate("OTPVerification", {
+          email: userEmail,
+          nextStep, // /auth/verify-device
+          deviceId,
+        });
+        return;
+      }
+
+      // if (status === "LOGIN_SUCCESS") {
+      //   Alert.alert("Success", message);
+      //   navigation.replace("MainTabs");
+      //   return;
+      // }
+
+      if (status === "LOGIN_SUCCESS") {
+        const { token, user } = res.data;
+
+        try {
+          // Redux update
+          dispatch(setAuthData({ token, user }));
+
+          // AsyncStorage update
+          await AsyncStorage.setItem("authToken", token);
+          await AsyncStorage.setItem("userData", JSON.stringify(user));
+
+          console.log("✅ User data saved:", { token, user });
+        } catch (storageErr) {
+          console.error("❌ AsyncStorage Save Error:", storageErr);
+        }
+
+        Alert.alert("Success", message);
+        navigation.replace("MainTabs");
+        return;
+      }
+
+      Alert.alert("Login Failed", message || "Unknown error occurred.");
+    } catch (err) {
+      console.error("❌ Signin Error:", err.response?.data || err.message);
+      const status = err.response?.status;
+      const errorMsg =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+
+      if (status === 401) {
+        Alert.alert("Invalid Credentials", errorMsg);
+      } else {
+        Alert.alert("Login Error", errorMsg);
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <KeyboardAvoidingView
@@ -215,8 +216,10 @@ if (status === "LOGIN_SUCCESS") {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPass")}>
-            <Text style={tw`text-sm text-green-500 font-semibold`}
-            onPress={() => navigation.navigate("ForgotPass")}>
+            <Text
+              style={tw`text-sm text-green-500 font-semibold`}
+              onPress={() => navigation.navigate("ForgotPass")}
+            >
               Forgot Password
             </Text>
           </TouchableOpacity>
@@ -229,7 +232,7 @@ if (status === "LOGIN_SUCCESS") {
           disabled={loading}
         >
           <Text style={tw`text-white text-center font-semibold`}>
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? "Signing in..." : "Sign in"}
           </Text>
         </TouchableOpacity>
 
@@ -254,13 +257,27 @@ if (status === "LOGIN_SUCCESS") {
             <Text style={tw`text-sm`}>Sign in with Google</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white mb-3`}>
-            <Image source={{ uri: 'https://img.icons8.com/color/48/facebook-new.png' }} style={{ width: 20, height: 20, marginRight: 10 }} />
+          <TouchableOpacity
+            style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white mb-3`}
+          >
+            <Image
+              source={{
+                uri: "https://img.icons8.com/color/48/facebook-new.png",
+              }}
+              style={{ width: 20, height: 20, marginRight: 10 }}
+            />
             <Text style={tw`text-sm`}>Sign in with Facebook</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white`}>
-            <Image source={{ uri: 'https://img.icons8.com/ios-filled/50/mac-os.png' }} style={{ width: 20, height: 20, marginRight: 10 }} />
+          <TouchableOpacity
+            style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white`}
+          >
+            <Image
+              source={{
+                uri: "https://img.icons8.com/ios-filled/50/mac-os.png",
+              }}
+              style={{ width: 20, height: 20, marginRight: 10 }}
+            />
             <Text style={tw`text-sm`}>Sign in with Apple</Text>
           </TouchableOpacity>
         </View>

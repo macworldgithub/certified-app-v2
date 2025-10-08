@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Platform,
   GestureResponderEvent,
 } from "react-native";
 
@@ -66,12 +67,30 @@ const CarCard: React.FC<CarCardProps> = ({
           <Text style={styles.year}>{year}</Text>
         </View>
         <Text style={styles.sub}>{vin}</Text>
-        <View style={styles.row}>
+
+        {/* ✅ CHANGE: Android pe email ko alag line mein show karo */}
+        {Platform.OS === "android" ? (
+          <>
+            <Text style={styles.mileage}>{mileage} km</Text>
+            {inspectorEmail ? (
+              <Text style={styles.inspector}>{inspectorEmail}</Text>
+            ) : null}
+          </>
+        ) : (
+          <View style={styles.row}>
+            <Text style={styles.mileage}>{mileage} km</Text>
+            {inspectorEmail ? (
+              <Text style={styles.inspector}>{inspectorEmail}</Text>
+            ) : null}
+          </View>
+        )}
+
+        {/* <View style={styles.row}>
           <Text style={styles.mileage}>{mileage} km</Text>
           {inspectorEmail ? (
             <Text style={styles.inspector}>{inspectorEmail}</Text>
           ) : null}
-        </View>
+        </View> */}
 
         {/* Action buttons */}
         <View style={styles.actions}>

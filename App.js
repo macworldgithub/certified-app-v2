@@ -32,6 +32,9 @@ import Profile from './src/Screens/Profile';
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import InspectionList from './src/Screens/InspectionList';
+import ForgotPass from './src/auth/ForgotPass';
+import VerifyResetOTP from './src/auth/VerifyResetOTP';
+import ResetPassword from './src/auth/ResetPassword';
 
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -69,6 +72,9 @@ export default function App() {
             <Stack.Screen name='Profile' component={Profile} />
             <Stack.Screen name='AnalyzeScreen' component={AnalyzeScreen} />
             <Stack.Screen name='InspectionList' component={InspectionList} />
+            <Stack.Screen name='ForgotPass' component={ForgotPass} />
+            <Stack.Screen name='VerifyResetOTP' component={VerifyResetOTP} />
+            <Stack.Screen name='ResetPassword' component={ResetPassword} />
             {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>

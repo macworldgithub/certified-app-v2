@@ -163,7 +163,6 @@ const handleEdit = async (id: string) => {
                 // onEdit={(id) => navigation.navigate("EditInspection", { id })}
                 onEdit={(id) => handleEdit(id)}
                 onRating={(id) => console.log("Rating", id)}
-
               />
             )}
             ListEmptyComponent={

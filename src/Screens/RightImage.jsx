@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-
   ScrollView,
 
 } from "react-native";
@@ -13,7 +12,6 @@ import { setImages } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 import { Header ,ImageComparison ,ImageActions ,LoadingIndicator,AnalyzeDeleteButtons,DamageSection,NextButton} from "../components/InspectionComponent";
-
 
 export default function RightImage({ navigation }) {
   const dispatch = useDispatch();
