@@ -18,7 +18,7 @@ import axios from "axios";
 import { buildInspectionPayload } from "../../utils/buildInspectionPayload";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import API_BASE_URL from "../../utils/config";
-
+import AppIcon from "../components/AppIcon";
 import { useEffect } from "react";
 import { Header } from "../components/InspectionComponent";
 
@@ -182,15 +182,19 @@ export default function OperationalChecklist({ navigation }) {
       Alert.alert("❌ Error", errorMsg);
     }
   };
+   const handleBack = () => navigation.goBack();
 
   return (
     <SafeAreaWrapper>
       <ScrollView style={tw`flex-1 bg-white p-3`}>
-        {/* <Text style={tw`text-xl font-bold mb-4 text-green-800`}>
-          Operational Inspection
-        </Text> */}
-        <Header title="Operational" onBack={() => navigation.goBack()} />
-
+        <View style={tw`flex-row items-center mb-6`}>
+          <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+            <AppIcon name="arrow-left" size={24} color="#065f46" />
+          </TouchableOpacity>
+          <Text style={tw`text-lg font-bold text-green-800`}>
+           Operational
+          </Text>
+        </View>
         {/* Start */}
         {renderSection(
           "Start",

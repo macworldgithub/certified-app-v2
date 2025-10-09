@@ -10,7 +10,7 @@ export default function TransportActive({ navigation }) {
 
     return (
         <ScrollView
-            style={tw`flex-1 bg-white px-2`}
+            style={tw`flex-1 bg-white px-2 pt-8`}
             contentContainerStyle={tw`pb-20 px-2`}
             showsVerticalScrollIndicator={true}
         >

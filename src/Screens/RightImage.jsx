@@ -41,7 +41,7 @@ export default function RightImage({ navigation }) {
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-white`}>
         <ScrollView
-          style={tw`flex-1 px-4 mt-6`}
+          style={tw`flex-1 px-4`}
           contentContainerStyle={tw`pb-32`}
         >
           <View style={tw`flex-row items-center mb-6`}>

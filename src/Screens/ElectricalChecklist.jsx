@@ -13,7 +13,7 @@ import { setElectrical } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { Header } from "../components/InspectionComponent";
 import { useSelector } from "react-redux";
-
+import AppIcon from "../components/AppIcon";
 export default function ElectricalChecklist({ navigation }) {
   const dispatch = useDispatch();
   const redux_electrical = useSelector((state) => state.inspection.electrical);
@@ -73,17 +73,19 @@ export default function ElectricalChecklist({ navigation }) {
     dispatch(setElectrical(electrical)); // electrical data save karo
     navigation.navigate("EngineFluidsChecklist");
   };
+  const handleBack = () => navigation.goBack();
 
   return (
     <SafeAreaWrapper>
       <ScrollView style={tw`flex-1 bg-white p-3`}>
-        {/* <Text style={tw`text-xl font-bold mb-4 text-green-800`}>
-          Electrical Inspection
-        </Text> */}
-        <Header
-          title="Electrical Checklist"
-          onBack={() => navigation.goBack()}
-        />
+        <View style={tw`flex-row items-center mb-6`}>
+          <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+            <AppIcon name="arrow-left" size={24} color="#065f46" />
+          </TouchableOpacity>
+          <Text style={tw`text-lg font-bold text-green-800`}>
+            Electrical Checklist
+          </Text>
+        </View>
 
         {/* Lights */}
         {renderSection(

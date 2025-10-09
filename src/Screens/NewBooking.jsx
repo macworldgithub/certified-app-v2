@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from "react-native";
 import tw from "tailwind-react-native-classnames";
 
 export default function NewBooking() {
@@ -10,11 +17,14 @@ export default function NewBooking() {
   const [instruction, setInstruction] = useState("");
 
   return (
-   <ScrollView
-            style={tw`flex-1 bg-white pt-10 px-4`}
-            contentContainerStyle={tw`pb-20`}
-            showsVerticalScrollIndicator={true}
-        > 
+    <ScrollView
+      style={[
+        tw`flex-1 bg-white px-4 pt-10`,
+        Platform.OS === "ios" ? tw`pt-8` : tw`pt-4`,
+      ]}
+      contentContainerStyle={tw`pb-20`}
+      showsVerticalScrollIndicator={true}
+    >
       <Text style={tw`text-green-700 text-lg font-bold text-center mb-4`}>
         New Transport Booking
       </Text>

@@ -13,7 +13,7 @@ import { setBody } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { Header } from "../components/InspectionComponent";
 import { useSelector } from "react-redux";
-
+import AppIcon from "../components/AppIcon";
 export default function BodyChecklist({ navigation }) {
   const dispatch = useDispatch();
 
@@ -125,11 +125,14 @@ export default function BodyChecklist({ navigation }) {
   return (
     <SafeAreaWrapper>
       <ScrollView style={tw`flex-1 bg-white p-3`}>
-        {/* <Text style={tw`text-xl font-bold mb-4 text-green-800 `}>
-          Body Inspection
-        </Text> */}
-
-        <Header title="Body Inspection" onBack={handleBack} />
+           <View style={tw`flex-row items-center mb-6`}>
+            <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+              <AppIcon name="arrow-left" size={24} color="#065f46" />
+            </TouchableOpacity>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              Body Inspection
+            </Text>
+          </View>
 
         {/* Panels */}
         {renderSection(

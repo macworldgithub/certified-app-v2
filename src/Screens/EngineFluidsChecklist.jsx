@@ -14,7 +14,7 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Header } from "../components/InspectionComponent";
-
+import AppIcon from "../components/AppIcon";
 export default function EngineFluidsChecklist({ navigation }) {
   const dispatch = useDispatch();
   const redux_engineFluids = useSelector(
@@ -75,15 +75,19 @@ export default function EngineFluidsChecklist({ navigation }) {
     dispatch(setFluids(engineFluids));
     navigation.navigate("OperationalChecklist");
   };
+   const handleBack = () => navigation.goBack();
 
   return (
     <SafeAreaWrapper>
       <ScrollView style={tw`flex-1 bg-white p-3`}>
-        {/* <Text style={tw`text-xl font-bold mb-4 text-green-800`}>
-          Engine Fluids Inspection
-        </Text> */}
-        <Header title="Engine Fluids" onBack={() => navigation.goBack()} />
-
+        <View style={tw`flex-row items-center mb-6`}>
+          <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+            <AppIcon name="arrow-left" size={24} color="#065f46" />
+          </TouchableOpacity>
+          <Text style={tw`text-lg font-bold text-green-800`}>
+            Engine Fluids
+          </Text>
+        </View>
         {/* Engine Oil */}
         {renderSection(
           "Engine Oil",

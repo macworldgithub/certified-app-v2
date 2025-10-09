@@ -269,7 +269,7 @@ export default function VehicleReport() {
             <Text style={tw`text-green-700 text-lg font-bold`}>
               Vehicles Reports
             </Text>
-            <FontAwesome5 name="user-circle" size={28} color="#999" />
+            <AppIcon name="user-circle" size={24} color="#474745ff" />
           </View>
 
           {/* Stats */}
@@ -278,19 +278,19 @@ export default function VehicleReport() {
               style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
             >
               <Text style={tw`text-blue-600 text-lg font-bold`}>3</Text>
-              <Text style={tw`text-gray-500 text-xs`}>Reports</Text>
+              <Text style={tw`text-gray-500 text-xs text-center`}>Reports</Text>
             </View>
             <View
               style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
             >
               <Text style={tw`text-blue-600 text-lg font-bold`}>9.2</Text>
-              <Text style={tw`text-gray-500 text-xs`}>Avg Score</Text>
+              <Text style={tw`text-gray-500 text-xs text-center`}>Avg Score</Text>
             </View>
             <View
               style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
             >
               <Text style={tw`text-blue-600 text-lg font-bold`}>4</Text>
-              <Text style={tw`text-gray-500 text-xs`}>Total Issues</Text>
+              <Text style={tw`text-gray-500 text-xs text-center`}>Total Issues</Text>
             </View>
           </View>
 
@@ -300,7 +300,7 @@ export default function VehicleReport() {
               {/* Title + Score */}
               <View style={tw`flex-row justify-between items-center`}>
                 <View style={tw`flex-row items-center`}>
-                  <MaterialIcons name="description" size={24} color="#facc15" />
+                  <AppIcon name="info" size={24} color="#facc15" />
                   <Text style={tw`ml-2 text-green-800 font-bold`}>
                     {item.title}
                   </Text>
@@ -324,7 +324,7 @@ export default function VehicleReport() {
               {/* Issues & Prices */}
               <View style={tw`flex-row justify-between items-center`}>
                 <View style={tw`flex-row items-center`}>
-                  <MaterialIcons name="warning" size={16} color="#facc15" />
+                  <AppIcon name="warning" size={16} color="#facc15" />
                   <Text style={tw`text-gray-500 text-xs ml-1`}>
                     {item.issues} Market: {item.marketPrice}
                   </Text>
