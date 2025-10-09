@@ -178,6 +178,7 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import API_BASE_URL from "../../utils/config";
+import AppIcon from "../components/AppIcon";
 
 export default function Profile() {
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -301,7 +302,7 @@ export default function Profile() {
           <Text style={tw`text-yellow-600 font-semibold`}>My Account</Text>
 
           <TouchableOpacity style={tw`flex-row items-center py-2`}>
-            <Icon name="person-outline" size={20} color="black" />
+            <AppIcon name="user" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Personal information</Text>
           </TouchableOpacity>
 
@@ -309,19 +310,19 @@ export default function Profile() {
             style={tw`flex-row items-center justify-between py-2`}
           >
             <View style={tw`flex-row items-center`}>
-              <Icon name="globe-outline" size={20} color="black" />
+              <AppIcon name="globe" size={20} color="black" />
               <Text style={tw`ml-3 text-gray-700`}>Language</Text>
             </View>
             <Text style={tw`text-gray-500`}>English (US)</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={tw`flex-row items-center py-2`}>
-            <Icon name="shield-checkmark-outline" size={20} color="black" />
+            <AppIcon name="lock" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Privacy Policy</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={tw`flex-row items-center py-2`}>
-            <Icon name="settings-outline" size={20} color="black" />
+            <AppIcon name="gear" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Setting</Text>
           </TouchableOpacity>
         </View>
@@ -376,7 +377,7 @@ export default function Profile() {
 
           <View style={tw`flex-row items-center justify-between mb-2`}>
             <View style={tw`flex-row items-center`}>
-              <Icon name="notifications-outline" size={20} color="black" />
+              <AppIcon name="bell" size={14} color="black" />
               <Text style={tw`ml-3 text-gray-700`}>Push Notifications</Text>
             </View>
             <Switch
@@ -389,7 +390,7 @@ export default function Profile() {
 
           <View style={tw`flex-row items-center justify-between`}>
             <View style={tw`flex-row items-center`}>
-              <Icon name="pricetag-outline" size={20} color="black" />
+              <AppIcon name="percent" size={14} color="black" />
               <Text style={tw`ml-3 text-gray-700`}>
                 Promotional Notifications
               </Text>
@@ -405,12 +406,12 @@ export default function Profile() {
 
         {/* More */}
         <View
-          style={tw`bg-white m-4 p-2 rounded-lg border border-gray-200 -mb-2`}
+          style={tw`bg-white m-4 p-2 rounded-lg border border-gray-200 -mb-2 mt-8`}
         >
           <Text style={tw`text-yellow-600 font-semibold`}>More</Text>
 
           <TouchableOpacity style={tw`flex-row items-center py-3`}>
-            <Icon name="help-circle-outline" size={20} color="black" />
+            <AppIcon name="phone" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Help Center</Text>
           </TouchableOpacity>
 
@@ -418,7 +419,7 @@ export default function Profile() {
             style={tw`flex-row items-center py-3`}
             onPress={handleLogoutAll}
           >
-            <Icon name="log-out-outline" size={20} color="red" />
+            <AppIcon name="sign-out" size={20} color="red" />
             <Text style={tw`ml-3 text-red-500 font-semibold`}>Log Out</Text>
           </TouchableOpacity>
         </View>

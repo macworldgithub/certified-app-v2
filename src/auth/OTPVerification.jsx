@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as Device from "expo-device";
 import API_BASE_URL from "../../utils/config";
-
+import AppIcon from "../components/AppIcon";
 const OTPVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -98,7 +98,7 @@ const OTPVerification = () => {
         style={tw`absolute top-10 left-4 z-10`}
         onPress={() => navigation.goBack()}
       >
-        <Icon name="arrow-left" size={24} color="#000" />
+            <AppIcon name="arrow-left" size={24} color="#000" />
       </TouchableOpacity>
 
       {/* OTP UI */}

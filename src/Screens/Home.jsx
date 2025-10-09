@@ -274,8 +274,7 @@ export default function Home() {
             </Text>
           </View>
           <TouchableOpacity>
-            <FontAwesome5 name="user-circle" size={24} color="#9ca3af" />
-            <AppIcon name="user-circle" size={22} color="#474745ff" />
+            <AppIcon name="user-circle" size={24} color="#474745ff" />
 
           </TouchableOpacity>
         </View>

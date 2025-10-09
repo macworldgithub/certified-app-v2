@@ -19,10 +19,16 @@ import axios from "axios";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { API_BASE_URL_Prod } from "../../utils/config";
 import ImageViewing from "react-native-image-viewing";
-import { Header ,ImageComparison ,ImageActions ,LoadingIndicator,AnalyzeDeleteButtons,DamageSection,NextButton} from "../components/InspectionComponent";
-
-
-
+import {
+  Header,
+  ImageComparison,
+  ImageActions,
+  LoadingIndicator,
+  AnalyzeDeleteButtons,
+  DamageSection,
+  NextButton,
+} from "../components/InspectionComponent";
+import AppIcon from "../components/AppIcon";
 
 export default function RearImage({ navigation }) {
   const dispatch = useDispatch();
@@ -49,8 +55,16 @@ export default function RearImage({ navigation }) {
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-white`}>
         <ScrollView style={tw`flex-1 px-4`} contentContainerStyle={tw`pb-32`}>
-          <Header title="Rear Image" onBack={handleBack} />
-          <Text style={tw`text-lg font-bold text-green-800 mb-6`}>Rear Image</Text>
+          <View style={tw`flex-row items-center mb-6`}>
+            <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+              <AppIcon name="arrow-left" size={24} color="#065f46" />
+              {/* green-800 color */}
+            </TouchableOpacity>
+            <Text style={tw`text-lg font-bold text-green-800`}>Rear Image</Text>
+          </View>
+          <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
+            Rear Image
+          </Text>
 
           <ImageComparison
             partKey={partKey}
@@ -86,4 +100,3 @@ export default function RearImage({ navigation }) {
     </SafeAreaWrapper>
   );
 }
-

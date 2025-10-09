@@ -1,18 +1,21 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setImages } from "../redux/slices/inspectionSlice";
 
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
-import { Header ,ImageComparison ,ImageActions ,LoadingIndicator,AnalyzeDeleteButtons,DamageSection,NextButton} from "../components/InspectionComponent";
-
+import {
+  Header,
+  ImageComparison,
+  ImageActions,
+  LoadingIndicator,
+  AnalyzeDeleteButtons,
+  DamageSection,
+  NextButton,
+} from "../components/InspectionComponent";
+import AppIcon from "../components/AppIcon";
 export default function RightImage({ navigation }) {
   const dispatch = useDispatch();
   const { images: savedImages } = useSelector((state) => state.inspection);
@@ -37,10 +40,22 @@ export default function RightImage({ navigation }) {
   return (
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-white`}>
-        <ScrollView style={tw`flex-1 px-4`} contentContainerStyle={tw`pb-32`}>
-          
-          <Header title="Right Image" onBack={handleBack} />
-          <Text style={tw`text-lg font-bold text-green-800 mb-6`}>Right Image</Text>
+        <ScrollView
+          style={tw`flex-1 px-4 mt-6`}
+          contentContainerStyle={tw`pb-32`}
+        >
+          <View style={tw`flex-row items-center mb-6`}>
+            <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+              <AppIcon name="arrow-left" size={24} color="#065f46" />
+              {/* green-800 color */}
+            </TouchableOpacity>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              Right Image
+            </Text>
+          </View>
+          <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
+            Right Image
+          </Text>
 
           {/* Image Comparison */}
           <ImageComparison
@@ -74,7 +89,6 @@ export default function RightImage({ navigation }) {
 
           {/* Damages */}
           <DamageSection inspection={inspection} partKey={partKey} />
-
         </ScrollView>
 
         {/* Next */}
@@ -83,4 +97,3 @@ export default function RightImage({ navigation }) {
     </SafeAreaWrapper>
   );
 }
-

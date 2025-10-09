@@ -29,7 +29,7 @@ import {
 } from "../../utils/inspectionFunctions";
 import SignedImage from "../components/SignedImage";
 import DamageList from "../components/DamageList";
-
+import AppIcon from "../components/AppIcon";
 import {
   Header,
   ImageComparison,
@@ -71,12 +71,16 @@ export default function FrontImage({ navigation }) {
   return (
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-white`}>
-        <ScrollView style={tw`flex-1 px-4 `} contentContainerStyle={tw`pb-32`}>
-          {/* Header */}
-          <Header title="Front Image" onBack={handleBack} />
-          <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
-            Front Image
-          </Text>
+        <ScrollView style={tw`flex-1 px-4`} contentContainerStyle={tw`pb-32`}>
+          <View style={tw`flex-row items-center mb-6`}>
+            <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
+              <AppIcon name="arrow-left" size={24} color="#065f46" />
+              {/* green-800 color */}
+            </TouchableOpacity>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              Front Image
+            </Text>
+          </View>
 
           {/* Original + Analyzed */}
           <ImageComparison

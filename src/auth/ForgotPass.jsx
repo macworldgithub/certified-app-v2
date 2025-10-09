@@ -4,7 +4,7 @@ import tw from "tailwind-react-native-classnames";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons"; 
 import API_BASE_URL from "../../utils/config";
-
+import AppIcon from "../components/AppIcon";
 export default function ForgotPass({ navigation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ export default function ForgotPass({ navigation }) {
     <View style={tw`flex-1 bg-white p-6`}>
       <View style={tw`flex-row items-center mb-6`}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+            <AppIcon name="arrow-left" size={24} color="#020807ff" />
         </TouchableOpacity>
         <Text style={tw`text-2xl font-bold text-gray-800 ml-6`}>
           Forgot Password
