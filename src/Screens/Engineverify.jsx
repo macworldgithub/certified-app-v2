@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setEngineDetails } from "../redux/slices/inspectionSlice";
 // import { Ionicons } from "@expo/vector-icons"; // ✅ expo users
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function Engineverify({ navigation }) {
@@ -52,7 +52,8 @@ export default function Engineverify({ navigation }) {
           {/* Header */}
     <View style={tw`flex-row items-center mb-6`}>
       <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
-        <Ionicons name="arrow-back" size={24} color="#065f46" /> 
+        {/* <Ionicons name="arrow-back" size={24} color="#065f46" />  */}
+        <AppIcon name="arrow-left" size={24} color="#065f46"/>
         {/* green-800 color */}
       </TouchableOpacity>
       <Text style={tw`text-lg font-bold text-green-800`}>
