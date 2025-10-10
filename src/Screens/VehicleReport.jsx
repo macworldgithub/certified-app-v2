@@ -202,7 +202,7 @@ export default function VehicleReport() {
                 style={tw`flex-row items-center py-3`}
                 onPress={() => setShareModalVisible(false)}
               >
-                <FontAwesome5 name="whatsapp" size={20} color="green" />
+                <AppIcon name="whatsapp" size={20} color="green" />
                 <Text style={tw`ml-3 text-gray-800`}>WhatsApp</Text>
               </TouchableOpacity>
 
