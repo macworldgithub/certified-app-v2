@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import debounce from "lodash.debounce";
 import CarCard from "../components/CarCard";
 import { useDispatch } from "react-redux";
-import { setInspection } from "../redux/slices/inspectionSlice";    
+import { setInspection } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 type CarItem = {
@@ -37,6 +37,8 @@ export default function InspectionList() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [selectedVin, setSelectedVin] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const email = "muhammadanasrashid18@gmail.com";
   const limit = 10;
@@ -104,21 +106,57 @@ export default function InspectionList() {
   };
 
   // InspectionList.tsx
-const handleEdit = async (id: string) => {
-  try {
-    const res = await fetch(
-      `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
-      { headers: { accept: "application/json" } }
-    );
-    const inspection = await res.json();
+  
+  // const handleEdit = async (id: string) => {
+  //   try {
+  //     const res = await fetch(
+  //       `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
+  //       { headers: { accept: "application/json" } }
+  //     );
+  //     const inspection = await res.json();
 
-    dispatch(setInspection(inspection)); // store in redux
+  //     dispatch(setInspection(inspection)); // store in redux
 
-    navigation.navigate("InspectionDetails" as never); 
-  } catch (err) {
-    console.error("Error fetching inspection:", err);
-  }
-};
+  //     navigation.navigate("InspectionDetails" as never);
+  //   } catch (err) {
+  //     console.error("Error fetching inspection:", err);
+  //   }
+  // };
+
+  const handleEdit = (vin) => {
+    console.log("Pressed VIN:", vin);
+    (navigation as any).navigate("EditInspectionScreen", { vin });
+  };
+
+  const handleDelete = async () => {
+    if (!selectedVin) return;
+
+    try {
+      const res = await fetch(
+        `https://apiv2.certifiedinspect.com.au/inspections/${selectedVin}`,
+        {
+          method: "DELETE",
+          headers: {
+            accept: "application/json",
+          },
+        }
+      );
+
+      const json = await res.json();
+      console.log("Delete response:", json);
+
+      // Remove deleted inspection from list
+      setData((prev) => prev.filter((item) => item.vin !== selectedVin));
+
+      alert(json.message || "Inspection deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting inspection:", err);
+      alert("Failed to delete inspection. Please try again.");
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedVin(null);
+    }
+  };
 
   return (
     <SafeAreaWrapper>
@@ -158,26 +196,64 @@ const handleEdit = async (id: string) => {
                 year={item.year}
                 mileage={item.mileAge}
                 inspectorEmail={item.inspectorEmail}
-                onPress={(id) => console.log("Pressed", id)} 
-                onDelete={(id) => console.log("Delete", id)}
+                onPress={(id) => console.log("Pressed", id)}
+                onDelete={() => {
+                  setSelectedVin(item.vin);
+                  setShowConfirmModal(true);
+                }}
                 // onEdit={(id) => navigation.navigate("EditInspection", { id })}
-                onEdit={(id) => handleEdit(id)}
+                // onEdit={(id) => handleEdit(id)}
+                onEdit={(vin) => handleEdit(vin)}
                 onRating={(id) => console.log("Rating", id)}
               />
             )}
             ListEmptyComponent={
               <Text style={styles.noData}>
-                {query.length > 0 ? "No results found" : "No inspections available"}
+                {query.length > 0
+                  ? "No results found"
+                  : "No inspections available"}
               </Text>
             }
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
               loadingMore ? (
-                <ActivityIndicator size="small" style={{ marginVertical: 16 }} />
+                <ActivityIndicator
+                  size="small"
+                  style={{ marginVertical: 16 }}
+                />
               ) : null
             }
           />
+        )}
+        {/* 🔹 Confirmation Modal */}
+        {showConfirmModal && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete this inspection?
+              </Text>
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalBtn, styles.cancelBtn]}
+                  onPress={() => {
+                    setShowConfirmModal(false);
+                    setSelectedVin(null);
+                  }}
+                >
+                  <Text style={styles.cancelText}>No</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.modalBtn, styles.confirmBtn]}
+                  onPress={handleDelete}
+                >
+                  <Text style={styles.confirmText}>Yes</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         )}
       </View>
     </SafeAreaWrapper>
@@ -216,5 +292,57 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
     color: "#64748b",
+  },
+
+  // 🔹 Modal styles
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+  },
+  modalBox: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#1e293b",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  cancelBtn: {
+    backgroundColor: "#e2e8f0",
+  },
+  confirmBtn: {
+    backgroundColor: "#dc2626",
+  },
+  cancelText: {
+    color: "#0f172a",
+    fontWeight: "600",
+  },
+  confirmText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });

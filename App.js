@@ -35,6 +35,7 @@ import InspectionList from './src/Screens/InspectionList';
 import ForgotPass from './src/auth/ForgotPass';
 import VerifyResetOTP from './src/auth/VerifyResetOTP';
 import ResetPassword from './src/auth/ResetPassword';
+import EditInspectionScreen from './src/Screens/EditInspectionScreen';
 
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -75,6 +76,7 @@ export default function App() {
             <Stack.Screen name='ForgotPass' component={ForgotPass} />
             <Stack.Screen name='VerifyResetOTP' component={VerifyResetOTP} />
             <Stack.Screen name='ResetPassword' component={ResetPassword} />
+            <Stack.Screen name='EditInspectionScreen' component={EditInspectionScreen} />
             {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>
