@@ -92,7 +92,7 @@ export default function RightImage({ navigation }) {
         </ScrollView>
 
         {/* Next */}
-        <NextButton navigation={navigation} nextScreen="BodyChecklist" />
+        <NextButton navigation={navigation} nextScreen="InspectionWizardStepTwo" />
       </View>
     </SafeAreaWrapper>
   );
