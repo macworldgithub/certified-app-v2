@@ -166,7 +166,7 @@ export default function InspectionList() {
           <Text style={styles.title}>Inspection List</Text>
           <TouchableOpacity
             style={styles.addBtn}
-            onPress={() => navigation.navigate("InspectionDetails" as never)}
+            onPress={() => navigation.navigate("InspectionWizardStepOne" as never)}
           >
             <Text style={styles.addBtnText}>+ Inspection</Text>
           </TouchableOpacity>
