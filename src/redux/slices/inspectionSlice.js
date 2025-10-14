@@ -1,6 +1,9 @@
+
+
 // import { createSlice } from "@reduxjs/toolkit";
+
 // const initialState = {
-//   _id:"",
+//   _id: "",
 //   vin: "",
 //   make: "",
 //   carModel: "",
@@ -14,17 +17,20 @@
 //     left: null,
 //     right: null,
 //   },
-//   body: {},
-//   electrical: {},
-//   engineFluids: {},
-//   operational: {},
-//   analysis: null,
+
+//   // 🔹 New Inspection Wizard fields
+//   odometer: "",
+//   fuelType: "",
+//   driveTrain: "",
+//   transmission: "",
+//   bodyType: "",
 // };
 
 // const inspectionSlice = createSlice({
 //   name: "inspection",
 //   initialState,
 //   reducers: {
+//     // 🔹 Existing reducers (from old slice)
 //     setInspectionDetails: (state, action) => {
 //       state.vin = action.payload.vin;
 //       state.make = action.payload.make;
@@ -41,124 +47,153 @@
 //     setImages: (state, action) => {
 //       state.images = { ...state.images, ...action.payload };
 //     },
-//     setBody: (state, action) => {
-//       state.body = action.payload;
+
+//     // 🔹 New universal field updater for Wizard steps
+//     setInspectionData: (state, action) => {
+//       const { field, value } = action.payload;
+//       state[field] = value;
 //     },
-//     setElectrical: (state, action) => {
-//       state.electrical = action.payload;
-//     },
-//     setFluids: (state, action) => {
-//       state.fluids = action.payload;
-//     },
-//     setOperational: (state, action) => {
-//       state.operational = action.payload;
-//     },
-//     setAnalysisData: (state, action) => {
-//       state.analysis = action.payload;
-//     },
-//       setInspection(state, action) {
+
+//     // 🔹 Merge full inspection data object (useful for bulk updates)
+//     setInspection: (state, action) => {
 //       return { ...state, ...action.payload };
 //     },
+
+//     // 🔹 Reset inspection data
 //     resetInspection: () => initialState,
+
+//     // 🔹 Reset only wizard fields if needed
+//     resetInspectionData: (state) => {
+//       state.odometer = "";
+//       state.fuelType = "";
+//       state.driveTrain = "";
+//       state.transmission = "";
+//       state.bodyType = "";
+//     },
 //   },
 // });
 
 // export const {
 //   setInspectionDetails,
 //   setEngineDetails,
+//   setOverallRating,
 //   setImages,
-//   setBody,
-//   setElectrical,
-//   setFluids,
-//   setOperational,
+//   setInspectionData,
 //   resetInspection,
-//   setInspection
+//   resetInspectionData,
+//   setInspection,
 // } = inspectionSlice.actions;
 
 // export default inspectionSlice.reducer;
 
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  _id: "",
-  vin: "",
-  make: "",
-  carModel: "",
-  year: "",
-  engineNumber: "",
-  mileAge: "",
-  overallRating: "",
+  vinChassisNumber: "", // From InspectionWizardStepOne
+  year: "", // From InspectionWizardStepOne
+  make: "", // From InspectionWizardStepOne
+  model: "", // From InspectionWizardStepOne
+  registrationPlate: "", // From InspectionWizardStepOne
+  registrationExpiry: "", // From InspectionWizardStepOne
+  buildDate: "", // From InspectionWizardStepOne
+  complianceDate: "", // From InspectionWizardStepOne
   images: {
-    front: null,
+    front: null, // Image upload after StepOne
     rear: null,
     left: null,
     right: null,
   },
-
-  // 🔹 New Inspection Wizard fields
-  odometer: "",
-  fuelType: "",
-  driveTrain: "",
-  transmission: "",
-  bodyType: "",
+  odometer: "", // From InspectionWizardStepTwo
+  fuelType: "", // From InspectionWizardStepTwo
+  driveTrain: "", // From InspectionWizardStepTwo
+  transmission: "", // From InspectionWizardStepTwo
+  bodyType: "", // From InspectionWizardStepTwo
+  color: "", // From InspectionWizardStepThree
+  frontWheelDiameter: "", // From InspectionWizardStepThree
+  rearWheelDiameter: "", // From InspectionWizardStepThree
+  keysPresent: "", // From InspectionWizardStepThree
+  serviceBookPresent: "", // From InspectionWizardStepFour
+  serviceHistoryPresent: "", // From InspectionWizardStepFour
+  tyreConditionFrontLeft: "", // From InspectionWizardStepFive
+  tyreConditionFrontRight: "", // From InspectionWizardStepFive
+  tyreConditionRearRight: "", // From InspectionWizardStepFive
+  tyreConditionRearLeft: "", // From InspectionWizardStepFive
+  damagePresent: "", // From InspectionWizardStepSix
+  roadTest: "", // From InspectionWizardStepSix
+  roadTestComments: "", // From InspectionWizardStepSix
+  generalComments: "", // From InspectionWizardStepSix
 };
 
 const inspectionSlice = createSlice({
   name: "inspection",
   initialState,
   reducers: {
-    // 🔹 Existing reducers (from old slice)
-    setInspectionDetails: (state, action) => {
-      state.vin = action.payload.vin;
-      state.make = action.payload.make;
-      state.carModel = action.payload.carModel;
-      state.year = action.payload.year;
+    // Universal field updater for all Wizard steps
+    setInspectionData: (state, action) => {
+      const { field, value } = action.payload;
+      if (field in state || (field in state.images && value !== null)) {
+        if (field in state.images) {
+          state.images[field] = value;
+        } else {
+          state[field] = value;
+        }
+      }
     },
-    setEngineDetails: (state, action) => {
-      state.engineNumber = action.payload.engineNumber;
-      state.mileAge = action.payload.mileAge;
-    },
-    setOverallRating: (state, action) => {
-      state.overallRating = action.payload;
-    },
+
+    // Update images specifically
     setImages: (state, action) => {
       state.images = { ...state.images, ...action.payload };
     },
 
-    // 🔹 New universal field updater for Wizard steps
-    setInspectionData: (state, action) => {
-      const { field, value } = action.payload;
-      state[field] = value;
-    },
-
-    // 🔹 Merge full inspection data object (useful for bulk updates)
+    // Merge full inspection data object
     setInspection: (state, action) => {
       return { ...state, ...action.payload };
     },
 
-    // 🔹 Reset inspection data
+    // Reset all inspection data
     resetInspection: () => initialState,
 
-    // 🔹 Reset only wizard fields if needed
+    // Reset only specific wizard fields
     resetInspectionData: (state) => {
+      state.vinChassisNumber = "";
+      state.year = "";
+      state.make = "";
+      state.model = "";
+      state.registrationPlate = "";
+      state.registrationExpiry = "";
+      state.buildDate = "";
+      state.complianceDate = "";
+      state.images = { front: null, rear: null, left: null, right: null };
       state.odometer = "";
       state.fuelType = "";
       state.driveTrain = "";
       state.transmission = "";
       state.bodyType = "";
+      state.color = "";
+      state.frontWheelDiameter = "";
+      state.rearWheelDiameter = "";
+      state.keysPresent = "";
+      state.serviceBookPresent = "";
+      state.serviceHistoryPresent = "";
+      state.tyreConditionFrontLeft = "";
+      state.tyreConditionFrontRight = "";
+      state.tyreConditionRearRight = "";
+      state.tyreConditionRearLeft = "";
+      state.damagePresent = "";
+      state.roadTest = "";
+      state.roadTestComments = "";
+      state.generalComments = "";
     },
   },
 });
 
 export const {
-  setInspectionDetails,
-  setEngineDetails,
-  setOverallRating,
-  setImages,
   setInspectionData,
+  setImages,
+  setInspection,
   resetInspection,
   resetInspectionData,
-  setInspection,
 } = inspectionSlice.actions;
 
 export default inspectionSlice.reducer;
