@@ -89,6 +89,7 @@ export default function App() {
             <Stack.Screen name='InspectionWizardStepFour' component={InspectionWizardStepFour} />
             <Stack.Screen name='InspectionWizardStepFive' component={InspectionWizardStepFive} />
             <Stack.Screen name='InspectionWizardStepSix' component={InspectionWizardStepSix} />
+            
             {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>
