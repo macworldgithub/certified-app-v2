@@ -17,10 +17,7 @@
 //   body: {},
 //   electrical: {},
 //   engineFluids: {},
-//   operational: {},
-//   analysis: null,
-// };
-
+//
 // const inspectionSlice = createSlice({
 //   name: "inspection",
 //   initialState,
