@@ -225,7 +225,7 @@ export const handleDeleteFromS3 = async ({
   export  const signUrl = async (awsKey) => {
   try {
     const signResp = await axios.get(
-      `${API_BASE_URL}/inspections/signed-url`,
+      `${API_BASE_URL}/inspections/signed-url-you`,
       {
         params: { key: awsKey }, // ✅ sends key as query param
         headers: {

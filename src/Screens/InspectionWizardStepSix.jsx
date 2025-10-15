@@ -5,19 +5,22 @@
 //   TextInput,
 //   TouchableOpacity,
 //   ScrollView,
+//   Alert,
 // } from "react-native";
 // import tw from "tailwind-react-native-classnames";
 // import { useDispatch, useSelector } from "react-redux";
-// import { setInspectionData } from "../redux/slices/inspectionSlice";
+// import axios from "axios";
+// import { setInspectionData, resetInspection } from "../redux/slices/inspectionSlice";
 // import AppIcon from "../components/AppIcon";
 // import SafeAreaWrapper from "../components/SafeAreaWrapper";
+// import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js exports your base URL
 
 // export default function InspectionWizardStepSix({ navigation }) {
 //   const dispatch = useDispatch();
-//   const { damagePresent, roadTest, roadTestComments, generalComments } = useSelector(
-//     (state) => state.inspection
-//   );
+//   const inspectionData = useSelector((state) => state.inspection);
+//   const { damagePresent, roadTest, roadTestComments, generalComments } = inspectionData;
 
+//   // ✅ Update Redux fields
 //   const handleSelect = (field, value) => {
 //     dispatch(setInspectionData({ field, value }));
 //   };
@@ -26,8 +29,67 @@
 //     dispatch(setInspectionData({ field, value }));
 //   };
 
-//   const handleNext = () => {
-//     navigation.navigate("");
+//   // ✅ API Function
+//   const createInspection = async (payload) => {
+//     try {
+//       const response = await axios.post(`${API_BASE_URL}/inspections`, payload, {
+//         headers: {
+//           "Content-Type": "application/json",
+//           accept: "*/*",
+//         },
+//       });
+//       console.log("✅ Inspection created:", response.data);
+//       return response.data;
+//     } catch (err) {
+//       console.error("❌ Error creating inspection:", err.response?.data || err.message);
+//       throw err;
+//     }
+//   };
+
+//   // ✅ Submit handler
+//   const handleSubmit = async () => {
+//     try {
+//       console.log("📦 Full Redux Inspection Data:", inspectionData);
+
+//       // Minimal validation
+//       if (!inspectionData.vinChassisNumber || !inspectionData.make || !inspectionData.model) {
+//         Alert.alert("❌ Missing Fields", "Please fill VIN, Make, and Model before submitting.");
+//         return;
+//       }
+
+//       // ✅ Build payload
+//       const finalPayload = {
+//         vin: inspectionData.vinChassisNumber,
+//         make: inspectionData.make,
+//         model: inspectionData.model,
+//         year: inspectionData.year,
+//         registrationPlate: inspectionData.registrationPlate,
+//         registrationExpiry: inspectionData.registrationExpiry,
+//         buildDate: inspectionData.buildDate,
+//         complianceDate: inspectionData.complianceDate,
+//         damagePresent: inspectionData.damagePresent,
+//         roadTest: inspectionData.roadTest,
+//         roadTestComments: inspectionData.roadTestComments,
+//         generalComments: inspectionData.generalComments,
+//         images: inspectionData.images,
+//         inspectorEmail: "muhammadanasrashid18@gmail.com", // ✅ Hardcoded like your operational checklist
+//       };
+
+//       // Remove empty/undefined fields
+//       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
+//       console.log("🚀 Final Payload to Send:", cleanPayload);
+
+//       await createInspection(cleanPayload);
+
+//       dispatch(resetInspection());
+//       Alert.alert("✅ Success", "Inspection submitted successfully!");
+//       navigation.navigate("MainTabs");
+//     } catch (err) {
+//       const errorMsg =
+//         err.response?.data?.message || JSON.stringify(err.response?.data) || err.message;
+//       console.error("❌ Submit failed:", errorMsg);
+//       Alert.alert("❌ Error", errorMsg);
+//     }
 //   };
 
 //   const handleBack = () => navigation.goBack();
@@ -46,7 +108,7 @@
 //         </View>
 
 //         {/* Scrollable Content */}
-//         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-32`}>
+//         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
 //           {/* Damage Present */}
 //           <View style={tw`mt-4`}>
 //             <Text style={tw`text-gray-500 mb-1`}>Is There Any Damage Present</Text>
@@ -112,23 +174,23 @@
 //               multiline
 //             />
 //           </View>
+//         </ScrollView>
 
-//           {/* Next Button */}
+//         {/* Submit Button (Fixed Bottom) */}
+//         <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
 //           <TouchableOpacity
-//             style={tw`bg-green-800 py-2 rounded-xl mt-10 mb-6`}
-//             onPress={handleNext}
+//             style={tw`bg-green-700 py-2 rounded-xl`}
+//             onPress={handleSubmit}
 //           >
 //             <Text style={tw`text-white text-center text-lg font-semibold`}>
-//               Next
+//               Submit
 //             </Text>
 //           </TouchableOpacity>
-//         </ScrollView>
+//         </View>
 //       </View>
 //     </SafeAreaWrapper>
 //   );
 // }
-
-
 import React, { useState } from "react";
 import {
   View,
@@ -136,19 +198,22 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { setInspectionData } from "../redux/slices/inspectionSlice";
+import axios from "axios";
+import { setInspectionData, resetInspection } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js exports your base URL
 
 export default function InspectionWizardStepSix({ navigation }) {
   const dispatch = useDispatch();
-  const { damagePresent, roadTest, roadTestComments, generalComments } = useSelector(
-    (state) => state.inspection
-  );
+  const inspectionData = useSelector((state) => state.inspection);
+  const { damagePresent, roadTest, roadTestComments, generalComments } = inspectionData;
 
+  // ✅ Update Redux fields
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
   };
@@ -157,8 +222,67 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  const handleSubmit = () => {
-    navigation.navigate("MainTabs"); 
+  // ✅ API Function
+  const createInspection = async (payload) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/inspections`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+      });
+      console.log("✅ Inspection created:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("❌ Error creating inspection:", err.response?.data || err.message);
+      throw err;
+    }
+  };
+
+  // ✅ Submit handler
+  const handleSubmit = async () => {
+    try {
+      console.log("📦 Full Redux Inspection Data:", inspectionData);
+
+      // Minimal validation
+      if (!inspectionData.vin || !inspectionData.make || !inspectionData.model) {
+        Alert.alert("❌ Missing Fields", "Please fill VIN, Make, and Model before submitting.");
+        return;
+      }
+
+      // ✅ Build payload
+      const finalPayload = {
+        vin: inspectionData.vin,
+        make: inspectionData.make,
+        model: inspectionData.model,
+        year: inspectionData.year,
+        registrationPlate: inspectionData.registrationPlate,
+        registrationExpiry: inspectionData.registrationExpiry,
+        buildDate: inspectionData.buildDate,
+        complianceDate: inspectionData.complianceDate,
+        damagePresent: inspectionData.damagePresent,
+        roadTest: inspectionData.roadTest,
+        roadTestComments: inspectionData.roadTestComments,
+        generalComments: inspectionData.generalComments,
+        images: inspectionData.images,
+        inspectorEmail: "muhammadanasrashid18@gmail.com", // ✅ Hardcoded like your operational checklist
+      };
+
+      // Remove empty/undefined fields
+      const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
+      console.log("🚀 Final Payload to Send:", cleanPayload);
+
+      await createInspection(cleanPayload);
+
+      dispatch(resetInspection());
+      Alert.alert("✅ Success", "Inspection submitted successfully!");
+      navigation.navigate("MainTabs");
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message || JSON.stringify(err.response?.data) || err.message;
+      console.error("❌ Submit failed:", errorMsg);
+      Alert.alert("❌ Error", errorMsg);
+    }
   };
 
   const handleBack = () => navigation.goBack();
@@ -245,10 +369,10 @@ export default function InspectionWizardStepSix({ navigation }) {
           </View>
         </ScrollView>
 
-        {/* Submit Button (Fixed at Bottom) */}
-        <View style={tw`absolute bottom-0 left-0 right-0`}>
+        {/* Submit Button (Fixed Bottom) */}
+        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
           <TouchableOpacity
-            style={tw`bg-green-800 py-2 rounded-xl mx-6 mb-6`}
+            style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleSubmit}
           >
             <Text style={tw`text-white text-center text-lg font-semibold`}>

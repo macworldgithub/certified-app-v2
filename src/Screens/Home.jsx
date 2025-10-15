@@ -304,7 +304,7 @@ export default function Home() {
             style={tw`flex-row items-center bg-white p-4 mt-2 rounded-xl shadow`}
             onPress={() => {
               if (action.title === "New Inspection")
-                navigation.navigate("InspectionDetails");
+                navigation.navigate("InspectionWizardStepOne");
               if (action.title === "View Reports")
                 navigation.navigate("Report");
               if (action.title === "Transport")

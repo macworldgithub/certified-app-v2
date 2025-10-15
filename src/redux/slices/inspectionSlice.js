@@ -90,7 +90,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  vinChassisNumber: "", // From InspectionWizardStepOne
+  vin: "", // From InspectionWizardStepOne
   year: "", // From InspectionWizardStepOne
   make: "", // From InspectionWizardStepOne
   model: "", // From InspectionWizardStepOne
@@ -156,7 +156,7 @@ const inspectionSlice = createSlice({
 
     // Reset only specific wizard fields
     resetInspectionData: (state) => {
-      state.vinChassisNumber = "";
+      state.vin = "";
       state.year = "";
       state.make = "";
       state.model = "";
