@@ -127,17 +127,20 @@ export default function InspectionWizardStepThree({ navigation }) {
               ))}
             </View>
           </View>
-
+        </ScrollView>
+        
           {/* Next Button */}
+            <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
           <TouchableOpacity
-            style={tw`bg-green-600 py-2 bg-green-800 rounded-xl mt-10 mb-6`}
+            style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleNext}
           >
             <Text style={tw`text-white text-center text-lg font-semibold`}>
               Next
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
+
       </View>
     </SafeAreaWrapper>
   );

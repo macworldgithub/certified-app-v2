@@ -12,8 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 // import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
-import SafeAreaWrapper from "../components/SafeAreaWrapper"; 
-import { setInspectionData } from "../redux/slices/inspectionSlice";
+import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric"];
 const driveTrainOptions = ["FWD", "RWD", "AWD", "4WD"];
@@ -116,16 +115,20 @@ export default function InspectionWizardStepTwo({ navigation }) {
           <Text style={tw`text-gray-500 mt-4 mb-1`}>Body Type</Text>
           {renderDropdown("bodyType", bodyTypeOptions)}
 
-          {/* Next Button */}
+
+        </ScrollView>
+        {/* Next Button */}
+     
+        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
           <TouchableOpacity
-            style={tw`bg-green-600 py-2 rounded-xl mt-10 mb-6 bg-green-800`}
+            style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleNext}
           >
-            <Text style={tw`text-white text-center text-lg font-semibold `}>
+            <Text style={tw`text-white text-center text-lg font-semibold`}>
               Next
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </View>
     </SafeAreaWrapper>
   );

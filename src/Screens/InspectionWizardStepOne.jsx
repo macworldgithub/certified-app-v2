@@ -5,29 +5,130 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Platform,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+// Import the infoAgent API helpers
+import {
+  fetchAndStoreInfoAgentToken,
+  fetchVehicleReport,
+  getVehicleBasicInfo,
+  getVehicleAdditionalInfo,
+} from "../../utils/infoAgentApi";
 
 export default function InspectionWizardStepOne({ navigation }) {
   const dispatch = useDispatch();
-  const { vinChassisNumber, year, make, model, registrationPlate, registrationExpiry, buildDate, complianceDate } = useSelector(
-    (state) => state.inspection
-  );
+  const {
+    vin,
+    year,
+    make,
+    model,
+    registrationPlate,
+    registrationExpiry,
+    buildDate,
+    complianceDate,
+  } = useSelector((state) => state.inspection);
+
+  const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
+  const [date, setDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
 
   const handleTextChange = (field, value) => {
     dispatch(setInspectionData({ field, value }));
   };
 
-  const handleNext = () => {
-    navigation.navigate("FrontImage");
+  const handleNext = () => navigation.navigate("FrontImage");
+  const handleBack = () => navigation.goBack();
+
+  const showDatePicker = (field) => {
+    setShowPicker(field);
   };
 
-  const handleBack = () => navigation.goBack();
+  const onDateChange = (event, selectedDate) => {
+    // on Android 'event.type' might be 'set' or 'dismissed' (older RN versions vary)
+    if (selectedDate) {
+      setDate(selectedDate);
+      const formatted = selectedDate.toLocaleDateString("en-GB"); // dd/mm/yyyy
+      dispatch(setInspectionData({ field: showPicker, value: formatted }));
+    }
+    setShowPicker(null); // close after selection
+  };
+
+  // --- New: fetch vehicle info flow ---
+  const handleFetchVehicleInfo = async () => {
+    // Basic validation
+    if (!vin || vin.trim().length === 0) {
+      Alert.alert("VIN required", "Please enter a VIN/Chassis number before fetching.");
+      return;
+    }
+
+    // Optionally check length 17 (common for VINs) — not mandatory
+    // if (vin.trim().length < 10) { /* ignore or warn */ }
+
+    try {
+      setLoading(true);
+
+      // 1) Ensure token present
+      await fetchAndStoreInfoAgentToken();
+
+      // 2) Call vehicle report endpoint (stores report in AsyncStorage inside api util)
+      await fetchVehicleReport(vin.trim());
+
+      // 3) Read basic info from saved report
+      const basic = await getVehicleBasicInfo();
+      if (basic) {
+        // Map fields to your redux fields (use defensive checks)
+        console.log("Basic info", basic)
+        if (basic.year) dispatch(setInspectionData({ field: "year", value: String(basic.year) }));
+        
+        if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
+
+        // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
+        if (basic.buildDate) dispatch(setInspectionData({ field: "buildDate", value: basic.buildDate }));
+        if (basic.compliancePlate) dispatch(setInspectionData({ field: "complianceDate", value: basic.compliancePlate }));
+
+        // identification plate
+        if (basic.plate) dispatch(setInspectionData({ field: "registrationPlate", value: basic.plate }));
+      } else {
+        // basic null -> warn the user but continue to try additional info
+        console.warn("No basic info read from vehicleReport.");
+      }
+
+      // 4) Read additional info if you want to store/use it
+      const additional = await getVehicleAdditionalInfo();
+      if (additional) {
+      console.log("Additional info", additional)
+        // Example: if you want to store colour, fuelType etc. in inspection state,
+        // either extend your redux slice or temporarily store them under other fields.
+        // Below I show dispatches to fields named fuelType, driveType, etc.
+        if (additional.colour) dispatch(setInspectionData({ field: "color", value: additional.colour }));
+        if (additional.fuelType) dispatch(setInspectionData({ field: "fuelType", value: additional.fuelType }));
+        if (additional.transmissionType) dispatch(setInspectionData({ field: "transmission", value: additional.transmissionType }));
+        if (additional.driveType) dispatch(setInspectionData({ field: "driveTrain", value: additional.driveType }));
+        if (additional.bodyType) dispatch(setInspectionData({ field: "bodyType", value: additional.bodyType }));
+      }
+
+      Alert.alert("Vehicle info loaded", "Vehicle details have been populated from InfoAgent.");
+    } catch (err) {
+      console.error("Error in fetch flow:", err);
+      // Show friendly message
+      Alert.alert(
+        "Fetch failed",
+        err?.message || "Failed to fetch vehicle info. Check the VIN and network."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaWrapper>
@@ -43,16 +144,33 @@ export default function InspectionWizardStepOne({ navigation }) {
         </View>
 
         {/* Scrollable Content */}
-        <ScrollView style={tw`px-4`} contentContainerStyle={tw`pb-20`}>
+        <ScrollView style={tw`px-4`} contentContainerStyle={tw`pb-28`}>
           {/* VIN/Chassis Number */}
-          <View style={tw`mt-6`}>
+          <View style={tw`mt-0`}>
             <Text style={tw`text-gray-500 mb-2`}>VIN/Chassis Number</Text>
-            <TextInput
-              value={vinChassisNumber}
-              onChangeText={(value) => handleTextChange("vinChassisNumber", value)}
-              placeholder="Enter VIN/Chassis Number"
-              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-            />
+
+            <View style={tw`flex-row items-center`}>
+              <TextInput
+                value={vin}
+                onChangeText={(value) => handleTextChange("vin", value)}
+                placeholder="Enter VIN/Chassis Number"
+                style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                autoCapitalize="characters"
+              />
+
+              {/* Fetch button */}
+              <TouchableOpacity
+                onPress={handleFetchVehicleInfo}
+                style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={tw`text-white font-semibold`}>Fetch</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Year */}
@@ -89,7 +207,7 @@ export default function InspectionWizardStepOne({ navigation }) {
             />
           </View>
 
-          {/* Registration Plate and Registration Expiry (Same Row) */}
+          {/* Registration Fields */}
           <View style={tw`mt-6 flex-row justify-between`}>
             <View style={tw`flex-1 mr-2`}>
               <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
@@ -97,52 +215,73 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={registrationPlate}
                 onChangeText={(value) => handleTextChange("registrationPlate", value)}
                 placeholder="Enter Registration Plate"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
               />
             </View>
+
             <View style={tw`flex-1 ml-2`}>
               <Text style={tw`text-gray-500 mb-2`}>Registration Expiry</Text>
-              <TextInput
-                value={registrationExpiry}
-                onChangeText={(value) => handleTextChange("registrationExpiry", value)}
-                placeholder="Enter Registration Expiry"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-              />
+              <TouchableOpacity
+                onPress={() => showDatePicker("registrationExpiry")}
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+              >
+                <Text style={tw`text-base text-gray-800`}>
+                  {registrationExpiry || "Select Date"}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
-          {/* Build Date and Compliance Date (Same Row) */}
+          {/* Build & Compliance Dates */}
           <View style={tw`mt-6 flex-row justify-between`}>
             <View style={tw`flex-1 mr-2`}>
               <Text style={tw`text-gray-500 mb-2`}>Build Date</Text>
-              <TextInput
-                value={buildDate}
-                onChangeText={(value) => handleTextChange("buildDate", value)}
-                placeholder="Enter Build Date"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-              />
+              <TouchableOpacity
+                onPress={() => showDatePicker("buildDate")}
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+              >
+                <Text style={tw`text-base text-gray-800`}>
+                  {buildDate || "Select Date"}
+                </Text>
+              </TouchableOpacity>
             </View>
+
             <View style={tw`flex-1 ml-2`}>
               <Text style={tw`text-gray-500 mb-2`}>Compliance Date</Text>
-              <TextInput
-                value={complianceDate}
-                onChangeText={(value) => handleTextChange("complianceDate", value)}
-                placeholder="Enter Compliance Date"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-              />
+              <TouchableOpacity
+                onPress={() => showDatePicker("complianceDate")}
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+              >
+                <Text style={tw`text-base text-gray-800`}>
+                  {complianceDate || "Select Date"}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
+        </ScrollView>
 
-          {/* Next Button */}
+        {/* Date Picker (renders only when active) */}
+        {showPicker ? (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date || new Date()}
+            mode="date"
+            display={Platform.OS === "ios" ? "default" : "calendar"}
+            onChange={onDateChange}
+          />
+        ) : null}
+
+        {/* Next Button */}
+        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
           <TouchableOpacity
-            style={tw`bg-green-800 py-3 rounded-xl mt-10 mb-6`}
+            style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleNext}
           >
             <Text style={tw`text-white text-center text-lg font-semibold`}>
               Next
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </View>
     </SafeAreaWrapper>
   );

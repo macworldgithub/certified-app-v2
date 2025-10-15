@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
@@ -65,7 +60,9 @@ export default function InspectionWizardStepFour({ navigation }) {
 
           {/* Service History Present */}
           <View style={tw`mt-6`}>
-            <Text style={tw`text-gray-500 mb-2`}>Is A Service History Present</Text>
+            <Text style={tw`text-gray-500 mb-2`}>
+              Is A Service History Present
+            </Text>
             <View style={tw`flex-row justify-between`}>
               {["Yes", "No"].map((option) => (
                 <TouchableOpacity
@@ -83,17 +80,20 @@ export default function InspectionWizardStepFour({ navigation }) {
               ))}
             </View>
           </View>
-
-          {/* Next Button */}
+        </ScrollView>
+        {/* Next Button */}
+        <View
+          style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
+        >
           <TouchableOpacity
-            style={tw`bg-green-800 py-2 rounded-xl mt-10 mb-6`}
+            style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleNext}
           >
-            <Text style={tw`text-white text-center text-lg font-semibold `}>
+            <Text style={tw`text-white text-center text-lg font-semibold`}>
               Next
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </View>
     </SafeAreaWrapper>
   );
