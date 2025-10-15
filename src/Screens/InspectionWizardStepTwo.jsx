@@ -10,7 +10,7 @@ import {
 import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-// import { setInspectionData } from "../redux/slices/inspectionSlice";
+import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
@@ -114,12 +114,12 @@ export default function InspectionWizardStepTwo({ navigation }) {
           {/* Body Type */}
           <Text style={tw`text-gray-500 mt-4 mb-1`}>Body Type</Text>
           {renderDropdown("bodyType", bodyTypeOptions)}
-
-
         </ScrollView>
         {/* Next Button */}
-     
-        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
+
+        <View
+          style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
+        >
           <TouchableOpacity
             style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleNext}
