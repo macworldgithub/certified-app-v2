@@ -20,7 +20,7 @@ type CarItem = {
   _id: string;
   vin: string;
   make: string;
-  carModel: string;
+  Model: string;
   year: string;
   mileAge: number;
   inspectorEmail: string;
@@ -123,37 +123,6 @@ export default function InspectionList() {
     }
   };
 
-//  const handleEdit = async (id) => {
-//   try {
-//     console.log("Editing inspection for ID:", id);
-//     setLoading(true);
-
-//     const res = await fetch(
-//       `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
-//       { headers: { accept: "application/json" } }
-//     );
-
-//     if (!res.ok) {
-//       throw new Error(`Failed to fetch inspection: ${res.status}`);
-//     }
-
-//     const inspection = await res.json();
-//     console.log("Fetched inspection:", inspection);
-
-//     // ✅ Store data in Redux (for prefill)
-//     dispatch(setInspection(inspection));
-
-//     // ✅ Navigate to New Inspection form (prefilled)
-//     navigation.navigate("InspectionWizardStepOne" as never);
-//   } catch (err) {
-//     console.error("❌ Error fetching inspection:", err);
-//     alert("Failed to load inspection. Please try again.");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-
   const handleDelete = async () => {
     if (!selectedVin) return;
 
@@ -220,7 +189,7 @@ export default function InspectionList() {
                 id={item._id}
                 vin={item.vin}
                 make={item.make}
-                carModel={item.carModel}
+                carModel={item.Model}
                 year={item.year}
                 mileage={item.mileAge}
                 inspectorEmail={item.inspectorEmail}
@@ -229,9 +198,7 @@ export default function InspectionList() {
                   setSelectedVin(item.vin);
                   setShowConfirmModal(true);
                 }}
-                // onEdit={(id) => handleEdit(id)}
                 onEdit={() => handleEdit(item._id)}
-                // onEdit={(vin) => handleEdit(vin)}
                 onRating={(id) => console.log("Rating", id)}
               />
             )}
