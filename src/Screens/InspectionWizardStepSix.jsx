@@ -203,7 +203,10 @@ import {
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setInspectionData, resetInspection } from "../redux/slices/inspectionSlice";
+import {
+  setInspectionData,
+  resetInspection,
+} from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js exports your base URL
@@ -211,7 +214,8 @@ import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js export
 export default function InspectionWizardStepSix({ navigation }) {
   const dispatch = useDispatch();
   const inspectionData = useSelector((state) => state.inspection);
-  const { damagePresent, roadTest, roadTestComments, generalComments } = inspectionData;
+  const { damagePresent, roadTest, roadTestComments, generalComments } =
+    inspectionData;
 
   // ✅ Update Redux fields
   const handleSelect = (field, value) => {
@@ -225,28 +229,45 @@ export default function InspectionWizardStepSix({ navigation }) {
   // ✅ API Function
   const createInspection = async (payload) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/inspections`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-          accept: "*/*",
-        },
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/inspections`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "*/*",
+          },
+        }
+      );
       console.log("✅ Inspection created:", response.data);
       return response.data;
     } catch (err) {
-      console.error("❌ Error creating inspection:", err.response?.data || err.message);
+      console.error(
+        "❌ Error creating inspection:",
+        err.response?.data || err.message
+      );
       throw err;
     }
   };
 
-  // ✅ Submit handler
   const handleSubmit = async () => {
     try {
       console.log("📦 Full Redux Inspection Data:", inspectionData);
 
-      // Minimal validation
-      if (!inspectionData.vin || !inspectionData.make || !inspectionData.model) {
-        Alert.alert("❌ Missing Fields", "Please fill VIN, Make, and Model before submitting.");
+      // ✅ Basic validation
+      if (!inspectionData.vin || inspectionData.vin.length !== 17) {
+        Alert.alert(
+          "❌ Invalid VIN",
+          "VIN must be exactly 17 characters long."
+        );
+        return;
+      }
+
+      if (!inspectionData.make || !inspectionData.model) {
+        Alert.alert(
+          "❌ Missing Fields",
+          "Please fill Make and Model before submitting."
+        );
         return;
       }
 
@@ -265,21 +286,37 @@ export default function InspectionWizardStepSix({ navigation }) {
         roadTestComments: inspectionData.roadTestComments,
         generalComments: inspectionData.generalComments,
         images: inspectionData.images,
-        inspectorEmail: "muhammadanasrashid18@gmail.com", // ✅ Hardcoded like your operational checklist
+        inspectorEmail: "muhammadanasrashid18@gmail.com",
       };
 
-      // Remove empty/undefined fields
       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
       console.log("🚀 Final Payload to Send:", cleanPayload);
 
-      await createInspection(cleanPayload);
+      // ✅ Choose method based on mode
+      if (inspectionData._id) {
+        console.log("✏️ Updating existing inspection:", inspectionData._id);
+        await axios.put(
+          `${API_BASE_URL}/inspections/${inspectionData._id}`,
+          cleanPayload,
+          {
+            headers: { "Content-Type": "application/json", accept: "*/*" },
+          }
+        );
+      } else {
+        console.log("🆕 Creating new inspection");
+        await axios.post(`${API_BASE_URL}/inspections`, cleanPayload, {
+          headers: { "Content-Type": "application/json", accept: "*/*" },
+        });
+      }
 
       dispatch(resetInspection());
       Alert.alert("✅ Success", "Inspection submitted successfully!");
       navigation.navigate("MainTabs");
     } catch (err) {
       const errorMsg =
-        err.response?.data?.message || JSON.stringify(err.response?.data) || err.message;
+        err.response?.data?.message ||
+        JSON.stringify(err.response?.data) ||
+        err.message;
       console.error("❌ Submit failed:", errorMsg);
       Alert.alert("❌ Error", errorMsg);
     }
@@ -304,7 +341,9 @@ export default function InspectionWizardStepSix({ navigation }) {
         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
           {/* Damage Present */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Is There Any Damage Present</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Is There Any Damage Present
+            </Text>
             <View style={tw`flex-row justify-between`}>
               {["Yes", "No"].map((option) => (
                 <TouchableOpacity
@@ -349,7 +388,9 @@ export default function InspectionWizardStepSix({ navigation }) {
             <Text style={tw`text-gray-500 mb-1`}>Road Test Comments</Text>
             <TextInput
               value={roadTestComments}
-              onChangeText={(value) => handleTextChange("roadTestComments", value)}
+              onChangeText={(value) =>
+                handleTextChange("roadTestComments", value)
+              }
               placeholder="Enter comments"
               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
               multiline
@@ -361,7 +402,9 @@ export default function InspectionWizardStepSix({ navigation }) {
             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
             <TextInput
               value={generalComments}
-              onChangeText={(value) => handleTextChange("generalComments", value)}
+              onChangeText={(value) =>
+                handleTextChange("generalComments", value)
+              }
               placeholder="Enter comments"
               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
               multiline
@@ -370,7 +413,9 @@ export default function InspectionWizardStepSix({ navigation }) {
         </ScrollView>
 
         {/* Submit Button (Fixed Bottom) */}
-        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
+        <View
+          style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
+        >
           <TouchableOpacity
             style={tw`bg-green-700 py-2 rounded-xl`}
             onPress={handleSubmit}
