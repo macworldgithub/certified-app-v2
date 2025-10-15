@@ -13,6 +13,7 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AppIcon from "../components/AppIcon";
 
+
 export default function InspectionDetails({ navigation }) {
   const dispatch = useDispatch();
 

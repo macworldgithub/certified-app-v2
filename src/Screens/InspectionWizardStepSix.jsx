@@ -128,7 +128,6 @@
 //   );
 // }
 
-
 import React, { useState } from "react";
 import {
   View,
@@ -142,12 +141,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import axios from "axios";
+import { resetInspection } from "../redux/slices/inspectionSlice";
+import API_BASE_URL from "../../utils/config";
+import { Alert } from "react-native";
 
 export default function InspectionWizardStepSix({ navigation }) {
   const dispatch = useDispatch();
-  const { damagePresent, roadTest, roadTestComments, generalComments } = useSelector(
-    (state) => state.inspection
-  );
+  const { damagePresent, roadTest, roadTestComments, generalComments } =
+    useSelector((state) => state.inspection);
+  const inspectionData = useSelector((state) => state.inspection);
+
+  const createInspection = async (inspectionPayload) => {
+    try {
+      const response = await axios.post(
+        // "http://192.168.18.11:5000/inspections",
+        `${API_BASE_URL}/inspections`,
+        inspectionPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "*/*",
+          },
+        }
+      );
+
+      console.log("✅ Inspection created:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error(
+        "❌ Error creating inspection:",
+        err.response?.data || err.message
+      );
+      throw err;
+    }
+  };
 
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
@@ -157,8 +185,76 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  const handleSubmit = () => {
-    navigation.navigate("MainTabs"); 
+  const handleSubmit = async () => {
+    try {
+      // ✅ Validate required data
+      if (
+        !inspectionData.vin ||
+        !inspectionData.make ||
+        !inspectionData.model ||
+        !inspectionData.year
+      ) {
+        Alert.alert(
+          "❌ Missing Data",
+          "Please fill VIN, Make, Model, and Year before submitting."
+        );
+        return;
+      }
+      // console.log("Mileage", inspectionData.inspectionDetail);
+      const finalPayload = {
+        vin: inspectionData.vin,
+        make: inspectionData.make,
+        carModel: inspectionData.carModel,
+        year: inspectionData.year,
+        engineNumber: inspectionData.engineNumber,
+        mileAge: inspectionData.mileAge,
+
+        // Images (object-based)
+        frontImage: inspectionData.images.frontImage,
+        rearImage: inspectionData.images.rearImage,
+        leftImage: inspectionData.images.leftImage,
+        rightImage: inspectionData.images.rightImage,
+
+        odometer: inspectionData.odometer, // From InspectionWizardStepTwo
+        fuelType: inspectionData.fuelType, // From InspectionWizardStepTwo,
+        driveTrain: inspectionData.driveTrain, // From InspectionWizardStepTwo
+        transmission: inspectionData.transmission, // From InspectionWizardStepTwo
+        bodyType: inspectionData.bodyType, // From InspectionWizardStepTwo
+        color: inspectionData.color, // From InspectionWizardStepThree
+        frontWheelDiameter: inspectionData.frontWheelDiameter, // From InspectionWizardStepThree
+        rearWheelDiameter: inspectionData.rearWheelDiameter, // From InspectionWizardStepThree
+        keysPresent: inspectionData.keysPresent, // From InspectionWizardStepThree
+        serviceBookPresent: inspectionData.serviceBookPresent, // From InspectionWizardStepFour
+        serviceHistoryPresent: inspectionData.serviceHistoryPresent, // From InspectionWizardStepFour
+        tyreConditionFrontLeft: inspectionData.tyreConditionFrontLeft, // From InspectionWizardStepFive
+        tyreConditionFrontRight: inspectionData.tyreConditionFrontRight, // From InspectionWizardStepFive
+        tyreConditionRearRight: inspectionData.tyreConditionRearRight, // From InspectionWizardStepFive
+        tyreConditionRearLeft: inspectionData.tyreConditionRearLeft, // From InspectionWizardStepFive
+        damagePresent: inspectionData.damagePresent, // From InspectionWizardStepSix
+        roadTest: "" + inspectionData.roadTest, // From InspectionWizardStepSix
+        roadTestComments: inspectionData.roadTestComments, // From InspectionWizardStepSix
+        generalComments: inspectionData.generalComments, // From InspectionWizardStepSix
+
+        inspectorEmail: "muhammadanasrashid18@gmail.com", // ✅ hardcoded
+      };
+
+      // ✅ Remove undefined/null before sending
+      const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
+      console.log("📦 Final Clean Payload:", cleanPayload);
+
+      await createInspection(cleanPayload);
+
+      dispatch(resetInspection());
+      Alert.alert("✅ Success", "Inspection created successfully!");
+      navigation.navigate("MainTabs");
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message ||
+        JSON.stringify(err.response?.data) ||
+        err.message;
+      console.error("❌ Submit failed:", errorMsg, inspectionData);
+      Alert.alert("❌ Error", errorMsg);
+    }
   };
 
   const handleBack = () => navigation.goBack();
@@ -180,7 +276,9 @@ export default function InspectionWizardStepSix({ navigation }) {
         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
           {/* Damage Present */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Is There Any Damage Present</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Is There Any Damage Present
+            </Text>
             <View style={tw`flex-row justify-between`}>
               {["Yes", "No"].map((option) => (
                 <TouchableOpacity
@@ -225,7 +323,9 @@ export default function InspectionWizardStepSix({ navigation }) {
             <Text style={tw`text-gray-500 mb-1`}>Road Test Comments</Text>
             <TextInput
               value={roadTestComments}
-              onChangeText={(value) => handleTextChange("roadTestComments", value)}
+              onChangeText={(value) =>
+                handleTextChange("roadTestComments", value)
+              }
               placeholder="Enter comments"
               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
               multiline
@@ -237,7 +337,9 @@ export default function InspectionWizardStepSix({ navigation }) {
             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
             <TextInput
               value={generalComments}
-              onChangeText={(value) => handleTextChange("generalComments", value)}
+              onChangeText={(value) =>
+                handleTextChange("generalComments", value)
+              }
               placeholder="Enter comments"
               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
               multiline

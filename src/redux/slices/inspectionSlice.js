@@ -1,5 +1,3 @@
-
-
 // import { createSlice } from "@reduxjs/toolkit";
 
 // const initialState = {
@@ -86,7 +84,6 @@
 
 // export default inspectionSlice.reducer;
 
-
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -139,6 +136,18 @@ const inspectionSlice = createSlice({
           state[field] = value;
         }
       }
+    },
+
+    setEngineDetails: (state, action) => {
+      state.engineNumber = action.payload.engineNumber;
+      state.mileAge = action.payload.mileAge;
+    },
+
+    setInspectionDetails: (state, action) => {
+      state.vin = action.payload.vin;
+      state.make = action.payload.make;
+      state.model = action.payload.carModel;
+      state.year = action.payload.year;
     },
 
     // Update images specifically
@@ -194,6 +203,8 @@ export const {
   setInspection,
   resetInspection,
   resetInspectionData,
+  setInspectionDetails,
+  setEngineDetails,
 } = inspectionSlice.actions;
 
 export default inspectionSlice.reducer;

@@ -10,9 +10,10 @@ import {
 import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { setInspectionData } from "../redux/slices/inspectionSlice";
+// import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper"; 
+import { setInspectionData } from "../redux/slices/inspectionSlice";
 
 const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric"];
 const driveTrainOptions = ["FWD", "RWD", "AWD", "4WD"];
