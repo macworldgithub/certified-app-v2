@@ -114,9 +114,9 @@ export default function InspectionList() {
         { headers: { accept: "application/json" } }
       );
       const inspection = await res.json();
-
+      
       dispatch(setInspection(inspection)); // store in redux
-
+      
       navigation.navigate("InspectionWizardStepOne" as never);
     } catch (err) {
       console.error("Error fetching inspection:", err);

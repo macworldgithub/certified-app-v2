@@ -66,7 +66,10 @@ export default function InspectionWizardStepOne({ navigation }) {
   const handleFetchVehicleInfo = async () => {
     // Basic validation
     if (!vin || vin.trim().length === 0) {
-      Alert.alert("VIN required", "Please enter a VIN/Chassis number before fetching.");
+      Alert.alert(
+        "VIN required",
+        "Please enter a VIN/Chassis number before fetching."
+      );
       return;
     }
 
@@ -84,20 +87,42 @@ export default function InspectionWizardStepOne({ navigation }) {
 
       // 3) Read basic info from saved report
       const basic = await getVehicleBasicInfo();
+      console.log("info", basic);
       if (basic) {
         // Map fields to your redux fields (use defensive checks)
-        console.log("Basic info", basic)
-        if (basic.year) dispatch(setInspectionData({ field: "year", value: String(basic.year) }));
-        
-        if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
-        if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
+        // console.log("Basic info", basic)
+        // console.log(basic.model)
+        if (basic.year)
+          dispatch(
+            setInspectionData({ field: "year", value: String(basic.year) })
+          );
+
+        if (basic.make)
+          dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model)
+          dispatch(setInspectionData({ field: "model", value: basic.model }));
 
         // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
-        if (basic.buildDate) dispatch(setInspectionData({ field: "buildDate", value: basic.buildDate }));
-        if (basic.compliancePlate) dispatch(setInspectionData({ field: "complianceDate", value: basic.compliancePlate }));
+        if (basic.buildDate)
+          dispatch(
+            setInspectionData({ field: "buildDate", value: basic.buildDate })
+          );
+        if (basic.compliancePlate)
+          dispatch(
+            setInspectionData({
+              field: "complianceDate",
+              value: basic.compliancePlate,
+            })
+          );
 
         // identification plate
-        if (basic.plate) dispatch(setInspectionData({ field: "registrationPlate", value: basic.plate }));
+        if (basic.plate)
+          dispatch(
+            setInspectionData({
+              field: "registrationPlate",
+              value: basic.plate,
+            })
+          );
       } else {
         // basic null -> warn the user but continue to try additional info
         console.warn("No basic info read from vehicleReport.");
@@ -106,24 +131,49 @@ export default function InspectionWizardStepOne({ navigation }) {
       // 4) Read additional info if you want to store/use it
       const additional = await getVehicleAdditionalInfo();
       if (additional) {
-      console.log("Additional info", additional)
+        console.log("Additional info", additional);
         // Example: if you want to store colour, fuelType etc. in inspection state,
         // either extend your redux slice or temporarily store them under other fields.
         // Below I show dispatches to fields named fuelType, driveType, etc.
-        if (additional.colour) dispatch(setInspectionData({ field: "color", value: additional.colour }));
-        if (additional.fuelType) dispatch(setInspectionData({ field: "fuelType", value: additional.fuelType }));
-        if (additional.transmissionType) dispatch(setInspectionData({ field: "transmission", value: additional.transmissionType }));
-        if (additional.driveType) dispatch(setInspectionData({ field: "driveTrain", value: additional.driveType }));
-        if (additional.bodyType) dispatch(setInspectionData({ field: "bodyType", value: additional.bodyType }));
+        if (additional.colour)
+          dispatch(
+            setInspectionData({ field: "color", value: additional.colour })
+          );
+        if (additional.fuelType)
+          dispatch(
+            setInspectionData({ field: "fuelType", value: additional.fuelType })
+          );
+        if (additional.transmissionType)
+          dispatch(
+            setInspectionData({
+              field: "transmission",
+              value: additional.transmissionType,
+            })
+          );
+        if (additional.driveType)
+          dispatch(
+            setInspectionData({
+              field: "driveTrain",
+              value: additional.driveType,
+            })
+          );
+        if (additional.bodyType)
+          dispatch(
+            setInspectionData({ field: "bodyType", value: additional.bodyType })
+          );
       }
 
-      Alert.alert("Vehicle info loaded", "Vehicle details have been populated from InfoAgent.");
+      Alert.alert(
+        "Vehicle info loaded",
+        "Vehicle details have been populated from InfoAgent."
+      );
     } catch (err) {
       console.error("Error in fetch flow:", err);
       // Show friendly message
       Alert.alert(
         "Fetch failed",
-        err?.message || "Failed to fetch vehicle info. Check the VIN and network."
+        err?.message ||
+          "Failed to fetch vehicle info. Check the VIN and network."
       );
     } finally {
       setLoading(false);
@@ -213,7 +263,9 @@ export default function InspectionWizardStepOne({ navigation }) {
               <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
               <TextInput
                 value={registrationPlate}
-                onChangeText={(value) => handleTextChange("registrationPlate", value)}
+                onChangeText={(value) =>
+                  handleTextChange("registrationPlate", value)
+                }
                 placeholder="Enter Registration Plate"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
               />

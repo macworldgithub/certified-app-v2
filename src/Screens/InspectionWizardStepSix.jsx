@@ -10,15 +10,19 @@
 // import tw from "tailwind-react-native-classnames";
 // import { useDispatch, useSelector } from "react-redux";
 // import axios from "axios";
-// import { setInspectionData, resetInspection } from "../redux/slices/inspectionSlice";
+// import {
+//   setInspectionData,
+//   resetInspection,
+// } from "../redux/slices/inspectionSlice";
 // import AppIcon from "../components/AppIcon";
 // import SafeAreaWrapper from "../components/SafeAreaWrapper";
-// import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js exports your base URL
+// import API_BASE_URL from "../../utils/config";
 
 // export default function InspectionWizardStepSix({ navigation }) {
 //   const dispatch = useDispatch();
 //   const inspectionData = useSelector((state) => state.inspection);
-//   const { damagePresent, roadTest, roadTestComments, generalComments } = inspectionData;
+//   const { damagePresent, roadTest, roadTestComments, generalComments } =
+//     inspectionData;
 
 //   // ✅ Update Redux fields
 //   const handleSelect = (field, value) => {
@@ -32,34 +36,51 @@
 //   // ✅ API Function
 //   const createInspection = async (payload) => {
 //     try {
-//       const response = await axios.post(`${API_BASE_URL}/inspections`, payload, {
-//         headers: {
-//           "Content-Type": "application/json",
-//           accept: "*/*",
-//         },
-//       });
+//       const response = await axios.post(
+//         `${API_BASE_URL}/inspections`,
+//         payload,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             accept: "*/*",
+//           },
+//         }
+//       );
 //       console.log("✅ Inspection created:", response.data);
 //       return response.data;
 //     } catch (err) {
-//       console.error("❌ Error creating inspection:", err.response?.data || err.message);
+//       console.error(
+//         "❌ Error creating inspection:",
+//         err.response?.data || err.message
+//       );
 //       throw err;
 //     }
 //   };
 
-//   // ✅ Submit handler
 //   const handleSubmit = async () => {
 //     try {
 //       console.log("📦 Full Redux Inspection Data:", inspectionData);
 
-//       // Minimal validation
-//       if (!inspectionData.vinChassisNumber || !inspectionData.make || !inspectionData.model) {
-//         Alert.alert("❌ Missing Fields", "Please fill VIN, Make, and Model before submitting.");
+//       // ✅ Basic validation
+//       if (!inspectionData.vin || inspectionData.vin.length !== 17) {
+//         Alert.alert(
+//           "❌ Invalid VIN",
+//           "VIN must be exactly 17 characters long."
+//         );
+//         return;
+//       }
+
+//       if (!inspectionData.make || !inspectionData.model) {
+//         Alert.alert(
+//           "❌ Missing Fields",
+//           "Please fill Make and Model before submitting."
+//         );
 //         return;
 //       }
 
 //       // ✅ Build payload
 //       const finalPayload = {
-//         vin: inspectionData.vinChassisNumber,
+//         vin: inspectionData.vin,
 //         make: inspectionData.make,
 //         model: inspectionData.model,
 //         year: inspectionData.year,
@@ -72,21 +93,37 @@
 //         roadTestComments: inspectionData.roadTestComments,
 //         generalComments: inspectionData.generalComments,
 //         images: inspectionData.images,
-//         inspectorEmail: "muhammadanasrashid18@gmail.com", // ✅ Hardcoded like your operational checklist
+//         inspectorEmail: "muhammadanasrashid18@gmail.com",
 //       };
 
-//       // Remove empty/undefined fields
 //       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
 //       console.log("🚀 Final Payload to Send:", cleanPayload);
 
-//       await createInspection(cleanPayload);
+//       // ✅ Choose method based on mode
+//       if (inspectionData._id) {
+//         console.log("✏️ Updating existing inspection:", inspectionData._id);
+//         await axios.put(
+//           `${API_BASE_URL}/inspections/${inspectionData._id}`,
+//           cleanPayload,
+//           {
+//             headers: { "Content-Type": "application/json", accept: "*/*" },
+//           }
+//         );
+//       } else {
+//         console.log("🆕 Creating new inspection");
+//         await axios.post(`${API_BASE_URL}/inspections`, cleanPayload, {
+//           headers: { "Content-Type": "application/json", accept: "*/*" },
+//         });
+//       }
 
 //       dispatch(resetInspection());
-//       Alert.alert("✅ Success", "Inspection submitted successfully!");
+//       Alert.alert("✅ Success", "Inspection created successfully!");
 //       navigation.navigate("MainTabs");
 //     } catch (err) {
 //       const errorMsg =
-//         err.response?.data?.message || JSON.stringify(err.response?.data) || err.message;
+//         err.response?.data?.message ||
+//         JSON.stringify(err.response?.data) ||
+//         err.message;
 //       console.error("❌ Submit failed:", errorMsg);
 //       Alert.alert("❌ Error", errorMsg);
 //     }
@@ -111,7 +148,9 @@
 //         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
 //           {/* Damage Present */}
 //           <View style={tw`mt-4`}>
-//             <Text style={tw`text-gray-500 mb-1`}>Is There Any Damage Present</Text>
+//             <Text style={tw`text-gray-500 mb-1`}>
+//               Is There Any Damage Present
+//             </Text>
 //             <View style={tw`flex-row justify-between`}>
 //               {["Yes", "No"].map((option) => (
 //                 <TouchableOpacity
@@ -156,7 +195,9 @@
 //             <Text style={tw`text-gray-500 mb-1`}>Road Test Comments</Text>
 //             <TextInput
 //               value={roadTestComments}
-//               onChangeText={(value) => handleTextChange("roadTestComments", value)}
+//               onChangeText={(value) =>
+//                 handleTextChange("roadTestComments", value)
+//               }
 //               placeholder="Enter comments"
 //               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
 //               multiline
@@ -168,7 +209,9 @@
 //             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
 //             <TextInput
 //               value={generalComments}
-//               onChangeText={(value) => handleTextChange("generalComments", value)}
+//               onChangeText={(value) =>
+//                 handleTextChange("generalComments", value)
+//               }
 //               placeholder="Enter comments"
 //               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
 //               multiline
@@ -177,7 +220,9 @@
 //         </ScrollView>
 
 //         {/* Submit Button (Fixed Bottom) */}
-//         <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}>
+//         <View
+//           style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
+//         >
 //           <TouchableOpacity
 //             style={tw`bg-green-700 py-2 rounded-xl`}
 //             onPress={handleSubmit}
@@ -191,7 +236,8 @@
 //     </SafeAreaWrapper>
 //   );
 // }
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -199,17 +245,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Image,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import Voice from "@react-native-voice/voice";
+
 import {
   setInspectionData,
   resetInspection,
 } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-import API_BASE_URL from "../../utils/config"; // ✅ make sure config.js exports your base URL
+import API_BASE_URL from "../../utils/config";
+
+import greenmic from "../../assets/greenmic.png";
+import redmic from "../../assets/redmic.png";
 
 export default function InspectionWizardStepSix({ navigation }) {
   const dispatch = useDispatch();
@@ -217,7 +269,50 @@ export default function InspectionWizardStepSix({ navigation }) {
   const { damagePresent, roadTest, roadTestComments, generalComments } =
     inspectionData;
 
-  // ✅ Update Redux fields
+  // ✅ Voice State
+  const [isRecording, setIsRecording] = useState(false);
+  const [error, setError] = useState("");
+
+  // ✅ Voice Setup
+  useEffect(() => {
+    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const onSpeechResults = (event) => {
+    if (event.value && event.value.length > 0) {
+      dispatch(
+        setInspectionData({ field: "generalComments", value: event.value[0] })
+      );
+    }
+  };
+
+  const onSpeechError = (event) => {
+    setError(event.error?.message || "Voice recognition error");
+    setIsRecording(false);
+  };
+
+  const toggleRecording = async () => {
+    try {
+      if (isRecording) {
+        await Voice.stop();
+        setIsRecording(false);
+      } else {
+        setError("");
+        setIsRecording(true);
+        await Voice.start("en-US"); // Change language if needed
+      }
+    } catch (err) {
+      setError(JSON.stringify(err));
+      setIsRecording(false);
+    }
+  };
+
+  // ✅ Redux updates
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
   };
@@ -226,35 +321,11 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  // ✅ API Function
-  const createInspection = async (payload) => {
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/inspections`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            accept: "*/*",
-          },
-        }
-      );
-      console.log("✅ Inspection created:", response.data);
-      return response.data;
-    } catch (err) {
-      console.error(
-        "❌ Error creating inspection:",
-        err.response?.data || err.message
-      );
-      throw err;
-    }
-  };
-
+  // ✅ API call
   const handleSubmit = async () => {
     try {
       console.log("📦 Full Redux Inspection Data:", inspectionData);
 
-      // ✅ Basic validation
       if (!inspectionData.vin || inspectionData.vin.length !== 17) {
         Alert.alert(
           "❌ Invalid VIN",
@@ -264,14 +335,10 @@ export default function InspectionWizardStepSix({ navigation }) {
       }
 
       if (!inspectionData.make || !inspectionData.model) {
-        Alert.alert(
-          "❌ Missing Fields",
-          "Please fill Make and Model before submitting."
-        );
+        Alert.alert("❌ Missing Fields", "Please fill Make and Model.");
         return;
       }
 
-      // ✅ Build payload
       const finalPayload = {
         vin: inspectionData.vin,
         make: inspectionData.make,
@@ -292,7 +359,6 @@ export default function InspectionWizardStepSix({ navigation }) {
       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
       console.log("🚀 Final Payload to Send:", cleanPayload);
 
-      // ✅ Choose method based on mode
       if (inspectionData._id) {
         console.log("✏️ Updating existing inspection:", inspectionData._id);
         await axios.put(
@@ -310,7 +376,7 @@ export default function InspectionWizardStepSix({ navigation }) {
       }
 
       dispatch(resetInspection());
-      Alert.alert("✅ Success", "Inspection submitted successfully!");
+      Alert.alert("✅ Success", "Inspection created successfully!");
       navigation.navigate("MainTabs");
     } catch (err) {
       const errorMsg =
@@ -400,6 +466,7 @@ export default function InspectionWizardStepSix({ navigation }) {
           {/* General Comments */}
           <View style={tw`mt-4`}>
             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
+
             <TextInput
               value={generalComments}
               onChangeText={(value) =>
@@ -409,6 +476,33 @@ export default function InspectionWizardStepSix({ navigation }) {
               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
               multiline
             />
+
+            {/* 🎤 Voice Recording Button (Below Input) */}
+            <View style={tw`flex-row justify-center mt-3`}>
+              <TouchableOpacity
+                onPress={toggleRecording}
+                style={{
+                  backgroundColor: isRecording ? "red" : "green",
+                  padding: 14,
+                  borderRadius: 50,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  source={isRecording ? redmic : greenmic}
+                  style={{ width: 30, height: 30, tintColor: "white" }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {error ? (
+              <Text style={tw`text-red-500 text-xs mt-2 text-center`}>
+                {error}
+              </Text>
+            ) : null}
           </View>
         </ScrollView>
 
