@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,17 +91,11 @@ export default function InspectionWizardStepOne({ navigation }) {
       console.log("info", basic);
       if (basic) {
         // Map fields to your redux fields (use defensive checks)
-        // console.log("Basic info", basic)
-        // console.log(basic.model)
-        if (basic.year)
-          dispatch(
-            setInspectionData({ field: "year", value: String(basic.year) })
-          );
-
-        if (basic.make)
-          dispatch(setInspectionData({ field: "make", value: basic.make }));
-        if (basic.model)
-          dispatch(setInspectionData({ field: "model", value: basic.model }));
+        console.log("Basic info", basic)
+        if (basic.year) dispatch(setInspectionData({ field: "year", value: String(basic.year) }));
+        
+        if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
 
         // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
         if (basic.buildDate)
@@ -312,16 +307,63 @@ export default function InspectionWizardStepOne({ navigation }) {
           </View>
         </ScrollView>
 
-        {/* Date Picker (renders only when active) */}
-        {showPicker ? (
+        {/* Date Picker for Android */}
+        {showPicker && Platform.OS === "android" && (
           <DateTimePicker
             testID="dateTimePicker"
             value={date || new Date()}
             mode="date"
-            display={Platform.OS === "ios" ? "default" : "calendar"}
+            display="calendar"
             onChange={onDateChange}
           />
-        ) : null}
+        )}
+
+        {/* Date Picker for iOS (Modal) */}
+        {showPicker && Platform.OS === "ios" && (
+          <Modal transparent animationType="slide">
+            <View style={tw`flex-1 justify-end bg-black/50 `}>
+              <View
+                style={tw`bg-white text-black rounded-t-2xl p-4  text-red-900`}
+              >
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date || new Date()}
+                  mode="date"
+                  display="spinner"
+                  onChange={onDateChange}
+                  color="#000000"
+                  themeVariant="light"
+                  // style={tw`bg-black color-black text-red-500`}
+                />
+
+                <View style={tw`flex-row justify-end mt-2`}>
+                  <TouchableOpacity onPress={() => setShowPicker(null)}>
+                    <Text style={tw`text-gray-500 mr-4 text-base`}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={tw`mr-2 text-red-500`}
+                    onPress={() => {
+                      // Confirm the selected date
+                      const formatted = date.toLocaleDateString("en-GB");
+                      dispatch(
+                        setInspectionData({
+                          field: showPicker,
+                          value: formatted,
+                        })
+                      );
+                      setShowPicker(null);
+                    }}
+                  >
+                    <Text style={tw`text-green-700 text-base font-semibold`}>
+                      Done
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
 
         {/* Next Button */}
         <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
