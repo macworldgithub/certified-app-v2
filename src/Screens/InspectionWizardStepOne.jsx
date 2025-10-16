@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -66,7 +67,10 @@ export default function InspectionWizardStepOne({ navigation }) {
   const handleFetchVehicleInfo = async () => {
     // Basic validation
     if (!vin || vin.trim().length === 0) {
-      Alert.alert("VIN required", "Please enter a VIN/Chassis number before fetching.");
+      Alert.alert(
+        "VIN required",
+        "Please enter a VIN/Chassis number before fetching."
+      );
       return;
     }
 
@@ -86,18 +90,38 @@ export default function InspectionWizardStepOne({ navigation }) {
       const basic = await getVehicleBasicInfo();
       if (basic) {
         // Map fields to your redux fields (use defensive checks)
-        console.log("Basic info", basic)
-        if (basic.year) dispatch(setInspectionData({ field: "year", value: String(basic.year) }));
-        
-        if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
-        if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
+        console.log("Basic info", basic);
+        if (basic.year)
+          dispatch(
+            setInspectionData({ field: "year", value: String(basic.year) })
+          );
+
+        if (basic.make)
+          dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model)
+          dispatch(setInspectionData({ field: "model", value: basic.model }));
 
         // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
-        if (basic.buildDate) dispatch(setInspectionData({ field: "buildDate", value: basic.buildDate }));
-        if (basic.compliancePlate) dispatch(setInspectionData({ field: "complianceDate", value: basic.compliancePlate }));
+        if (basic.buildDate)
+          dispatch(
+            setInspectionData({ field: "buildDate", value: basic.buildDate })
+          );
+        if (basic.compliancePlate)
+          dispatch(
+            setInspectionData({
+              field: "complianceDate",
+              value: basic.compliancePlate,
+            })
+          );
 
         // identification plate
-        if (basic.plate) dispatch(setInspectionData({ field: "registrationPlate", value: basic.plate }));
+        if (basic.plate)
+          dispatch(
+            setInspectionData({
+              field: "registrationPlate",
+              value: basic.plate,
+            })
+          );
       } else {
         // basic null -> warn the user but continue to try additional info
         console.warn("No basic info read from vehicleReport.");
@@ -106,24 +130,49 @@ export default function InspectionWizardStepOne({ navigation }) {
       // 4) Read additional info if you want to store/use it
       const additional = await getVehicleAdditionalInfo();
       if (additional) {
-      console.log("Additional info", additional)
+        console.log("Additional info", additional);
         // Example: if you want to store colour, fuelType etc. in inspection state,
         // either extend your redux slice or temporarily store them under other fields.
         // Below I show dispatches to fields named fuelType, driveType, etc.
-        if (additional.colour) dispatch(setInspectionData({ field: "color", value: additional.colour }));
-        if (additional.fuelType) dispatch(setInspectionData({ field: "fuelType", value: additional.fuelType }));
-        if (additional.transmissionType) dispatch(setInspectionData({ field: "transmission", value: additional.transmissionType }));
-        if (additional.driveType) dispatch(setInspectionData({ field: "driveTrain", value: additional.driveType }));
-        if (additional.bodyType) dispatch(setInspectionData({ field: "bodyType", value: additional.bodyType }));
+        if (additional.colour)
+          dispatch(
+            setInspectionData({ field: "color", value: additional.colour })
+          );
+        if (additional.fuelType)
+          dispatch(
+            setInspectionData({ field: "fuelType", value: additional.fuelType })
+          );
+        if (additional.transmissionType)
+          dispatch(
+            setInspectionData({
+              field: "transmission",
+              value: additional.transmissionType,
+            })
+          );
+        if (additional.driveType)
+          dispatch(
+            setInspectionData({
+              field: "driveTrain",
+              value: additional.driveType,
+            })
+          );
+        if (additional.bodyType)
+          dispatch(
+            setInspectionData({ field: "bodyType", value: additional.bodyType })
+          );
       }
 
-      Alert.alert("Vehicle info loaded", "Vehicle details have been populated from InfoAgent.");
+      Alert.alert(
+        "Vehicle info loaded",
+        "Vehicle details have been populated from InfoAgent."
+      );
     } catch (err) {
       console.error("Error in fetch flow:", err);
       // Show friendly message
       Alert.alert(
         "Fetch failed",
-        err?.message || "Failed to fetch vehicle info. Check the VIN and network."
+        err?.message ||
+          "Failed to fetch vehicle info. Check the VIN and network."
       );
     } finally {
       setLoading(false);
@@ -213,7 +262,9 @@ export default function InspectionWizardStepOne({ navigation }) {
               <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
               <TextInput
                 value={registrationPlate}
-                onChangeText={(value) => handleTextChange("registrationPlate", value)}
+                onChangeText={(value) =>
+                  handleTextChange("registrationPlate", value)
+                }
                 placeholder="Enter Registration Plate"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
               />
@@ -260,16 +311,63 @@ export default function InspectionWizardStepOne({ navigation }) {
           </View>
         </ScrollView>
 
-        {/* Date Picker (renders only when active) */}
-        {showPicker ? (
+        {/* Date Picker for Android */}
+        {showPicker && Platform.OS === "android" && (
           <DateTimePicker
             testID="dateTimePicker"
             value={date || new Date()}
             mode="date"
-            display={Platform.OS === "ios" ? "default" : "calendar"}
+            display="calendar"
             onChange={onDateChange}
           />
-        ) : null}
+        )}
+
+        {/* Date Picker for iOS (Modal) */}
+        {showPicker && Platform.OS === "ios" && (
+          <Modal transparent animationType="slide">
+            <View style={tw`flex-1 justify-end bg-black/50 `}>
+              <View
+                style={tw`bg-white text-black rounded-t-2xl p-4  text-red-900`}
+              >
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date || new Date()}
+                  mode="date"
+                  display="spinner"
+                  onChange={onDateChange}
+                  color="#000000"
+                  themeVariant="light"
+                  // style={tw`bg-black color-black text-red-500`}
+                />
+
+                <View style={tw`flex-row justify-end mt-2`}>
+                  <TouchableOpacity onPress={() => setShowPicker(null)}>
+                    <Text style={tw`text-gray-500 mr-4 text-base`}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={tw`mr-2 text-red-500`}
+                    onPress={() => {
+                      // Confirm the selected date
+                      const formatted = date.toLocaleDateString("en-GB");
+                      dispatch(
+                        setInspectionData({
+                          field: showPicker,
+                          value: formatted,
+                        })
+                      );
+                      setShowPicker(null);
+                    }}
+                  >
+                    <Text style={tw`text-green-700 text-base font-semibold`}>
+                      Done
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
 
         {/* Next Button */}
         <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
