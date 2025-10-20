@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import {
 //   View,
 //   Text,
@@ -6,10 +6,13 @@
 //   TouchableOpacity,
 //   ScrollView,
 //   Alert,
+//   Image,
 // } from "react-native";
 // import tw from "tailwind-react-native-classnames";
 // import { useDispatch, useSelector } from "react-redux";
 // import axios from "axios";
+// import Voice from "@react-native-voice/voice";
+
 // import {
 //   setInspectionData,
 //   resetInspection,
@@ -18,13 +21,59 @@
 // import SafeAreaWrapper from "../components/SafeAreaWrapper";
 // import API_BASE_URL from "../../utils/config";
 
+// import greenmic from "../../assets/greenmic.png";
+// import redmic from "../../assets/redmic.png";
+
 // export default function InspectionWizardStepSix({ navigation }) {
 //   const dispatch = useDispatch();
 //   const inspectionData = useSelector((state) => state.inspection);
 //   const { damagePresent, roadTest, roadTestComments, generalComments } =
 //     inspectionData;
 
-//   // ✅ Update Redux fields
+//   // ✅ Voice State
+//   const [isRecording, setIsRecording] = useState(false);
+//   const [error, setError] = useState("");
+
+//   // ✅ Voice Setup
+//   useEffect(() => {
+//     Voice.onSpeechResults = onSpeechResults;
+//     Voice.onSpeechError = onSpeechError;
+
+//     return () => {
+//       Voice.destroy().then(Voice.removeAllListeners);
+//     };
+//   }, []);
+
+//   const onSpeechResults = (event) => {
+//     if (event.value && event.value.length > 0) {
+//       dispatch(
+//         setInspectionData({ field: "generalComments", value: event.value[0] })
+//       );
+//     }
+//   };
+
+//   const onSpeechError = (event) => {
+//     setError(event.error?.message || "Voice recognition error");
+//     setIsRecording(false);
+//   };
+
+//   const toggleRecording = async () => {
+//     try {
+//       if (isRecording) {
+//         await Voice.stop();
+//         setIsRecording(false);
+//       } else {
+//         setError("");
+//         setIsRecording(true);
+//         await Voice.start("en-US"); // Change language if needed
+//       }
+//     } catch (err) {
+//       setError(JSON.stringify(err));
+//       setIsRecording(false);
+//     }
+//   };
+
+//   // ✅ Redux updates
 //   const handleSelect = (field, value) => {
 //     dispatch(setInspectionData({ field, value }));
 //   };
@@ -33,35 +82,11 @@
 //     dispatch(setInspectionData({ field, value }));
 //   };
 
-//   // ✅ API Function
-//   const createInspection = async (payload) => {
-//     try {
-//       const response = await axios.post(
-//         `${API_BASE_URL}/inspections`,
-//         payload,
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//             accept: "*/*",
-//           },
-//         }
-//       );
-//       console.log("✅ Inspection created:", response.data);
-//       return response.data;
-//     } catch (err) {
-//       console.error(
-//         "❌ Error creating inspection:",
-//         err.response?.data || err.message
-//       );
-//       throw err;
-//     }
-//   };
-
+//   // ✅ API call
 //   const handleSubmit = async () => {
 //     try {
 //       console.log("📦 Full Redux Inspection Data:", inspectionData);
 
-//       // ✅ Basic validation
 //       if (!inspectionData.vin || inspectionData.vin.length !== 17) {
 //         Alert.alert(
 //           "❌ Invalid VIN",
@@ -71,14 +96,10 @@
 //       }
 
 //       if (!inspectionData.make || !inspectionData.model) {
-//         Alert.alert(
-//           "❌ Missing Fields",
-//           "Please fill Make and Model before submitting."
-//         );
+//         Alert.alert("❌ Missing Fields", "Please fill Make and Model.");
 //         return;
 //       }
 
-//       // ✅ Build payload
 //       const finalPayload = {
 //         vin: inspectionData.vin,
 //         make: inspectionData.make,
@@ -99,7 +120,6 @@
 //       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
 //       console.log("🚀 Final Payload to Send:", cleanPayload);
 
-//       // ✅ Choose method based on mode
 //       if (inspectionData._id) {
 //         console.log("✏️ Updating existing inspection:", inspectionData._id);
 //         await axios.put(
@@ -207,6 +227,7 @@
 //           {/* General Comments */}
 //           <View style={tw`mt-4`}>
 //             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
+
 //             <TextInput
 //               value={generalComments}
 //               onChangeText={(value) =>
@@ -216,6 +237,33 @@
 //               style={tw`border border-gray-300 rounded-lg p-3 bg-white h-20`}
 //               multiline
 //             />
+
+//             {/* 🎤 Voice Recording Button (Below Input) */}
+//             <View style={tw`flex-row justify-center mt-3`}>
+//               <TouchableOpacity
+//                 onPress={toggleRecording}
+//                 style={{
+//                   backgroundColor: isRecording ? "red" : "green",
+//                   padding: 14,
+//                   borderRadius: 50,
+//                   display: "flex",
+//                   justifyContent: "center",
+//                   alignItems: "center",
+//                 }}
+//               >
+//                 <Image
+//                   source={isRecording ? redmic : greenmic}
+//                   style={{ width: 30, height: 30, tintColor: "white" }}
+//                   resizeMode="contain"
+//                 />
+//               </TouchableOpacity>
+//             </View>
+
+//             {error ? (
+//               <Text style={tw`text-red-500 text-xs mt-2 text-center`}>
+//                 {error}
+//               </Text>
+//             ) : null}
 //           </View>
 //         </ScrollView>
 
@@ -246,12 +294,13 @@ import {
   ScrollView,
   Alert,
   Image,
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Voice from "@react-native-voice/voice";
-
 import {
   setInspectionData,
   resetInspection,
@@ -269,7 +318,6 @@ export default function InspectionWizardStepSix({ navigation }) {
   const { damagePresent, roadTest, roadTestComments, generalComments } =
     inspectionData;
 
-  // ✅ Voice State
   const [isRecording, setIsRecording] = useState(false);
   const [error, setError] = useState("");
 
@@ -296,23 +344,61 @@ export default function InspectionWizardStepSix({ navigation }) {
     setIsRecording(false);
   };
 
+  // ✅ Request Microphone Permission (Android only)
+  const requestMicrophonePermission = async () => {
+    console.log("platform.os", Platform.OS);
+    if (Platform.OS !== "android") return true;
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        {
+          title: "Microphone Permission",
+          message:
+            "This app needs access to your microphone so you can record voice comments.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      console.log(granted);
+      console.log(PermissionsAndroid.RESULTS.GRANTED);
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn("Permission error:", err);
+      return false;
+    }
+  };
+
   const toggleRecording = async () => {
     try {
       if (isRecording) {
         await Voice.stop();
         setIsRecording(false);
       } else {
+        const hasPermission = await requestMicrophonePermission();
+        console.log("abc");
+        if (!hasPermission) {
+          Alert.alert(
+            "Permission Denied",
+            "Microphone permission is required to record voice."
+          );
+          return;
+        }
         setError("");
         setIsRecording(true);
-        await Voice.start("en-US"); // Change language if needed
+        console.log("Voice module:", Voice);
+
+        await Voice.start("en-US");
+        console.log("3");
       }
     } catch (err) {
+      console.log("Voice error:", err);
       setError(JSON.stringify(err));
       setIsRecording(false);
     }
   };
 
-  // ✅ Redux updates
+  // ✅ Redux handlers
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
   };
@@ -321,11 +407,9 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  // ✅ API call
+  // ✅ API submission
   const handleSubmit = async () => {
     try {
-      console.log("📦 Full Redux Inspection Data:", inspectionData);
-
       if (!inspectionData.vin || inspectionData.vin.length !== 17) {
         Alert.alert(
           "❌ Invalid VIN",
@@ -357,10 +441,8 @@ export default function InspectionWizardStepSix({ navigation }) {
       };
 
       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
-      console.log("🚀 Final Payload to Send:", cleanPayload);
 
       if (inspectionData._id) {
-        console.log("✏️ Updating existing inspection:", inspectionData._id);
         await axios.put(
           `${API_BASE_URL}/inspections/${inspectionData._id}`,
           cleanPayload,
@@ -369,7 +451,6 @@ export default function InspectionWizardStepSix({ navigation }) {
           }
         );
       } else {
-        console.log("🆕 Creating new inspection");
         await axios.post(`${API_BASE_URL}/inspections`, cleanPayload, {
           headers: { "Content-Type": "application/json", accept: "*/*" },
         });
@@ -403,9 +484,8 @@ export default function InspectionWizardStepSix({ navigation }) {
           </Text>
         </View>
 
-        {/* Scrollable Content */}
         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
-          {/* Damage Present */}
+          {/* Damage */}
           <View style={tw`mt-4`}>
             <Text style={tw`text-gray-500 mb-1`}>
               Is There Any Damage Present
@@ -449,7 +529,7 @@ export default function InspectionWizardStepSix({ navigation }) {
             </View>
           </View>
 
-          {/* Road Test Comments */}
+          {/* Comments */}
           <View style={tw`mt-4`}>
             <Text style={tw`text-gray-500 mb-1`}>Road Test Comments</Text>
             <TextInput
@@ -463,7 +543,7 @@ export default function InspectionWizardStepSix({ navigation }) {
             />
           </View>
 
-          {/* General Comments */}
+          {/* General Comments + Voice */}
           <View style={tw`mt-4`}>
             <Text style={tw`text-gray-500 mb-1`}>General Comments</Text>
 
@@ -477,7 +557,7 @@ export default function InspectionWizardStepSix({ navigation }) {
               multiline
             />
 
-            {/* 🎤 Voice Recording Button (Below Input) */}
+            {/* 🎤 Voice Button */}
             <View style={tw`flex-row justify-center mt-3`}>
               <TouchableOpacity
                 onPress={toggleRecording}
@@ -506,7 +586,7 @@ export default function InspectionWizardStepSix({ navigation }) {
           </View>
         </ScrollView>
 
-        {/* Submit Button (Fixed Bottom) */}
+        {/* Submit Button */}
         <View
           style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
         >

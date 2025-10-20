@@ -2,7 +2,6 @@ package com.anas1481.certifiedappversion2
 
 import android.app.Application
 import android.content.res.Configuration
-import com.wenkesj.voice.VoicePackage; // <------ Add this!
 
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -26,7 +25,6 @@ class MainApplication : Application(), ReactApplication {
             val packages = PackageList(this).packages
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(MyReactNativePackage())
-              packages.add(VoicePackage()) // <-- Add this line
             return packages
           }
 
