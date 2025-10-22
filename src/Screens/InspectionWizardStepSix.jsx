@@ -483,7 +483,7 @@ export default function InspectionWizardStepSix({ navigation }) {
             Inspection Wizard
           </Text>
         </View>
-
+        
         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
           {/* Damage */}
           <View style={tw`mt-4`}>

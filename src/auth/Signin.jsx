@@ -200,8 +200,8 @@ const Signin = () => {
         </View>
 
         {/* Remember Me & Forgot Password */}
-        <View style={tw`flex-row justify-between items-center mb-6`}>
-          <TouchableOpacity
+        <View style={tw`flex-row justify-end items-center mb-6`}>
+          {/* <TouchableOpacity
             onPress={() => setRememberMe(!rememberMe)}
             style={tw`flex-row items-center`}
           >
@@ -213,7 +213,7 @@ const Signin = () => {
               )}
             </View>
             <Text style={tw`text-sm text-gray-700`}>Remember me</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPass")}>
             <Text

@@ -154,7 +154,7 @@ export default function Signup() {
             color={rememberMe ? "#007941" : "gray"}
           />
         </TouchableOpacity>
-        <Text style={tw`text-sm text-gray-700`}>Remember me</Text>
+        {/* <Text style={tw`text-sm text-gray-700`}>Remember me</Text> */}
       </View>
 
       {/* Signup Button */}
