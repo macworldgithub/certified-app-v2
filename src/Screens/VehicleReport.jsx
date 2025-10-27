@@ -138,68 +138,68 @@
 
 //   return (
 //     <SafeAreaWrapper>
-      // <View style={tw`flex-1 bg-white`}>
-      //   {loading ? (
-      //     <View style={tw`flex-1 justify-center items-center`}>
-      //       <ActivityIndicator size="large" color="#00cc66" />
-      //       <Text style={tw`text-gray-600 mt-2`}>Loading reports...</Text>
-      //     </View>
-      //   ) : (
-      //     <ScrollView
-      //       style={tw`px-2`}
-      //       contentContainerStyle={tw`pb-20 px-4`}
-      //       showsVerticalScrollIndicator={true}
-      //       onScrollEndDrag={loadMore}
-      //     >
-      //       {/* Header */}
-      //       <View
-      //         style={[
-      //           tw`flex-row justify-between items-center mb-4`,
-      //           Platform.OS === "android" ? tw`pt-6` : tw`pt-0`,
-      //         ]}
-      //       >
-      //         <Text style={tw`text-green-700 text-lg font-bold`}>
-      //           Vehicle Reports
-      //         </Text>
-      //         <AppIcon name="user-circle" size={24} color="#474745ff" />
-      //       </View>
+// <View style={tw`flex-1 bg-white`}>
+//   {loading ? (
+//     <View style={tw`flex-1 justify-center items-center`}>
+//       <ActivityIndicator size="large" color="#00cc66" />
+//       <Text style={tw`text-gray-600 mt-2`}>Loading reports...</Text>
+//     </View>
+//   ) : (
+//     <ScrollView
+//       style={tw`px-2`}
+//       contentContainerStyle={tw`pb-20 px-4`}
+//       showsVerticalScrollIndicator={true}
+//       onScrollEndDrag={loadMore}
+//     >
+//       {/* Header */}
+//       <View
+//         style={[
+//           tw`flex-row justify-between items-center mb-4`,
+//           Platform.OS === "android" ? tw`pt-6` : tw`pt-0`,
+//         ]}
+//       >
+//         <Text style={tw`text-green-700 text-lg font-bold`}>
+//           Vehicle Reports
+//         </Text>
+//         <AppIcon name="user-circle" size={24} color="#474745ff" />
+//       </View>
 
-      //       {/* Stats */}
-      //       <View style={tw`flex-row justify-between mb-6`}>
-      //         <View
-      //           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
-      //         >
-      //           <Text style={tw`text-blue-600 text-lg font-bold`}>
-      //             {data.length}
-      //           </Text>
-      //           <Text style={tw`text-gray-500 text-xs text-center`}>
-      //             Reports
-      //           </Text>
-      //         </View>
-      //         <View
-      //           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
-      //         >
-      //           <Text style={tw`text-blue-600 text-lg font-bold`}>
-      //             {(
-      //               data.reduce((sum, r) => sum + (r.overallRating || 0), 0) /
-      //               (data.length || 1)
-      //             ).toFixed(1)}
-      //           </Text>
-      //           <Text style={tw`text-gray-500 text-xs text-center`}>
-      //             Avg Rating
-      //           </Text>
-      //         </View>
-      //         <View
-      //           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
-      //         >
-      //           <Text style={tw`text-blue-600 text-lg font-bold`}>
-      //             {data.reduce((sum, r) => sum + (r.mileAge || 0), 0)}
-      //           </Text>
-      //           <Text style={tw`text-gray-500 text-xs text-center`}>
-      //             Total Mileage
-      //           </Text>
-      //         </View>
-      //       </View>
+//       {/* Stats */}
+//       <View style={tw`flex-row justify-between mb-6`}>
+//         <View
+//           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+//         >
+//           <Text style={tw`text-blue-600 text-lg font-bold`}>
+//             {data.length}
+//           </Text>
+//           <Text style={tw`text-gray-500 text-xs text-center`}>
+//             Reports
+//           </Text>
+//         </View>
+//         <View
+//           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+//         >
+//           <Text style={tw`text-blue-600 text-lg font-bold`}>
+//             {(
+//               data.reduce((sum, r) => sum + (r.overallRating || 0), 0) /
+//               (data.length || 1)
+//             ).toFixed(1)}
+//           </Text>
+//           <Text style={tw`text-gray-500 text-xs text-center`}>
+//             Avg Rating
+//           </Text>
+//         </View>
+//         <View
+//           style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+//         >
+//           <Text style={tw`text-blue-600 text-lg font-bold`}>
+//             {data.reduce((sum, r) => sum + (r.mileAge || 0), 0)}
+//           </Text>
+//           <Text style={tw`text-gray-500 text-xs text-center`}>
+//             Total Mileage
+//           </Text>
+//         </View>
+//       </View>
 
 //             {/* Reports List */}
 //             {data.map((item, index) => (
@@ -383,7 +383,7 @@ export default function VehicleReport() {
     []
   );
 
-    // ✅ Pagination
+  // ✅ Pagination
   const loadMore = () => {
     if (!loadingMore && hasMore) {
       const nextPage = page + 1;
@@ -391,7 +391,6 @@ export default function VehicleReport() {
       fetchInspections(query, nextPage, true);
     }
   };
-
 
   const handleDownloadPDF = async (id) => {
     try {
@@ -490,7 +489,7 @@ export default function VehicleReport() {
 
   return (
     <SafeAreaWrapper>
-        <View style={tw`flex-1 bg-white`}>
+      <View style={tw`flex-1 bg-white`}>
         {loading ? (
           <View style={tw`flex-1 justify-center items-center`}>
             <ActivityIndicator size="large" color="#00cc66" />
@@ -518,24 +517,38 @@ export default function VehicleReport() {
 
             {/* ✅ Stats */}
             <View style={tw`flex-row justify-between mb-6`}>
-              <View style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}>
-                <Text style={tw`text-blue-600 text-lg font-bold`}>{data.length}</Text>
-                <Text style={tw`text-gray-500 text-xs text-center`}>Reports</Text>
+              <View
+                style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+              >
+                <Text style={tw`text-blue-600 text-lg font-bold`}>
+                  {data.length}
+                </Text>
+                <Text style={tw`text-gray-500 text-xs text-center`}>
+                  Reports
+                </Text>
               </View>
-              <View style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}>
+              <View
+                style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+              >
                 <Text style={tw`text-blue-600 text-lg font-bold`}>
                   {(
                     data.reduce((sum, r) => sum + (r.overallRating || 0), 0) /
                     (data.length || 1)
                   ).toFixed(1)}
                 </Text>
-                <Text style={tw`text-gray-500 text-xs text-center`}>Avg Rating</Text>
+                <Text style={tw`text-gray-500 text-xs text-center`}>
+                  Avg Rating
+                </Text>
               </View>
-              <View style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}>
+              <View
+                style={tw`bg-white rounded-xl shadow p-4 flex-1 mx-1 items-center`}
+              >
                 <Text style={tw`text-blue-600 text-lg font-bold`}>
                   {data.reduce((sum, r) => sum + (r.mileAge || 0), 0)}
                 </Text>
-                <Text style={tw`text-gray-500 text-xs text-center`}>Total Mileage</Text>
+                <Text style={tw`text-gray-500 text-xs text-center`}>
+                  Total Mileage
+                </Text>
               </View>
             </View>
 
@@ -547,7 +560,7 @@ export default function VehicleReport() {
                     {item.make} {item.Model || item.model} ({item.year})
                   </Text>
                   <Text style={tw`text-yellow-500 font-bold`}>
-                    {item.overallRating || " "}/10
+                    {item.overallRating ?? 0}/10
                   </Text>
                 </View>
 
@@ -588,7 +601,7 @@ export default function VehicleReport() {
                     style={tw`items-center`}
                     onPress={() => handleAdjustedPrice(item._id)}
                   >
-                    <AppIcon name="balance-scale" size={16} color="#22c55e"/>
+                    <AppIcon name="balance-scale" size={16} color="#22c55e" />
                     <Text style={tw`text-green-600 text-xs`}>
                       {adjustingId === item._id
                         ? "Adjusting..."

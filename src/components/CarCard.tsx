@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   Platform,
-  GestureResponderEvent,
 } from "react-native";
 
 type CarCardProps = {
@@ -18,10 +17,11 @@ type CarCardProps = {
   mileage: number | string;
   inspectorEmail?: string;
   thumbnailUri?: string;
+  rating?: number | null;
   onPress?: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
-  onRating?: (id: string) => void;
+  onRating?: (id: string, vin: string) => void;
   style?: any;
 };
 
@@ -34,6 +34,7 @@ const CarCard: React.FC<CarCardProps> = ({
   mileage,
   inspectorEmail,
   thumbnailUri,
+  rating,
   onPress,
   onDelete,
   onEdit,
@@ -47,7 +48,7 @@ const CarCard: React.FC<CarCardProps> = ({
       accessibilityRole="button"
       accessibilityLabel={`${make} ${carModel} ${year}`}
     >
-      {/* Left thumbnail */}
+      {/* Left Thumbnail */}
       <View style={styles.left}>
         {thumbnailUri ? (
           <Image source={{ uri: thumbnailUri }} style={styles.thumbnail} />
@@ -62,55 +63,46 @@ const CarCard: React.FC<CarCardProps> = ({
       <View style={styles.body}>
         <View style={styles.row}>
           <Text style={styles.title}>
-            {make} {carModel}
+            {make} ({year})
           </Text>
-          <Text style={styles.year}>{year}</Text>
+        
         </View>
-        <Text style={styles.sub}>{vin}</Text>
-
-        {/* ✅ CHANGE: Android pe email ko alag line mein show karo */}
+        <Text style={styles.sub}>VIN: {vin}</Text>
         {Platform.OS === "android" ? (
           <>
-            <Text style={styles.mileage}>{mileage} km</Text>
+            <Text style={styles.mileage}>Mileage: {mileage} km</Text>
             {inspectorEmail ? (
               <Text style={styles.inspector}>{inspectorEmail}</Text>
             ) : null}
           </>
         ) : (
           <View style={styles.row}>
-            <Text style={styles.mileage}>{mileage} km</Text>
+            <Text style={styles.mileage}>Mileage: {mileage} km</Text>
             {inspectorEmail ? (
               <Text style={styles.inspector}>{inspectorEmail}</Text>
             ) : null}
           </View>
         )}
 
-        {/* <View style={styles.row}>
-          <Text style={styles.mileage}>{mileage} km</Text>
-          {inspectorEmail ? (
-            <Text style={styles.inspector}>{inspectorEmail}</Text>
-          ) : null}
-        </View> */}
-
-        {/* Action buttons */}
+        {/* Actions */}
         <View style={styles.actions}>
           <TouchableOpacity
             onPress={() => onDelete?.(id)}
-            style={[styles.actionBtn, { backgroundColor: "#ef4444" }]} // red
+            style={[styles.actionBtn, { backgroundColor: "#ef4444" }]}
           >
             <Text style={styles.actionText}>Delete</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => onEdit?.(id)}
-            style={[styles.actionBtn, { backgroundColor: "#3b82f6" }]} // blue
+            style={[styles.actionBtn, { backgroundColor: "#3b82f6" }]}
           >
             <Text style={styles.actionText}>Edit</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => onRating?.(id)}
-            style={[styles.actionBtn, { backgroundColor: "#f59e0b" }]} // yellow
+            onPress={() => onRating?.(id, vin)}
+            style={[styles.actionBtn, { backgroundColor: "#f59e0b" }]}
           >
             <Text style={styles.actionText}>Rating</Text>
           </TouchableOpacity>
@@ -154,11 +146,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: { fontSize: 15, fontWeight: "700", color: "#0f172a" },
-  year: { fontSize: 13, color: "#475569" },
   sub: { marginTop: 6, color: "#475569", fontSize: 13 },
   mileage: { fontSize: 13, color: "#0f172a", fontWeight: "600" },
   inspector: { fontSize: 12, color: "#64748b" },
-
+  ratingText: { fontSize: 14, fontWeight: "700", color: "#f59e0b" },
   actions: {
     flexDirection: "row",
     justifyContent: "flex-start",
