@@ -1,10 +1,9 @@
 import axios from "axios";
 import mime from "mime";
-import { Alert } from "react-native"; 
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";  
+import { Alert } from "react-native";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
-import  API_BASE_URL from "./config";
-
+import API_BASE_URL from "./config";
 
 export const uploadToS3 = async ({
   fileUri,
@@ -77,9 +76,6 @@ export const uploadToS3 = async ({
   }
 };
 
-
-
-
 // ✅ Pick from Gallery
 export const handlePickFromGallery = async ({
   partKey,
@@ -141,8 +137,6 @@ export const handleImageCapture = async ({
   }
 };
 
-
-
 const deleteFileFromS3 = async (key) => {
   try {
     const response = await axios.delete(`${API_BASE_URL}/inspections/file`, {
@@ -160,11 +154,13 @@ const deleteFileFromS3 = async (key) => {
       return response.data;
     }
   } catch (error) {
-    console.error("❌ Error deleting file:", error.response?.data || error.message);
+    console.error(
+      "❌ Error deleting file:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
-
 
 export const handleDeleteFromS3 = async ({
   partKey,
@@ -220,9 +216,7 @@ export const handleDeleteFromS3 = async ({
   }
 };
 
-
-
-  export  const signUrl = async (awsKey) => {
+export const signUrl = async (awsKey) => {
   try {
     const signResp = await axios.get(
       `${API_BASE_URL}/inspections/signed-url-you`,
@@ -244,42 +238,103 @@ export const handleDeleteFromS3 = async ({
   }
 };
 
+// ✅ Analyze uploaded image
+//   const analyzeInspection = async (key) => {
+//     try {
+//       console.log("🔑 Passing key to analyze:", key);
+
+//       const analyzeResp = await axios.post(
+//         `${API_BASE_URL}/inspections/analyze`,
+//         { key },
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             accept: "*/*",
+//           },
+//         }
+//       );
+
+//     //   console.log("🔍 Analyze Response:", analyzeResp.data);
+
+//       const { analysedImageUrl, damages } = analyzeResp.data;
+
+//     //   Alert.alert(
+//     //     "Analysis Complete",
+//     //     damages?.length > 0
+//     //       ? `Damages detected: ${JSON.stringify(damages)}`
+//     //       : "No damages found!"
+//     //   );
+
+//       return analyzeResp.data;
+//     } catch (err) {
+//       console.error("❌ Analyze error:", err);
+//       Alert.alert("Error", "Image analysis failed");
+//       return null;
+//     }
+//   };
+
+// export const handleAnalyzeImage = async ({
+//   partKey,
+//   images,
+//   saveImagesToRedux,
+//   setAnalyzing,
+// }) => {
+//   if (!images[partKey]?.original) {
+//     Alert.alert("No Image", "Please upload an image first.");
+//     return;
+//   }
+
+//   try {
+//     setAnalyzing(true);
+
+//     const analysis = await analyzeInspection(images[partKey].original);
+
+//     if (analysis) {
+//       const updated = {
+//         ...images,
+//         [partKey]: {
+//           ...images[partKey],
+//           analyzed: analysis.analysedImageKey,
+//           damages: analysis.damages || [],
+//         },
+//       };
+
+//       saveImagesToRedux(updated);
+//     }
+//   } catch (err) {
+//     console.error("❌ Analysis error:", err);
+//     Alert.alert("Error", "Failed to analyze image. Please try again.");
+//   } finally {
+//     setAnalyzing(false);
+//   }
+// };
 
 // ✅ Analyze uploaded image
-  const analyzeInspection = async (key) => {
-    try {
-      console.log("🔑 Passing key to analyze:", key);
+const analyzeInspection = async (key) => {
+  try {
+    console.log("🔑 Passing key to analyze:", key);
 
-      const analyzeResp = await axios.post(
-        `${API_BASE_URL}/inspections/analyze`,
-        { key },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            accept: "*/*",
-          },
-        }
-      );
+    const analyzeResp = await axios.post(
+      `${API_BASE_URL}/inspections/analyze`,
+      { key },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+      }
+    );
 
-    //   console.log("🔍 Analyze Response:", analyzeResp.data);
+    console.log("🔍 Analyze Response:", analyzeResp.data);
 
-      const { analysedImageUrl, damages } = analyzeResp.data;
-
-    //   Alert.alert(
-    //     "Analysis Complete",
-    //     damages?.length > 0
-    //       ? `Damages detected: ${JSON.stringify(damages)}`
-    //       : "No damages found!"
-    //   );
-
-      return analyzeResp.data;
-    } catch (err) {
-      console.error("❌ Analyze error:", err);
-      Alert.alert("Error", "Image analysis failed");
-      return null;
-    }
-  };
-
+    // ✅ Return full response
+    return analyzeResp.data;
+  } catch (err) {
+    console.error("❌ Analyze error:", err);
+    Alert.alert("Error", "Image analysis failed");
+    return null;
+  }
+};
 
 export const handleAnalyzeImage = async ({
   partKey,
@@ -298,16 +353,27 @@ export const handleAnalyzeImage = async ({
     const analysis = await analyzeInspection(images[partKey].original);
 
     if (analysis) {
+      // ✅ Store both key and URL in Redux
       const updated = {
         ...images,
         [partKey]: {
           ...images[partKey],
           analyzed: analysis.analysedImageKey,
+          analyzedUrl: analysis.analysedImageUrl, // ✅ Add URL for frontend display
           damages: analysis.damages || [],
         },
       };
 
       saveImagesToRedux(updated);
+
+      Alert.alert(
+        "Analysis Complete",
+        analysis.damages?.length
+          ? `Detected damages: ${analysis.damages
+              .map((d) => d.type)
+              .join(", ")}`
+          : "No damages found!"
+      );
     }
   } catch (err) {
     console.error("❌ Analysis error:", err);
@@ -316,4 +382,3 @@ export const handleAnalyzeImage = async ({
     setAnalyzing(false);
   }
 };
-

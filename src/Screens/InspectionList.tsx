@@ -1,4 +1,3 @@
-// InspectionList.tsx
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -153,6 +152,51 @@ export default function InspectionList() {
     }
   };
 
+  const handleAnalyzeInspection = async (id: string, vin: string) => {
+    try {
+      setLoading(true);
+
+      const url = `https://apiv2.certifiedinspect.com.au/inspections/${vin}/analyze`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+
+      if (response.ok) {
+        // ✅ Update only the overallRating in list
+        setData((prev) =>
+          prev.map((item) =>
+            item.vin === vin
+              ? { ...item, overallRating: json.overallRating }
+              : item
+          )
+        );
+
+        alert(
+          `Inspection analyzed successfully!\nOverall Rating: ${
+            json.overallRating || "N/A"
+          }`
+        );
+
+        console.log("Analyze response:", json);
+      } else {
+        console.error("Analyze API error:", json);
+        alert(json.message || "Failed to analyze inspection.");
+      }
+    } catch (error) {
+      console.error("Error analyzing inspection:", error);
+      alert("Error analyzing inspection. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
@@ -199,7 +243,7 @@ export default function InspectionList() {
                   setShowConfirmModal(true);
                 }}
                 onEdit={() => handleEdit(item._id)}
-                onRating={(id) => console.log("Rating", id)}
+                onRating={(id, vin) => handleAnalyzeInspection(id, vin)}
               />
             )}
             ListEmptyComponent={

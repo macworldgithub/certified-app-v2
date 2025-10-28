@@ -32,6 +32,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     year,
     make,
     model,
+    mileAge,
     registrationPlate,
     registrationExpiry,
     buildDate,
@@ -96,6 +97,7 @@ export default function InspectionWizardStepOne({ navigation }) {
         
         if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
         if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
+        if (basic.mileAge) dispatch(setInspectionData({ field: "mileAge", value: basic.mileAge }));
 
         // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
         if (basic.buildDate)
@@ -248,6 +250,17 @@ export default function InspectionWizardStepOne({ navigation }) {
               value={model}
               onChangeText={(value) => handleTextChange("model", value)}
               placeholder="Enter Model"
+              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+            />
+          </View>
+
+
+            <View style={tw`mt-6`}>
+            <Text style={tw`text-gray-500 mb-2`}>mileAge</Text>
+            <TextInput
+              value={mileAge}
+              onChangeText={(value) => handleTextChange("mileAge", value)}
+              placeholder="Enter mileAge"
               style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
             />
           </View>
