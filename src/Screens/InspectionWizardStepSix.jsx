@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -122,9 +120,13 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  // ✅ API submission
   const handleSubmit = async () => {
     try {
+      console.log(
+        "🧾 Current Redux Inspection Data:",
+        JSON.stringify(inspectionData, null, 2)
+      );
+
       if (!inspectionData.vin || inspectionData.vin.length !== 17) {
         Alert.alert(
           "❌ Invalid VIN",
@@ -141,7 +143,7 @@ export default function InspectionWizardStepSix({ navigation }) {
       const finalPayload = {
         vin: inspectionData.vin,
         make: inspectionData.make,
-        carModel: inspectionData.model, // backend expects "carModel" not "model"
+        carModel: inspectionData.model,
         year: inspectionData.year || "string",
         engineNumber: inspectionData.engineNumber || "string",
         mileAge: Number(inspectionData.mileAge) || 0,
@@ -151,22 +153,22 @@ export default function InspectionWizardStepSix({ navigation }) {
         complianceDate: inspectionData.complianceDate,
         overallRating: 0,
         inspectorEmail: "muhammadanasrashid18@gmail.com",
-        frontImage: inspectionData.frontImage || {
+        frontImage: inspectionData.images.frontImage || {
           original: "s3://bucket/cars/front.jpg",
           analyzed: "s3://bucket/cars/front_annotated.jpg",
           damages: [],
         },
-        rearImage: inspectionData.rearImage || {
+        rearImage: inspectionData.images.rearImage || {
           original: "s3://bucket/cars/rear.jpg",
           analyzed: "s3://bucket/cars/rear_annotated.jpg",
           damages: [],
         },
-        leftImage: inspectionData.leftImage || {
+        leftImage: inspectionData.images.leftImage || {
           original: "s3://bucket/cars/left.jpg",
           analyzed: "s3://bucket/cars/left_annotated.jpg",
           damages: [],
         },
-        rightImage: inspectionData.rightImage || {
+        rightImage: inspectionData.images.rightImage || {
           original: "s3://bucket/cars/right.jpg",
           analyzed: "s3://bucket/cars/right_annotated.jpg",
           damages: [],
@@ -187,23 +189,29 @@ export default function InspectionWizardStepSix({ navigation }) {
           inspectionData.tyreConditionFrontRight || "Good",
         tyreConditionRearRight: inspectionData.tyreConditionRearRight || "Fair",
         tyreConditionRearLeft: inspectionData.tyreConditionRearLeft || "Fair",
-        damagePresent: inspectionData.damagePresent === "Yes" ? true : false,
-        roadTest: inspectionData.roadTest === "Yes" ? true : false,
+        damagePresent: inspectionData.damagePresent === "Yes",
+        roadTest: inspectionData.roadTest === "Yes",
         roadTestComments: inspectionData.roadTestComments,
         generalComments: inspectionData.generalComments,
       };
 
       const cleanPayload = JSON.parse(JSON.stringify(finalPayload));
 
+      // 🧩 Print payload before sending
+      console.log(
+        "📦 Final Payload Sent to API:",
+        JSON.stringify(cleanPayload, null, 2)
+      );
+
       if (inspectionData._id) {
+        console.log("🔄 Updating inspection:", inspectionData._id);
         await axios.put(
           `${API_BASE_URL}/inspections/${inspectionData._id}`,
           cleanPayload,
-          {
-            headers: { "Content-Type": "application/json", accept: "*/*" },
-          }
+          { headers: { "Content-Type": "application/json", accept: "*/*" } }
         );
       } else {
+        console.log("🆕 Creating new inspection...");
         await axios.post(`${API_BASE_URL}/inspections`, cleanPayload, {
           headers: { "Content-Type": "application/json", accept: "*/*" },
         });

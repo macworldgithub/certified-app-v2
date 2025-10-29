@@ -1,11 +1,16 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import tw from 'tailwind-react-native-classnames';
-import ImageViewing from 'react-native-image-viewing';
-import SignedImage from './SignedImage';
-import { handleAnalyzeImage, handleDeleteFromS3, handleImageCapture, handlePickFromGallery } from '../../utils/inspectionFunctions';
-import DamageList from './DamageList';
+import React from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import tw from "tailwind-react-native-classnames";
+import ImageViewing from "react-native-image-viewing";
+import SignedImage from "./SignedImage";
+import {
+  handleAnalyzeImage,
+  handleDeleteFromS3,
+  handleImageCapture,
+  handlePickFromGallery,
+} from "../../utils/inspectionFunctions";
+import DamageList from "./DamageList";
 
 const Header = ({ title, onBack }) => (
   <View style={tw`flex-row items-center mb-6`}>
@@ -16,7 +21,14 @@ const Header = ({ title, onBack }) => (
   </View>
 );
 
-const ImageComparison = ({ partKey, images, previewUri, setPreviewUri, previewVisible, setPreviewVisible }) => (
+const ImageComparison = ({
+  partKey,
+  images,
+  previewUri,
+  setPreviewUri,
+  previewVisible,
+  setPreviewVisible,
+}) => (
   <View style={tw`flex-row justify-between mb-4`}>
     {/* Original */}
     <View style={tw`flex-1 mr-2`}>
@@ -67,12 +79,24 @@ const LoadingIndicator = ({ label }) => (
   </View>
 );
 
-const ImageActions = ({ partKey, images, saveImagesToRedux, setUploading, setProgress }) => (
+const ImageActions = ({
+  partKey,
+  images,
+  saveImagesToRedux,
+  setUploading,
+  setProgress,
+}) => (
   <>
     <TouchableOpacity
       style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
       onPress={() =>
-        handlePickFromGallery({ partKey, images, saveImagesToRedux, setUploading, setProgress })
+        handlePickFromGallery({
+          partKey,
+          images,
+          saveImagesToRedux,
+          setUploading,
+          setProgress,
+        })
       }
     >
       <Text style={tw`text-white text-center`}>Pick from Gallery</Text>
@@ -81,7 +105,13 @@ const ImageActions = ({ partKey, images, saveImagesToRedux, setUploading, setPro
     <TouchableOpacity
       style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
       onPress={() =>
-        handleImageCapture({ partKey, images, saveImagesToRedux, setUploading, setProgress })
+        handleImageCapture({
+          partKey,
+          images,
+          saveImagesToRedux,
+          setUploading,
+          setProgress,
+        })
       }
     >
       <Text style={tw`text-white text-center`}>Capture from Camera</Text>
@@ -89,14 +119,27 @@ const ImageActions = ({ partKey, images, saveImagesToRedux, setUploading, setPro
   </>
 );
 
-const AnalyzeDeleteButtons = ({ partKey, images, saveImagesToRedux, analyzing, setAnalyzing }) => (
+const AnalyzeDeleteButtons = ({
+  partKey,
+  images,
+  saveImagesToRedux,
+  analyzing,
+  setAnalyzing,
+}) => (
   <View style={tw`flex-row justify-between mt-4`}>
     {images[partKey]?.original && (
       <>
         <TouchableOpacity
-          style={tw`${analyzing ? "bg-gray-400" : "bg-red-500"} p-3 rounded-lg flex-1 mr-2`}
+          style={tw`${
+            analyzing ? "bg-gray-400" : "bg-red-500"
+          } p-3 rounded-lg flex-1 mr-2`}
           onPress={() =>
-            handleAnalyzeImage({ partKey, images, saveImagesToRedux, setAnalyzing })
+            handleAnalyzeImage({
+              partKey,
+              images,
+              saveImagesToRedux,
+              setAnalyzing,
+            })
           }
           disabled={analyzing}
         >
@@ -106,7 +149,9 @@ const AnalyzeDeleteButtons = ({ partKey, images, saveImagesToRedux, analyzing, s
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={tw`${analyzing ? "bg-gray-400" : "bg-red-500"} p-3 rounded-lg flex-1 ml-2`}
+          style={tw`${
+            analyzing ? "bg-gray-400" : "bg-red-500"
+          } p-3 rounded-lg flex-1 ml-2`}
           onPress={() =>
             handleDeleteFromS3({ partKey, images, saveImagesToRedux })
           }
@@ -134,7 +179,6 @@ const DamageSection = ({ inspection, partKey }) => {
   );
 };
 
-
 const NextButton = ({ navigation, nextScreen }) => (
   <View style={tw`absolute bottom-0 left-0 right-0 p-4 mb-10 bg-white`}>
     <TouchableOpacity
@@ -146,10 +190,12 @@ const NextButton = ({ navigation, nextScreen }) => (
   </View>
 );
 
-
-
-
-
-
-
-export = {Header,NextButton ,DamageSection,ImageComparison ,LoadingIndicator ,ImageActions,AnalyzeDeleteButtons}  ;
+export = {
+  Header,
+  NextButton,
+  DamageSection,
+  ImageComparison,
+  LoadingIndicator,
+  ImageActions,
+  AnalyzeDeleteButtons,
+};

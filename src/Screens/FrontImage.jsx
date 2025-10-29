@@ -49,6 +49,7 @@ export default function FrontImage({ navigation }) {
   const inspection = useSelector((state) => state.inspection);
 
   const partKey = "frontImage";
+  console.log("savedImages:", savedImages);
   const [images, setLocalImages] = useState(savedImages || {});
   const [urlInput, setUrlInput] = useState("");
   const [uploading, setUploading] = useState(false);

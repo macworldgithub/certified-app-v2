@@ -43,7 +43,6 @@ export default function RearImage({ navigation }) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
-
   const saveImagesToRedux = (updatedImages) => {
     setLocalImages(updatedImages);
     dispatch(setImages(updatedImages));

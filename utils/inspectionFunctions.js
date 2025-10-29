@@ -32,7 +32,6 @@ export const uploadToS3 = async ({
     );
 
     const { url, key } = presignedResp.data;
-
     // STEP 2: Convert local file to blob
     const fileResp = await fetch(fileUri);
     const blob = await fileResp.blob();

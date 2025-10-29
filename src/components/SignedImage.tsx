@@ -9,7 +9,7 @@ const SignedImage = ({ s3Key, onPress }) => {
 
   useEffect(() => {
     let isMounted = true;
-
+    
     if (s3Key) {
       (async () => {
         try {

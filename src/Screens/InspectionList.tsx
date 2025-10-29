@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import debounce from "lodash.debounce";
 import CarCard from "../components/CarCard";
 import { useDispatch } from "react-redux";
-import { setInspection } from "../redux/slices/inspectionSlice";
+import { setInspection, setInspectionData } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 type CarItem = {
@@ -105,7 +105,7 @@ export default function InspectionList() {
   };
 
   // InspectionList.tsx
-
+  
   const handleEdit = async (id: string) => {
     try {
       const res = await fetch(
@@ -116,6 +116,7 @@ export default function InspectionList() {
 
       dispatch(setInspection(inspection)); // store in redux
 
+      console.log("xtz",inspection)
       navigation.navigate("InspectionWizardStepOne" as never);
     } catch (err) {
       console.error("Error fetching inspection:", err);

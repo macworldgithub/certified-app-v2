@@ -92,12 +92,20 @@ export default function InspectionWizardStepOne({ navigation }) {
       console.log("info", basic);
       if (basic) {
         // Map fields to your redux fields (use defensive checks)
-        console.log("Basic info", basic)
-        if (basic.year) dispatch(setInspectionData({ field: "year", value: String(basic.year) }));
-        
-        if (basic.make) dispatch(setInspectionData({ field: "make", value: basic.make }));
-        if (basic.model) dispatch(setInspectionData({ field: "model", value: basic.model }));
-        if (basic.mileAge) dispatch(setInspectionData({ field: "mileAge", value: basic.mileAge }));
+        console.log("Basic info", basic);
+        if (basic.year)
+          dispatch(
+            setInspectionData({ field: "year", value: String(basic.year) })
+          );
+
+        if (basic.make)
+          dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model)
+          dispatch(setInspectionData({ field: "model", value: basic.model }));
+        if (basic.mileAge)
+          dispatch(
+            setInspectionData({ field: "mileAge", value: basic.mileAge })
+          );
 
         // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
         if (basic.buildDate)
@@ -254,8 +262,7 @@ export default function InspectionWizardStepOne({ navigation }) {
             />
           </View>
 
-
-            <View style={tw`mt-6`}>
+          <View style={tw`mt-6`}>
             <Text style={tw`text-gray-500 mb-2`}>mileAge</Text>
             <TextInput
               value={mileAge}
