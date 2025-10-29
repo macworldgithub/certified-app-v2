@@ -40,10 +40,7 @@ export default function RightImage({ navigation }) {
   return (
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-white`}>
-        <ScrollView
-          style={tw`flex-1 px-4`}
-          contentContainerStyle={tw`pb-32`}
-        >
+        <ScrollView style={tw`flex-1 px-4`} contentContainerStyle={tw`pb-32`}>
           <View style={tw`flex-row items-center mb-6`}>
             <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
               <AppIcon name="arrow-left" size={24} color="#065f46" />
@@ -92,7 +89,10 @@ export default function RightImage({ navigation }) {
         </ScrollView>
 
         {/* Next */}
-        <NextButton navigation={navigation} nextScreen="InspectionWizardStepTwo" />
+        <NextButton
+          navigation={navigation}
+          nextScreen="InspectionWizardStepTwo"
+        />
       </View>
     </SafeAreaWrapper>
   );
