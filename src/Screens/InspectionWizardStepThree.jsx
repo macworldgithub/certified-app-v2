@@ -29,7 +29,7 @@ export default function InspectionWizardStepThree({ navigation }) {
   };
 
   const handleNext = () => {
-    navigation.navigate("InspectionWizardStepFour");
+    navigation.navigate("InspectionWizardStepFive");
   };
 
   const handleBack = () => navigation.goBack();

@@ -171,19 +171,25 @@ const inspectionSlice = createSlice({
     // Universal field updater for all Wizard steps
     setInspectionData: (state, action) => {
       const { field, value } = action.payload;
-      if (field in state || (field in state.images && value !== null)) {
-        if (field in state.images) {
-          state.images[field] = value;
-        } else {
-          state[field] = value;
-        }
+      // if (field in state || (field in state.images && value !== null)) {
+      //   if (field in state.images) {
+      //     state.images[field] = value;
+      //   } else {
+      //     state[field] = value;
+      //   }
+      // }
+
+      if (field in state) {
+        state[field] = value;
+      } else if (field in state.images && value !== null) {
+        state.images[field] = value;
       }
     },
 
-    setEngineDetails: (state, action) => {
-      state.engineNumber = action.payload.engineNumber;
-      state.mileAge = action.payload.mileAge;
-    },
+    // setEngineDetails: (state, action) => {
+    //   state.engineNumber = action.payload.engineNumber;
+    //   state.mileAge = action.payload.mileAge;
+    // },
 
     setInspectionDetails: (state, action) => {
       state.vin = action.payload.vin;
@@ -223,6 +229,16 @@ const inspectionSlice = createSlice({
       if (otherPayload.carModel) {
         state.model = otherPayload.carModel;
         delete otherPayload.carModel;
+      }
+
+      if (otherPayload.fuelType) {
+        state.fuelType = otherPayload.fuelType;
+      }
+
+      // ✅ Handle mileage to mileAge mapping
+      if (otherPayload.mileage) {
+        state.mileAge = otherPayload.mileage;
+        delete otherPayload.mileage;
       }
 
       Object.assign(state, otherPayload);

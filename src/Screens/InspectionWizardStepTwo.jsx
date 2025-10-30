@@ -14,7 +14,7 @@ import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
-const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric"];
+const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric", "other"];
 const driveTrainOptions = ["FWD", "RWD", "AWD", "4WD"];
 const transmissionOptions = ["Manual", "Automatic", "CVT"];
 const bodyTypeOptions = ["Sedan", "SUV", "Hatchback", "Truck", "Van"];

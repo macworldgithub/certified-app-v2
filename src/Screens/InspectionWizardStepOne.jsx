@@ -65,6 +65,127 @@ export default function InspectionWizardStepOne({ navigation }) {
   };
 
   // --- New: fetch vehicle info flow ---
+  // const handleFetchVehicleInfo = async () => {
+  //   // Basic validation
+  //   if (!vin || vin.trim().length === 0) {
+  //     Alert.alert(
+  //       "VIN required",
+  //       "Please enter a VIN/Chassis number before fetching."
+  //     );
+  //     return;
+  //   }
+
+  //   // Optionally check length 17 (common for VINs) — not mandatory
+  //   // if (vin.trim().length < 10) { /* ignore or warn */ }
+
+  //   try {
+  //     setLoading(true);
+
+  //     // 1) Ensure token present
+  //     await fetchAndStoreInfoAgentToken();
+
+  //     // 2) Call vehicle report endpoint (stores report in AsyncStorage inside api util)
+  //     await fetchVehicleReport(vin.trim());
+
+  //     // 3) Read basic info from saved report
+  //     const basic = await getVehicleBasicInfo();
+  //     // console.log("info", basic);
+  //     if (basic) {
+  //       // Map fields to your redux fields (use defensive checks)
+  //       // console.log("Basic info", basic);
+  //       if (basic.year)
+  //         dispatch(
+  //           setInspectionData({ field: "year", value: String(basic.year) })
+  //         );
+
+  //       if (basic.make)
+  //         dispatch(setInspectionData({ field: "make", value: basic.make }));
+  //       if (basic.model)
+  //         dispatch(setInspectionData({ field: "model", value: basic.model }));
+  //       if (basic.mileAge)
+  //         dispatch(
+  //           setInspectionData({ field: "mileAge", value: basic.mileAge })
+  //         );
+
+  //       // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
+  //       if (basic.buildDate)
+  //         dispatch(
+  //           setInspectionData({ field: "buildDate", value: basic.buildDate })
+  //         );
+  //       if (basic.compliancePlate)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "complianceDate",
+  //             value: basic.compliancePlate,
+  //           })
+  //         );
+
+  //       // identification plate
+  //       if (basic.plate)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "registrationPlate",
+  //             value: basic.plate,
+  //           })
+  //         );
+  //     } else {
+  //       // basic null -> warn the user but continue to try additional info
+  //       console.warn("No basic info read from vehicleReport.");
+  //     }
+
+  //     // 4) Read additional info if you want to store/use it
+  //     const additional = await getVehicleAdditionalInfo();
+  //     if (additional) {
+  //       console.log("Additional info", additional);
+  //       // Example: if you want to store colour, fuelType etc. in inspection state,
+  //       // either extend your redux slice or temporarily store them under other fields.
+  //       // Below I show dispatches to fields named fuelType, driveType, etc.
+  //       if (additional.colour)
+  //         dispatch(
+  //           setInspectionData({ field: "color", value: additional.colour })
+  //         );
+  //       if (additional.fuelType)
+  //         dispatch(
+  //           setInspectionData({ field: "fuelType", value: additional.fuelType })
+  //         );
+  //       if (additional.transmissionType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "transmission",
+  //             value: additional.transmissionType,
+  //           })
+  //         );
+  //       if (additional.driveType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "driveTrain",
+  //             value: additional.driveType,
+  //           })
+  //         );
+  //       if (additional.bodyType)
+  //         dispatch(
+  //           setInspectionData({ field: "bodyType", value: additional.bodyType })
+  //         );
+  //     }
+
+  //     Alert.alert(
+  //       "Vehicle info loaded",
+  //       "Vehicle details have been populated from InfoAgent."
+  //     );
+  //   } catch (err) {
+  //     console.error("Error in fetch flow:", err);
+  //     // Show friendly message
+  //     Alert.alert(
+  //       "Fetch failed",
+  //       err?.message ||
+  //         "Failed to fetch vehicle info. Check the VIN and network."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // --- New: fetch vehicle info flow ---
   const handleFetchVehicleInfo = async () => {
     // Basic validation
     if (!vin || vin.trim().length === 0) {
@@ -75,29 +196,23 @@ export default function InspectionWizardStepOne({ navigation }) {
       return;
     }
 
-    // Optionally check length 17 (common for VINs) — not mandatory
-    // if (vin.trim().length < 10) { /* ignore or warn */ }
-
     try {
       setLoading(true);
 
       // 1) Ensure token present
       await fetchAndStoreInfoAgentToken();
 
-      // 2) Call vehicle report endpoint (stores report in AsyncStorage inside api util)
+      // 2) Call vehicle report endpoint
       await fetchVehicleReport(vin.trim());
 
-      // 3) Read basic info from saved report
+      // 3) Read basic info
       const basic = await getVehicleBasicInfo();
-      console.log("info", basic);
+
       if (basic) {
-        // Map fields to your redux fields (use defensive checks)
-        console.log("Basic info", basic);
         if (basic.year)
           dispatch(
             setInspectionData({ field: "year", value: String(basic.year) })
           );
-
         if (basic.make)
           dispatch(setInspectionData({ field: "make", value: basic.make }));
         if (basic.model)
@@ -106,8 +221,6 @@ export default function InspectionWizardStepOne({ navigation }) {
           dispatch(
             setInspectionData({ field: "mileAge", value: basic.mileAge })
           );
-
-        // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
         if (basic.buildDate)
           dispatch(
             setInspectionData({ field: "buildDate", value: basic.buildDate })
@@ -119,8 +232,6 @@ export default function InspectionWizardStepOne({ navigation }) {
               value: basic.compliancePlate,
             })
           );
-
-        // identification plate
         if (basic.plate)
           dispatch(
             setInspectionData({
@@ -128,18 +239,10 @@ export default function InspectionWizardStepOne({ navigation }) {
               value: basic.plate,
             })
           );
-      } else {
-        // basic null -> warn the user but continue to try additional info
-        console.warn("No basic info read from vehicleReport.");
       }
 
-      // 4) Read additional info if you want to store/use it
       const additional = await getVehicleAdditionalInfo();
       if (additional) {
-        console.log("Additional info", additional);
-        // Example: if you want to store colour, fuelType etc. in inspection state,
-        // either extend your redux slice or temporarily store them under other fields.
-        // Below I show dispatches to fields named fuelType, driveType, etc.
         if (additional.colour)
           dispatch(
             setInspectionData({ field: "color", value: additional.colour })
@@ -168,13 +271,61 @@ export default function InspectionWizardStepOne({ navigation }) {
           );
       }
 
-      Alert.alert(
-        "Vehicle info loaded",
-        "Vehicle details have been populated from InfoAgent."
-      );
+      // ✅ ADDED for API Field Validation
+      // ------------------------------------------------------
+      // ✅ ADDED for API Field Validation (fixed timing issue)
+      const requiredFields = [
+        { key: "vin", label: "VIN/Chassis Number" },
+        { key: "year", label: "Year" },
+        { key: "make", label: "Make" },
+        { key: "model", label: "Model" },
+        { key: "mileAge", label: "Mileage" },
+        { key: "registrationPlate", label: "Registration Plate" },
+        { key: "buildDate", label: "Build Date" },
+        { key: "complianceDate", label: "Compliance Date" },
+      ];
+
+      // Build collected data from latest info (prefer fetched values)
+      const collectedData = {
+        vin: vin?.trim() || "",
+        year: basic?.year ? String(basic.year) : year,
+        make: basic?.make || make,
+        model: basic?.model || model,
+        mileAge: basic?.mileAge || mileAge,
+        registrationPlate: basic?.plate || registrationPlate,
+        buildDate: basic?.buildDate || buildDate,
+        complianceDate: basic?.compliancePlate || complianceDate,
+      };
+
+      // Find missing fields (based on latest fetched + stored data)
+      const missingFields = requiredFields
+        .filter(
+          (f) => !collectedData[f.key] || collectedData[f.key].trim() === ""
+        )
+        .map((f) => f.label);
+
+      let validationStatus = false;
+      let validationMessage = "";
+
+      if (missingFields.length > 0) {
+        validationStatus = false;
+        validationMessage = `Missing fields:\n${missingFields.join("\n")}`;
+        Alert.alert("⚠️ Missing Data", validationMessage);
+      } else {
+        validationStatus = true;
+        validationMessage = "✅ All fields have been successfully populated.";
+        Alert.alert("Success", validationMessage);
+      }
+
+      console.log({
+        missingFields,
+        validationStatus,
+        validationMessage,
+      });
+
+      // ------------------------------------------------------
     } catch (err) {
       console.error("Error in fetch flow:", err);
-      // Show friendly message
       Alert.alert(
         "Fetch failed",
         err?.message ||

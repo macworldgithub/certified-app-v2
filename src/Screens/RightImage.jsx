@@ -91,7 +91,7 @@ export default function RightImage({ navigation }) {
         {/* Next */}
         <NextButton
           navigation={navigation}
-          nextScreen="InspectionWizardStepTwo"
+          nextScreen="LeftImage"
         />
       </View>
     </SafeAreaWrapper>

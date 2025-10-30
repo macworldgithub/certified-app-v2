@@ -163,15 +163,8 @@
 //   );
 // }
 
-
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
@@ -181,16 +174,19 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function InspectionWizardStepFive({ navigation }) {
   const dispatch = useDispatch();
-  const { tyreConditionFrontLeft, tyreConditionFrontRight, tyreConditionRearRight, tyreConditionRearLeft } = useSelector(
-    (state) => state.inspection
-  );
+  const {
+    tyreConditionFrontLeft,
+    tyreConditionFrontRight,
+    tyreConditionRearRight,
+    tyreConditionRearLeft,
+  } = useSelector((state) => state.inspection);
 
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
   };
 
   const handleNext = () => {
-    navigation.navigate("InspectionWizardStepSix");
+    navigation.navigate("InspectionWizardStepFour");
   };
 
   const handleBack = () => navigation.goBack();
@@ -212,7 +208,9 @@ export default function InspectionWizardStepFive({ navigation }) {
         <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-32`}>
           {/* Tyre Condition - Front Left */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Tyre Condition - Front Left</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Tyre Condition - Front Left
+            </Text>
             <View style={tw`flex-row items-center justify-between`}>
               {["Pass", "Fail"].map((option) => (
                 <TouchableOpacity
@@ -238,7 +236,9 @@ export default function InspectionWizardStepFive({ navigation }) {
 
           {/* Tyre Condition - Front Right */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Tyre Condition - Front Right</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Tyre Condition - Front Right
+            </Text>
             <View style={tw`flex-row items-center justify-between`}>
               {["Pass", "Fail"].map((option) => (
                 <TouchableOpacity
@@ -249,7 +249,9 @@ export default function InspectionWizardStepFive({ navigation }) {
                       ? "border-green-600 bg-green-50"
                       : "border-gray-300 bg-white"
                   )}
-                  onPress={() => handleSelect("tyreConditionFrontRight", option)}
+                  onPress={() =>
+                    handleSelect("tyreConditionFrontRight", option)
+                  }
                 >
                   <Text style={tw`text-gray-700 text-sm`}>{option}</Text>
                 </TouchableOpacity>
@@ -264,7 +266,9 @@ export default function InspectionWizardStepFive({ navigation }) {
 
           {/* Tyre Condition - Rear Right */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Tyre Condition - Rear Right</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Tyre Condition - Rear Right
+            </Text>
             <View style={tw`flex-row items-center justify-between`}>
               {["Pass", "Fail"].map((option) => (
                 <TouchableOpacity
@@ -290,7 +294,9 @@ export default function InspectionWizardStepFive({ navigation }) {
 
           {/* Tyre Condition - Rear Left */}
           <View style={tw`mt-4`}>
-            <Text style={tw`text-gray-500 mb-1`}>Tyre Condition - Rear Left</Text>
+            <Text style={tw`text-gray-500 mb-1`}>
+              Tyre Condition - Rear Left
+            </Text>
             <View style={tw`flex-row items-center justify-between`}>
               {["Pass", "Fail"].map((option) => (
                 <TouchableOpacity
@@ -312,11 +318,11 @@ export default function InspectionWizardStepFive({ navigation }) {
                 resizeMode="contain"
               />
             </View>
-          </View>       
+          </View>
         </ScrollView>
 
         {/* Next Button */}
-          <View
+        <View
           style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
         >
           <TouchableOpacity
