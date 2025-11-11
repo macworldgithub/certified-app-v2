@@ -95,7 +95,7 @@ export default function LeftImage({ navigation }) {
           <DamageSection inspection={inspection} partKey={partKey} />
         </ScrollView>
 
-        <NextButton navigation={navigation} nextScreen="RearImage" />
+        <NextButton navigation={navigation} nextScreen="InteriorFront" />
       </View>
     </SafeAreaWrapper>
   );

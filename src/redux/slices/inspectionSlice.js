@@ -125,6 +125,7 @@
 // } = inspectionSlice.actions;
 
 // export default inspectionSlice.reducer;
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -133,18 +134,23 @@ const initialState = {
   make: "", // From InspectionWizardStepOne
   model: "", // From InspectionWizardStepOne
   mileAge: "",
+
   registrationPlate: "", // From InspectionWizardStepOne
   registrationExpiry: "", // From InspectionWizardStepOne
   buildDate: "", // From InspectionWizardStepOne
   complianceDate: "", // From InspectionWizardStepOne
   images: {
-    frontImage: null, // Updated key to match component partKey
-    rearImage: null,
-    leftImage: null,
+    frontImage: null,
+    engineImage: null,
     rightImage: null,
+    rearImage: null,
+    VINPlate: null,
+    leftImage: null,
+    InteriorFront: null,
+    InteriorBack: null,
   },
-  odometer: "", // From InspectionWizardStepTwo
-  fuelType: "", // From InspectionWizardStepTwo
+  odometerReading: "", // From InspectionWizardStepTwo
+  odometerImage: null, // From InspectionWizardStepTwo
   driveTrain: "", // From InspectionWizardStepTwo
   transmission: "", // From InspectionWizardStepTwo
   bodyType: "", // From InspectionWizardStepTwo
@@ -154,14 +160,23 @@ const initialState = {
   keysPresent: "", // From InspectionWizardStepThree
   serviceBookPresent: "", // From InspectionWizardStepFour
   serviceHistoryPresent: "", // From InspectionWizardStepFour
+  serviceHistoryAvailable: false, // derived in StepFour
+  bookImages: [], // StepFour: uploaded service book photos
+  currentServiceDate: "", // StepFour
+  currentServiceKilometers: "", // StepFour
+  lastServiceDate: "", // StepFour
+  lastServiceKilometers: "", // StepFour
+  serviceNotes: "", // StepFour
   tyreConditionFrontLeft: "", // From InspectionWizardStepFive
   tyreConditionFrontRight: "", // From InspectionWizardStepFive
   tyreConditionRearRight: "", // From InspectionWizardStepFive
   tyreConditionRearLeft: "", // From InspectionWizardStepFive
   damagePresent: "", // From InspectionWizardStepSix
+  damages: [], // StepSix: list of recorded damages
   roadTest: "", // From InspectionWizardStepSix
   roadTestComments: "", // From InspectionWizardStepSix
   generalComments: "", // From InspectionWizardStepSix
+  roadTestVoiceMemo: null, // StepSix: recorded memo path (mock)
 };
 
 const inspectionSlice = createSlice({
@@ -212,6 +227,10 @@ const inspectionSlice = createSlice({
         "rearImage",
         "leftImage",
         "rightImage",
+        "engineImage",
+        "VINPlate",
+        "InteriorFront",
+        "InteriorBack",
       ];
 
       imageFields.forEach((field) => {
@@ -263,8 +282,14 @@ const inspectionSlice = createSlice({
         rearImage: null,
         leftImage: null,
         rightImage: null,
+        engineImage: null,
+        VINPlate: null,
+        InteriorFront: null,
+        InteriorBack: null,
       };
-      state.odometer = "";
+      // state.odometer = "";
+      state.odometerReading = "";
+      state.odometerImage = null;
       state.fuelType = "";
       state.driveTrain = "";
       state.transmission = "";
@@ -275,14 +300,23 @@ const inspectionSlice = createSlice({
       state.keysPresent = "";
       state.serviceBookPresent = "";
       state.serviceHistoryPresent = "";
+      state.serviceHistoryAvailable = false;
+      state.bookImages = [];
+      state.currentServiceDate = "";
+      state.currentServiceKilometers = "";
+      state.lastServiceDate = "";
+      state.lastServiceKilometers = "";
+      state.serviceNotes = "";
       state.tyreConditionFrontLeft = "";
       state.tyreConditionFrontRight = "";
       state.tyreConditionRearRight = "";
       state.tyreConditionRearLeft = "";
       state.damagePresent = "";
+      state.damages = [];
       state.roadTest = "";
       state.roadTestComments = "";
       state.generalComments = "";
+      state.roadTestVoiceMemo = null;
     },
   },
 });
@@ -294,7 +328,6 @@ export const {
   resetInspection,
   resetInspectionData,
   setInspectionDetails,
-  setEngineDetails,
 } = inspectionSlice.actions;
 
 export default inspectionSlice.reducer;

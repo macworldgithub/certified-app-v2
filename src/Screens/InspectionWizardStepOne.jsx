@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -271,9 +272,6 @@ export default function InspectionWizardStepOne({ navigation }) {
           );
       }
 
-      // ✅ ADDED for API Field Validation
-      // ------------------------------------------------------
-      // ✅ ADDED for API Field Validation (fixed timing issue)
       const requiredFields = [
         { key: "vin", label: "VIN/Chassis Number" },
         { key: "year", label: "Year" },
@@ -285,7 +283,6 @@ export default function InspectionWizardStepOne({ navigation }) {
         { key: "complianceDate", label: "Compliance Date" },
       ];
 
-      // Build collected data from latest info (prefer fetched values)
       const collectedData = {
         vin: vin?.trim() || "",
         year: basic?.year ? String(basic.year) : year,
@@ -297,7 +294,6 @@ export default function InspectionWizardStepOne({ navigation }) {
         complianceDate: basic?.compliancePlate || complianceDate,
       };
 
-      // Find missing fields (based on latest fetched + stored data)
       const missingFields = requiredFields
         .filter(
           (f) => !collectedData[f.key] || collectedData[f.key].trim() === ""
@@ -322,8 +318,6 @@ export default function InspectionWizardStepOne({ navigation }) {
         validationStatus,
         validationMessage,
       });
-
-      // ------------------------------------------------------
     } catch (err) {
       console.error("Error in fetch flow:", err);
       Alert.alert(
@@ -338,216 +332,228 @@ export default function InspectionWizardStepOne({ navigation }) {
 
   return (
     <SafeAreaWrapper>
-      <View style={tw`flex-1 bg-white`}>
-        {/* Header */}
-        <View style={tw`flex-row items-center mb-6 px-4 pt-4`}>
-          <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>
-            <AppIcon name="arrow-left" size={24} color="#065f46" />
-          </TouchableOpacity>
-          <Text style={tw`text-lg font-bold text-green-800`}>
-            Inspection Wizard
-          </Text>
-        </View>
-
-        {/* Scrollable Content */}
-        <ScrollView style={tw`px-4`} contentContainerStyle={tw`pb-28`}>
-          {/* VIN/Chassis Number */}
-          <View style={tw`mt-0`}>
-            <Text style={tw`text-gray-500 mb-2`}>VIN/Chassis Number</Text>
-
-            <View style={tw`flex-row items-center`}>
-              <TextInput
-                value={vin}
-                onChangeText={(value) => handleTextChange("vin", value)}
-                placeholder="Enter VIN/Chassis Number"
-                style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
-                autoCapitalize="characters"
-              />
-
-              {/* Fetch button */}
-              <TouchableOpacity
-                onPress={handleFetchVehicleInfo}
-                style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={tw`text-white font-semibold`}>Fetch</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+      <KeyboardAvoidingView
+        style={tw`flex-1`}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      >
+        <View style={tw`flex-1 bg-white`}>
+          {/* Header */}
+          <View style={tw`flex-row items-center mb-6 px-4 pt-4`}>
+            <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>
+              <AppIcon name="arrow-left" size={24} color="#065f46" />
+            </TouchableOpacity>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              Inspection Wizard
+            </Text>
           </View>
+   
+          {/* Scrollable Content */}
+          <ScrollView
+            style={tw`px-4`}
+            contentContainerStyle={tw`pb-28`}
+            keyboardShouldPersistTaps="handled" // ✅ Helps input taps work properly
+          >
+            {/* VIN/Chassis Number */}
+            <View style={tw`mt-0`}>
+              <Text style={tw`text-gray-500 mb-2`}>VIN/Chassis Number</Text>
 
-          {/* Year */}
-          <View style={tw`mt-6`}>
-            <Text style={tw`text-gray-500 mb-2`}>Year</Text>
-            <TextInput
-              value={year}
-              onChangeText={(value) => handleTextChange("year", value)}
-              placeholder="Enter Year"
-              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-              keyboardType="numeric"
-            />
-          </View>
-
-          {/* Make */}
-          <View style={tw`mt-6`}>
-            <Text style={tw`text-gray-500 mb-2`}>Make</Text>
-            <TextInput
-              value={make}
-              onChangeText={(value) => handleTextChange("make", value)}
-              placeholder="Enter Make"
-              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-            />
-          </View>
-
-          {/* Model */}
-          <View style={tw`mt-6`}>
-            <Text style={tw`text-gray-500 mb-2`}>Model</Text>
-            <TextInput
-              value={model}
-              onChangeText={(value) => handleTextChange("model", value)}
-              placeholder="Enter Model"
-              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-            />
-          </View>
-
-          <View style={tw`mt-6`}>
-            <Text style={tw`text-gray-500 mb-2`}>mileAge</Text>
-            <TextInput
-              value={mileAge}
-              onChangeText={(value) => handleTextChange("mileAge", value)}
-              placeholder="Enter mileAge"
-              style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-            />
-          </View>
-
-          {/* Registration Fields */}
-          <View style={tw`mt-6 flex-row justify-between`}>
-            <View style={tw`flex-1 mr-2`}>
-              <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
-              <TextInput
-                value={registrationPlate}
-                onChangeText={(value) =>
-                  handleTextChange("registrationPlate", value)
-                }
-                placeholder="Enter Registration Plate"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
-              />
-            </View>
-
-            <View style={tw`flex-1 ml-2`}>
-              <Text style={tw`text-gray-500 mb-2`}>Registration Expiry</Text>
-              <TouchableOpacity
-                onPress={() => showDatePicker("registrationExpiry")}
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
-              >
-                <Text style={tw`text-base text-gray-800`}>
-                  {registrationExpiry || "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Build & Compliance Dates */}
-          <View style={tw`mt-6 flex-row justify-between`}>
-            <View style={tw`flex-1 mr-2`}>
-              <Text style={tw`text-gray-500 mb-2`}>Build Date</Text>
-              <TouchableOpacity
-                onPress={() => showDatePicker("buildDate")}
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
-              >
-                <Text style={tw`text-base text-gray-800`}>
-                  {buildDate || "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={tw`flex-1 ml-2`}>
-              <Text style={tw`text-gray-500 mb-2`}>Compliance Date</Text>
-              <TouchableOpacity
-                onPress={() => showDatePicker("complianceDate")}
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
-              >
-                <Text style={tw`text-base text-gray-800`}>
-                  {complianceDate || "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </ScrollView>
-
-        {/* Date Picker for Android */}
-        {showPicker && Platform.OS === "android" && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date || new Date()}
-            mode="date"
-            display="calendar"
-            onChange={onDateChange}
-          />
-        )}
-
-        {/* Date Picker for iOS (Modal) */}
-        {showPicker && Platform.OS === "ios" && (
-          <Modal transparent animationType="slide">
-            <View style={tw`flex-1 justify-end bg-black/50 `}>
-              <View
-                style={tw`bg-white text-black rounded-t-2xl p-4  text-red-900`}
-              >
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date || new Date()}
-                  mode="date"
-                  display="spinner"
-                  onChange={onDateChange}
-                  color="#000000"
-                  themeVariant="light"
-                  // style={tw`bg-black color-black text-red-500`}
+              <View style={tw`flex-row items-center`}>
+                <TextInput
+                  value={vin}
+                  onChangeText={(value) => handleTextChange("vin", value)}
+                  placeholder="Enter VIN/Chassis Number"
+                  style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                  autoCapitalize="characters"
                 />
 
-                <View style={tw`flex-row justify-end mt-2`}>
-                  <TouchableOpacity onPress={() => setShowPicker(null)}>
-                    <Text style={tw`text-gray-500 mr-4 text-base`}>Cancel</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={tw`mr-2 text-red-500`}
-                    onPress={() => {
-                      // Confirm the selected date
-                      const formatted = date.toLocaleDateString("en-GB");
-                      dispatch(
-                        setInspectionData({
-                          field: showPicker,
-                          value: formatted,
-                        })
-                      );
-                      setShowPicker(null);
-                    }}
-                  >
-                    <Text style={tw`text-green-700 text-base font-semibold`}>
-                      Done
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                {/* Fetch button */}
+                <TouchableOpacity
+                  onPress={handleFetchVehicleInfo}
+                  style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={tw`text-white font-semibold`}>Fetch</Text>
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        )}
 
-        {/* Next Button */}
-        <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
-          <TouchableOpacity
-            style={tw`bg-green-700 py-2 rounded-xl`}
-            onPress={handleNext}
-          >
-            <Text style={tw`text-white text-center text-lg font-semibold`}>
-              Next
-            </Text>
-          </TouchableOpacity>
+            {/* Year */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>Year</Text>
+              <TextInput
+                value={year}
+                onChangeText={(value) => handleTextChange("year", value)}
+                placeholder="Enter Year"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                keyboardType="numeric"
+              />
+            </View>
+
+            {/* Make */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>Make</Text>
+              <TextInput
+                value={make}
+                onChangeText={(value) => handleTextChange("make", value)}
+                placeholder="Enter Make"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+              />
+            </View>
+
+            {/* Model */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>Model</Text>
+              <TextInput
+                value={model}
+                onChangeText={(value) => handleTextChange("model", value)}
+                placeholder="Enter Model"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+              />
+            </View>
+
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>mileAge</Text>
+              <TextInput
+                value={mileAge}
+                onChangeText={(value) => handleTextChange("mileAge", value)}
+                placeholder="Enter mileAge"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+              />
+            </View>
+
+            {/* Registration Fields */}
+            <View style={tw`mt-6 flex-row justify-between`}>
+              <View style={tw`flex-1 mr-2`}>
+                <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
+                <TextInput
+                  value={registrationPlate}
+                  onChangeText={(value) =>
+                    handleTextChange("registrationPlate", value)
+                  }
+                  placeholder="Enter Registration Plate"
+                  style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
+                />
+              </View>
+
+              <View style={tw`flex-1 ml-2`}>
+                <Text style={tw`text-gray-500 mb-2`}>Registration Expiry</Text>
+                <TouchableOpacity
+                  onPress={() => showDatePicker("registrationExpiry")}
+                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                >
+                  <Text style={tw`text-base text-gray-800`}>
+                    {registrationExpiry || "Select Date"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Build & Compliance Dates */}
+            <View style={tw`mt-6 flex-row justify-between`}>
+              <View style={tw`flex-1 mr-2`}>
+                <Text style={tw`text-gray-500 mb-2`}>Build Date</Text>
+                <TouchableOpacity
+                  onPress={() => showDatePicker("buildDate")}
+                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                >
+                  <Text style={tw`text-base text-gray-800`}>
+                    {buildDate || "Select Date"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={tw`flex-1 ml-2`}>
+                <Text style={tw`text-gray-500 mb-2`}>Compliance Date</Text>
+                <TouchableOpacity
+                  onPress={() => showDatePicker("complianceDate")}
+                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                >
+                  <Text style={tw`text-base text-gray-800`}>
+                    {complianceDate || "Select Date"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+
+          {/* Date Picker for Android */}
+          {showPicker && Platform.OS === "android" && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date || new Date()}
+              mode="date"
+              display="calendar"
+              onChange={onDateChange}
+            />
+          )}
+
+          {/* Date Picker for iOS (Modal) */}
+          {showPicker && Platform.OS === "ios" && (
+            <Modal transparent animationType="slide">
+              <View style={tw`flex-1 justify-end bg-black/50 `}>
+                <View
+                  style={tw`bg-white text-black rounded-t-2xl p-4  text-red-900`}
+                >
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date || new Date()}
+                    mode="date"
+                    display="spinner"
+                    onChange={onDateChange}
+                    color="#000000"
+                    themeVariant="light"
+                    // style={tw`bg-black color-black text-red-500`}
+                  />
+
+                  <View style={tw`flex-row justify-end mt-2`}>
+                    <TouchableOpacity onPress={() => setShowPicker(null)}>
+                      <Text style={tw`text-gray-500 mr-4 text-base`}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={tw`mr-2 text-red-500`}
+                      onPress={() => {
+                        // Confirm the selected date
+                        const formatted = date.toLocaleDateString("en-GB");
+                        dispatch(
+                          setInspectionData({
+                            field: showPicker,
+                            value: formatted,
+                          })
+                        );
+                        setShowPicker(null);
+                      }}
+                    >
+                      <Text style={tw`text-green-700 text-base font-semibold`}>
+                        Done
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          )}
+
+          {/* Next Button */}
+          <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
+            <TouchableOpacity
+              style={tw`bg-green-700 py-2 rounded-xl`}
+              onPress={handleNext}
+            >
+              <Text style={tw`text-white text-center text-lg font-semibold`}>
+                Next
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 }

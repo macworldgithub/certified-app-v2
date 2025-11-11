@@ -89,10 +89,7 @@ export default function RightImage({ navigation }) {
         </ScrollView>
 
         {/* Next */}
-        <NextButton
-          navigation={navigation}
-          nextScreen="LeftImage"
-        />
+        <NextButton navigation={navigation} nextScreen="RearImage" />
       </View>
     </SafeAreaWrapper>
   );

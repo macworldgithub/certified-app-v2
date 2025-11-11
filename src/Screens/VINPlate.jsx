@@ -1,24 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  TextInput,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { setImages } from "../redux/slices/inspectionSlice";
-import mime from "mime";
-import API_BASE_URL from "../../utils/config";
-import axios from "axios";
+
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-import { API_BASE_URL_Prod } from "../../utils/config";
-import ImageViewing from "react-native-image-viewing";
+
 import {
   Header,
   ImageComparison,
@@ -29,20 +16,20 @@ import {
   NextButton,
 } from "../components/InspectionComponent";
 import AppIcon from "../components/AppIcon";
-
-export default function RearImage({ navigation }) {
+export default function VINPlate({ navigation }) {
   const dispatch = useDispatch();
   const { images: savedImages } = useSelector((state) => state.inspection);
   const inspection = useSelector((state) => state.inspection);
 
-  const partKey = "rearImage";
-
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewUri, setPreviewUri] = useState(null);
+  const partKey = "VINPlate";
   const [images, setLocalImages] = useState(savedImages || {});
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
+
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewUri, setPreviewUri] = useState(null);
+
   const saveImagesToRedux = (updatedImages) => {
     setLocalImages(updatedImages);
     dispatch(setImages(updatedImages));
@@ -59,12 +46,15 @@ export default function RearImage({ navigation }) {
               <AppIcon name="arrow-left" size={24} color="#065f46" />
               {/* green-800 color */}
             </TouchableOpacity>
-            <Text style={tw`text-lg font-bold text-green-800`}>Rear Image</Text>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              VIN Plate Image
+            </Text>
           </View>
           <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
-            Rear Image
+            VIN Plate Image
           </Text>
 
+          {/* Image Comparison */}
           <ImageComparison
             partKey={partKey}
             images={images}
@@ -72,9 +62,11 @@ export default function RearImage({ navigation }) {
             setPreviewVisible={setPreviewVisible}
           />
 
+          {/* Uploading / Analyzing indicators */}
           {uploading && <LoadingIndicator label="Uploading..." />}
           {analyzing && <LoadingIndicator label="Analyzing..." />}
 
+          {/* Gallery & Camera actions */}
           <ImageActions
             partKey={partKey}
             images={images}
@@ -83,6 +75,7 @@ export default function RearImage({ navigation }) {
             setProgress={setProgress}
           />
 
+          {/* Analyze + Delete */}
           <AnalyzeDeleteButtons
             partKey={partKey}
             images={images}
@@ -91,10 +84,12 @@ export default function RearImage({ navigation }) {
             setAnalyzing={setAnalyzing}
           />
 
+          {/* Damages */}
           <DamageSection inspection={inspection} partKey={partKey} />
         </ScrollView>
 
-        <NextButton navigation={navigation} nextScreen="VINPlate" />
+        {/* Next */}
+        <NextButton navigation={navigation} nextScreen="LeftImage" />
       </View>
     </SafeAreaWrapper>
   );

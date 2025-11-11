@@ -239,7 +239,7 @@ export default function FrontImage({ navigation }) {
         </ScrollView>
 
         {/* Next */}
-        <NextButton navigation={navigation} nextScreen="RightImage" />
+        <NextButton navigation={navigation} nextScreen="EngineImage" />
       </View>
     </SafeAreaWrapper>
   );

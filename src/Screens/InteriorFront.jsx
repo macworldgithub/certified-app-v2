@@ -30,12 +30,12 @@ import {
 } from "../components/InspectionComponent";
 import AppIcon from "../components/AppIcon";
 
-export default function RearImage({ navigation }) {
+export default function InteriorFront({ navigation }) {
   const dispatch = useDispatch();
   const { images: savedImages } = useSelector((state) => state.inspection);
   const inspection = useSelector((state) => state.inspection);
 
-  const partKey = "rearImage";
+  const partKey = "InteriorFront";
 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewUri, setPreviewUri] = useState(null);
@@ -59,10 +59,12 @@ export default function RearImage({ navigation }) {
               <AppIcon name="arrow-left" size={24} color="#065f46" />
               {/* green-800 color */}
             </TouchableOpacity>
-            <Text style={tw`text-lg font-bold text-green-800`}>Rear Image</Text>
+            <Text style={tw`text-lg font-bold text-green-800`}>
+              Interior Front Image
+            </Text>
           </View>
           <Text style={tw`text-lg font-bold text-green-800 mb-6`}>
-            Rear Image
+            Interior Front Image
           </Text>
 
           <ImageComparison
@@ -94,7 +96,7 @@ export default function RearImage({ navigation }) {
           <DamageSection inspection={inspection} partKey={partKey} />
         </ScrollView>
 
-        <NextButton navigation={navigation} nextScreen="VINPlate" />
+        <NextButton navigation={navigation} nextScreen="InteriorBack" />
       </View>
     </SafeAreaWrapper>
   );
