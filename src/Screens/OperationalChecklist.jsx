@@ -182,7 +182,7 @@ export default function OperationalChecklist({ navigation }) {
       Alert.alert("❌ Error", errorMsg);
     }
   };
-   const handleBack = () => navigation.goBack();
+  const handleBack = () => navigation.goBack();
 
   return (
     <SafeAreaWrapper>
@@ -191,9 +191,7 @@ export default function OperationalChecklist({ navigation }) {
           <TouchableOpacity onPress={handleBack} style={tw`mr-3`}>
             <AppIcon name="arrow-left" size={24} color="#065f46" />
           </TouchableOpacity>
-          <Text style={tw`text-lg font-bold text-green-800`}>
-           Operational
-          </Text>
+          <Text style={tw`text-lg font-bold text-green-800`}>Operational</Text>
         </View>
         {/* Start */}
         {renderSection(

@@ -167,7 +167,7 @@ const bodyTypeOptions = ["Sedan", "SUV", "Hatchback", "Truck", "Van"];
 export default function InspectionWizardStepTwo({ navigation }) {
   const dispatch = useDispatch();
   const {
-    odometerReading,
+    odometer,
     odometerImage,
     fuelType,
     driveTrain,
@@ -287,9 +287,9 @@ export default function InspectionWizardStepTwo({ navigation }) {
             <TextInput
               placeholder="Enter Odometer Reading"
               keyboardType="numeric"
-              value={odometerReading}
+              value={odometer}
               onChangeText={(value) =>
-                dispatch(setInspectionData({ field: "odometerReading", value }))
+                dispatch(setInspectionData({ field: "odometer", value }))
               }
               style={tw`border border-gray-300 rounded-lg p-3 bg-white mb-4`}
             />

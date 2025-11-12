@@ -1,133 +1,4 @@
-// import { createSlice } from "@reduxjs/toolkit";
-
-// const initialState = {
-//   vin: "", // From InspectionWizardStepOne
-//   year: "", // From InspectionWizardStepOne
-//   make: "", // From InspectionWizardStepOne
-//   model: "", // From InspectionWizardStepOne
-//   mileAge: "",
-//   registrationPlate: "", // From InspectionWizardStepOne
-//   registrationExpiry: "", // From InspectionWizardStepOne
-//   buildDate: "", // From InspectionWizardStepOne
-//   complianceDate: "", // From InspectionWizardStepOne
-//   images: {
-//     front: null, // Image upload after StepOne
-//     rear: null,
-//     left: null,
-//     right: null,
-//   },
-//   odometer: "", // From InspectionWizardStepTwo
-//   fuelType: "", // From InspectionWizardStepTwo
-//   driveTrain: "", // From InspectionWizardStepTwo
-//   transmission: "", // From InspectionWizardStepTwo
-//   bodyType: "", // From InspectionWizardStepTwo
-//   color: "", // From InspectionWizardStepThree
-//   frontWheelDiameter: "", // From InspectionWizardStepThree
-//   rearWheelDiameter: "", // From InspectionWizardStepThree
-//   keysPresent: "", // From InspectionWizardStepThree
-//   serviceBookPresent: "", // From InspectionWizardStepFour
-//   serviceHistoryPresent: "", // From InspectionWizardStepFour
-//   tyreConditionFrontLeft: "", // From InspectionWizardStepFive
-//   tyreConditionFrontRight: "", // From InspectionWizardStepFive
-//   tyreConditionRearRight: "", // From InspectionWizardStepFive
-//   tyreConditionRearLeft: "", // From InspectionWizardStepFive
-//   damagePresent: "", // From InspectionWizardStepSix
-//   roadTest: "", // From InspectionWizardStepSix
-//   roadTestComments: "", // From InspectionWizardStepSix
-//   generalComments: "", // From InspectionWizardStepSix
-// };
-
-// const inspectionSlice = createSlice({
-//   name: "inspection",
-//   initialState,
-//   reducers: {
-//     // Universal field updater for all Wizard steps
-//     setInspectionData: (state, action) => {
-//       const { field, value } = action.payload;
-//       if (field in state || (field in state.images && value !== null)) {
-//         if (field in state.images) {
-//           state.images[field] = value;
-//         } else {
-//           state[field] = value;
-//         }
-//       }
-//     },
-
-//     setEngineDetails: (state, action) => {
-//       state.engineNumber = action.payload.engineNumber;
-//       state.mileAge = action.payload.mileAge;
-//     },
-
-//     setInspectionDetails: (state, action) => {
-//       state.vin = action.payload.vin;
-//       state.make = action.payload.make;
-//       state.model = action.payload.carModel;
-//       state.year = action.payload.year;
-//       state.mileAge = action.payload.mileAge;
-//     },
-
-//     // Update images specifically
-//     setImages: (state, action) => {
-//       state.images = { ...state.images, ...action.payload };
-//     },
-
-//     // Merge full inspection data object
-//     setInspection: (state, action) => {
-//       return { ...state, ...action.payload };
-//     },
-
-//     // Reset all inspection data
-//     resetInspection: () => initialState,
-
-//     // Reset only specific wizard fields
-//     resetInspectionData: (state) => {
-//       state.vin = "";
-//       state.year = "";
-//       state.make = "";
-//       state.model = "";
-//       state.mileAge = "";
-//       state.registrationPlate = "";
-//       state.registrationExpiry = "";
-//       state.buildDate = "";
-//       state.complianceDate = "";
-//       state.images = { front: null, rear: null, left: null, right: null };
-//       state.odometer = "";
-//       state.fuelType = "";
-//       state.driveTrain = "";
-//       state.transmission = "";
-//       state.bodyType = "";
-//       state.color = "";
-//       state.frontWheelDiameter = "";
-//       state.rearWheelDiameter = "";
-//       state.keysPresent = "";
-//       state.serviceBookPresent = "";
-//       state.serviceHistoryPresent = "";
-//       state.tyreConditionFrontLeft = "";
-//       state.tyreConditionFrontRight = "";
-//       state.tyreConditionRearRight = "";
-//       state.tyreConditionRearLeft = "";
-//       state.damagePresent = "";
-//       state.roadTest = "";
-//       state.roadTestComments = "";
-//       state.generalComments = "";
-//     },
-//   },
-// });
-
-// export const {
-//   setInspectionData,
-//   setImages,
-//   setInspection,
-//   resetInspection,
-//   resetInspectionData,
-//   setInspectionDetails,
-//   setEngineDetails,
-// } = inspectionSlice.actions;
-
-// export default inspectionSlice.reducer;
-
 import { createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
   vin: "", // From InspectionWizardStepOne
   year: "", // From InspectionWizardStepOne
@@ -148,8 +19,9 @@ const initialState = {
     leftImage: null,
     InteriorFront: null,
     InteriorBack: null,
+    bookImages: null,
   },
-  odometerReading: "", // From InspectionWizardStepTwo
+  odometer: "", // From InspectionWizardStepTwo
   odometerImage: null, // From InspectionWizardStepTwo
   driveTrain: "", // From InspectionWizardStepTwo
   transmission: "", // From InspectionWizardStepTwo
@@ -161,12 +33,14 @@ const initialState = {
   serviceBookPresent: "", // From InspectionWizardStepFour
   serviceHistoryPresent: "", // From InspectionWizardStepFour
   serviceHistoryAvailable: false, // derived in StepFour
-  bookImages: [], // StepFour: uploaded service book photos
-  currentServiceDate: "", // StepFour
-  currentServiceKilometers: "", // StepFour
-  lastServiceDate: "", // StepFour
-  lastServiceKilometers: "", // StepFour
-  serviceNotes: "", // StepFour
+  // bookImages: [
+  //   "uploads/service_book/page1.jpg",
+  //   "uploads/service_book/page2.jpg",
+  // ],
+  lastServiceDate: "",
+  serviceCenterName: "",
+  odometerAtLastService: 0,
+  serviceRecordDocumentKey: "",
   tyreConditionFrontLeft: "", // From InspectionWizardStepFive
   tyreConditionFrontRight: "", // From InspectionWizardStepFive
   tyreConditionRearRight: "", // From InspectionWizardStepFive
@@ -231,6 +105,7 @@ const inspectionSlice = createSlice({
         "VINPlate",
         "InteriorFront",
         "InteriorBack",
+        "bookImages",
       ];
 
       imageFields.forEach((field) => {
@@ -286,6 +161,7 @@ const inspectionSlice = createSlice({
         VINPlate: null,
         InteriorFront: null,
         InteriorBack: null,
+        bookImages: null,
       };
       // state.odometer = "";
       state.odometerReading = "";
@@ -301,12 +177,14 @@ const inspectionSlice = createSlice({
       state.serviceBookPresent = "";
       state.serviceHistoryPresent = "";
       state.serviceHistoryAvailable = false;
-      state.bookImages = [];
-      state.currentServiceDate = "";
-      state.currentServiceKilometers = "";
+      // state.bookImages = [
+      //   "uploads/service_book/page1.jpg",
+      //   "uploads/service_book/page2.jpg",
+      // ];
       state.lastServiceDate = "";
-      state.lastServiceKilometers = "";
-      state.serviceNotes = "";
+      state.serviceCenterName = "";
+      state.odometerAtLastService = "";
+      state.serviceRecordDocumentKey = "";
       state.tyreConditionFrontLeft = "";
       state.tyreConditionFrontRight = "";
       state.tyreConditionRearRight = "";

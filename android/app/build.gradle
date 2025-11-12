@@ -152,7 +152,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
       // ✅ Manually linked @react-native-voice/voice
-    implementation project(':react-native-voice_voice')
+    // implementation project(':react-native-voice_voice')
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
