@@ -34,7 +34,7 @@ PODS:
     - ExpoModulesCore
   - ExpoDevice (7.1.4):
     - ExpoModulesCore
-  - ExpoFont (14.0.8):
+  - ExpoFont (14.0.9):
     - ExpoModulesCore
   - ExpoModulesCore (2.5.0):
     - DoubleConversion
@@ -1416,7 +1416,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (5.6.1):
+  - react-native-safe-area-context (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1431,8 +1431,8 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.6.1)
-    - react-native-safe-area-context/fabric (= 5.6.1)
+    - react-native-safe-area-context/common (= 5.6.2)
+    - react-native-safe-area-context/fabric (= 5.6.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1442,7 +1442,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (5.6.1):
+  - react-native-safe-area-context/common (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1466,7 +1466,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (5.6.1):
+  - react-native-safe-area-context/fabric (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1491,7 +1491,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-vector-icons-fontawesome6 (12.2.0)
+  - react-native-vector-icons-fontawesome6 (12.3.0)
   - React-NativeModulesApple (0.79.6):
     - glog
     - hermes-engine
@@ -1838,7 +1838,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCPicker (2.11.2):
+  - RNCPicker (2.11.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1862,7 +1862,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNDateTimePicker (8.4.5):
+  - RNDateTimePicker (8.5.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1890,7 +1890,7 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.28.0):
+  - RNGestureHandler (2.29.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1914,7 +1914,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (4.1.2):
+  - RNReanimated (4.1.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1937,10 +1937,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 4.1.2)
+    - RNReanimated/reanimated (= 4.1.5)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated (4.1.2):
+  - RNReanimated/reanimated (4.1.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1963,10 +1963,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 4.1.2)
+    - RNReanimated/reanimated/apple (= 4.1.5)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated/apple (4.1.2):
+  - RNReanimated/reanimated/apple (4.1.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1991,7 +1991,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - RNWorklets
     - Yoga
-  - RNScreens (4.16.0):
+  - RNScreens (4.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2015,9 +2015,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.16.0)
+    - RNScreens/common (= 4.18.0)
     - Yoga
-  - RNScreens/common (4.16.0):
+  - RNScreens/common (4.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2042,7 +2042,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.13.0):
+  - RNSVG (15.14.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2065,9 +2065,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.13.0)
+    - RNSVG/common (= 15.14.0)
     - Yoga
-  - RNSVG/common (15.13.0):
+  - RNSVG/common (15.14.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2115,7 +2115,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNWorklets (0.5.1):
+  - RNWorklets (0.5.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2138,9 +2138,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets (= 0.5.1)
+    - RNWorklets/worklets (= 0.5.2)
     - Yoga
-  - RNWorklets/worklets (0.5.1):
+  - RNWorklets/worklets (0.5.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2163,9 +2163,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets/apple (= 0.5.1)
+    - RNWorklets/worklets/apple (= 0.5.2)
     - Yoga
-  - RNWorklets/worklets/apple (0.5.1):
+  - RNWorklets/worklets/apple (0.5.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2480,7 +2480,7 @@ SPEC CHECKSUMS:
   Expo: dd7f49380001a55ea776f905f8b3c1c540160b09
   ExpoAsset: ef06e880126c375f580d4923fdd1cdf4ee6ee7d6
   ExpoDevice: 7082f03af1c588333ef1417d5aa8287081d94b24
-  ExpoFont: 86ceec09ffed1c99cfee36ceb79ba149074901b5
+  ExpoFont: cf9d90ec1d3b97c4f513211905724c8171f82961
   ExpoModulesCore: 00a1b5c73248465bd0b93f59f8538c4573dac579
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 07309209b7b914451b8f822544a18e2a0a85afff
@@ -2519,8 +2519,8 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 70a29536f84ddffca4a91097651d2b8f194f7c67
   React-microtasksnativemodule: ff05e894231c44c21135d1d23a82b87656d98eeb
   react-native-image-picker: db0b3e3c7ae57680876318d4f42e7dbedd72244a
-  react-native-safe-area-context: 895c49ee2613865f90318789be89a8e286fe7b69
-  react-native-vector-icons-fontawesome6: 1b667969bef2f430d1d7515163b980b856f58670
+  react-native-safe-area-context: 0b8555c40461feb7198e999912a3446602e7c601
+  react-native-vector-icons-fontawesome6: 1a73ea16a698f70851ad47e94521a99499e8e974
   React-NativeModulesApple: d94850b316446b0c39a82eb278d6efaa1a634055
   React-oscompat: 56b4766e96b06843a3af49a6763ef40992e720aa
   React-perflogger: 8fe9ec5f9ddbab1b8906c1aec159aa946e0ba041
@@ -2553,16 +2553,16 @@ SPEC CHECKSUMS:
   ReactCodegen: 06cf663b23a161f42a2e14087269753f422885c0
   ReactCommon: 44c86ec3ace664c0f33b7a2ac89aced8304ef25e
   RNCAsyncStorage: a1c8cc8a99c32de1244a9cf707bf9d83d0de0f71
-  RNCPicker: cff8e244e59eff57d36ff118774f86168acb0656
-  RNDateTimePicker: fabbb1f7cd6fada4c969d2a137012200c49e1f06
+  RNCPicker: 28c076ae12a1056269ec0305fe35fac3086c477d
+  RNDateTimePicker: 5433b7f418c5337abbd26fe6588da1a654f2b5a4
   RNFileViewer: 4b5d83358214347e4ab2d4ca8d5c1c90d869e251
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNGestureHandler: 0397fea67f39d5a2d17fcf4a028e206f7ba098ba
-  RNReanimated: e8e6ad352b23bf457cb569ae44733a5817deb45d
-  RNScreens: 824a29c178e253fe8b08fb0b2903195d35f724f2
-  RNSVG: ba22deba00b123dd9bca2e5540b6fbc0d3f858cb
+  RNGestureHandler: 6b39f4e43e4b3a0fb86de9531d090ff205a011d5
+  RNReanimated: 66b68ebe3baf7ec9e716bd059d700726f250d344
+  RNScreens: f38464ec1e83bda5820c3b05ccf4908e3841c5cc
+  RNSVG: 681f8ef5ca50e13cb3c6c88a907ea89b68fee74f
   RNVectorIcons: 1fe59cfa2d3ac94ceb9d373a59c54609471b8d56
-  RNWorklets: 6811e15dbdf2d61945b4327a249283515c36cde7
+  RNWorklets: 0725839ad8fe67a05ce4b9f2a7db4f5b95312068
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: dc7c21200195acacb62fa920c588e7c2106de45e
 

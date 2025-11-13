@@ -140,7 +140,7 @@
 //     </SafeAreaWrapper>
 //   );
 // }
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -158,6 +158,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import { signUrl } from "../../utils/inspectionFunctions";
+import API_BASE_URL from "../../utils/config";
 
 const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric", "other"];
 const driveTrainOptions = ["FWD", "RWD", "AWD", "4WD"];
@@ -176,6 +178,7 @@ export default function InspectionWizardStepTwo({ navigation }) {
   } = useSelector((state) => state.inspection);
 
   const [showDropdown, setShowDropdown] = useState(null);
+  const [odometerImageUrl, setOdometerImageUrl] = useState(null);
 
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
@@ -189,22 +192,78 @@ export default function InspectionWizardStepTwo({ navigation }) {
   const handleBack = () => navigation.goBack();
 
   const handleCaptureOdometer = async () => {
-    const result = await ImagePicker.launchCamera({
-      mediaType: "photo",
-      quality: 0.8,
-    });
+    try {
+      // 1. Capture photo
+      const result = await ImagePicker.launchCamera({
+        mediaType: "photo",
+        quality: 0.8,
+        includeBase64: false,
+      });
 
-    if (result.didCancel) return;
+      if (result.didCancel) return;
 
-    if (result.assets && result.assets[0].uri) {
+      const uri = result?.assets?.[0]?.uri;
+      if (!uri) return;
+
+      // 2. Request presigned URL from your backend
+      const presigned = await fetch(
+        `${API_BASE_URL}/inspections/presigned`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fileType: "image/jpeg" }),
+        }
+      );
+
+      const { url, key } = await presigned.json();
+
+      // console.log("Presigned URL:", url);
+      console.log("Upload Key:", key);
+
+      // 3. Convert iPhone "ph://" or "file://" URI to blob
+      const imgResp = await fetch(uri);
+      const imgBlob = await imgResp.blob();
+
+      // 4. Upload to S3 using the presigned URL
+      const upload = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "image/jpeg",
+        },
+        body: imgBlob,
+      });
+
+      if (!upload.ok) {
+        throw new Error("Upload failed: " + upload.status);
+      }
+
+      console.log("✅ Upload SUCCESS on iPhone");
+
+      // 5. Store ONLY the S3 key
       dispatch(
         setInspectionData({
           field: "odometerImage",
-          value: result.assets[0].uri,
+          value: key,
         })
       );
+    } catch (err) {
+      console.log("Error:", err);
     }
   };
+
+  useEffect(() => {
+    const loadSignedUrl = async () => {
+      if (odometerImage) {
+        const url = await signUrl(odometerImage); // your function that creates signed GET URL
+        setOdometerImageUrl(url);
+      }
+    };
+
+    loadSignedUrl();
+  }, [odometerImage]);
 
   const renderDropdown = (field, options) => (
     <View>
@@ -264,13 +323,13 @@ export default function InspectionWizardStepTwo({ navigation }) {
             {/* 📸 Odometer Image Section */}
             <Text style={tw`text-gray-500 mb-2`}>Odometer Image</Text>
 
-            {odometerImage ? (
+            {odometerImageUrl && (
               <Image
-                source={{ uri: odometerImage }}
+                source={{ uri: odometerImageUrl }}
                 style={tw`w-full h-48 rounded-lg mb-4`}
                 resizeMode="cover"
               />
-            ) : null}
+            )}
 
             <TouchableOpacity
               onPress={handleCaptureOdometer}

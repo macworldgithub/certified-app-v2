@@ -46,7 +46,7 @@ import EngineImage from "./src/Screens/EngineImage";
 import VINPlate from "./src/Screens/VINPlate";
 import InteriorFront from "./src/Screens/InteriorFront";
 import InteriorBack from "./src/Screens/InteriorBack";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, View, Text } from "react-native";
 enableScreens();
 const Stack = createNativeStackNavigator();
 
@@ -157,5 +157,7 @@ export default function App() {
         </KeyboardAvoidingView>
       </GestureHandlerRootView>
     </Provider>
+
+   
   );
 }
