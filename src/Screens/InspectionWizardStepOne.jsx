@@ -335,7 +335,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       <KeyboardAvoidingView
         style={tw`flex-1`}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // increased for iOS
       >
         <View style={tw`flex-1 bg-white`}>
           {/* Header */}
@@ -344,30 +344,31 @@ export default function InspectionWizardStepOne({ navigation }) {
               <AppIcon name="arrow-left" size={24} color="#065f46" />
             </TouchableOpacity>
             <Text style={tw`text-lg font-bold text-green-800`}>
-              Inspection Wizard
+              Basic Vehicle Information
             </Text>
           </View>
-   
-          {/* Scrollable Content */}
+
+          {/* Scrollable content */}
           <ScrollView
             style={tw`px-4`}
-            contentContainerStyle={tw`pb-28`}
-            keyboardShouldPersistTaps="handled" // ✅ Helps input taps work properly
+            contentContainerStyle={tw`pb-10`} // More padding at bottom to avoid keyboard
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {/* VIN/Chassis Number */}
-            <View style={tw`mt-0`}>
+            {/* VIN */}
+            <View>
               <Text style={tw`text-gray-500 mb-2`}>VIN/Chassis Number</Text>
 
               <View style={tw`flex-row items-center`}>
                 <TextInput
                   value={vin}
-                  onChangeText={(value) => handleTextChange("vin", value)}
+                  onChangeText={(val) => handleTextChange("vin", val)}
                   placeholder="Enter VIN/Chassis Number"
                   style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
+                  maxLength={17} // ✅ VIN won't go beyond 17 characters
                 />
 
-                {/* Fetch button */}
                 <TouchableOpacity
                   onPress={handleFetchVehicleInfo}
                   style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
@@ -387,7 +388,7 @@ export default function InspectionWizardStepOne({ navigation }) {
               <Text style={tw`text-gray-500 mb-2`}>Year</Text>
               <TextInput
                 value={year}
-                onChangeText={(value) => handleTextChange("year", value)}
+                onChangeText={(val) => handleTextChange("year", val)}
                 placeholder="Enter Year"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
                 keyboardType="numeric"
@@ -399,7 +400,7 @@ export default function InspectionWizardStepOne({ navigation }) {
               <Text style={tw`text-gray-500 mb-2`}>Make</Text>
               <TextInput
                 value={make}
-                onChangeText={(value) => handleTextChange("make", value)}
+                onChangeText={(val) => handleTextChange("make", val)}
                 placeholder="Enter Make"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
@@ -410,33 +411,34 @@ export default function InspectionWizardStepOne({ navigation }) {
               <Text style={tw`text-gray-500 mb-2`}>Model</Text>
               <TextInput
                 value={model}
-                onChangeText={(value) => handleTextChange("model", value)}
+                onChangeText={(val) => handleTextChange("model", val)}
                 placeholder="Enter Model"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
 
+            {/* Mileage */}
             <View style={tw`mt-6`}>
-              <Text style={tw`text-gray-500 mb-2`}>mileAge</Text>
+              <Text style={tw`text-gray-500 mb-2`}>Mileage</Text>
               <TextInput
                 value={mileAge}
-                onChangeText={(value) => handleTextChange("mileAge", value)}
-                placeholder="Enter mileAge"
+                onChangeText={(val) => handleTextChange("mileAge", val)}
+                placeholder="Enter Mileage"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
 
-            {/* Registration Fields */}
+            {/* Registration Plate & Expiry */}
             <View style={tw`mt-6 flex-row justify-between`}>
               <View style={tw`flex-1 mr-2`}>
                 <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
                 <TextInput
                   value={registrationPlate}
-                  onChangeText={(value) =>
-                    handleTextChange("registrationPlate", value)
+                  onChangeText={(val) =>
+                    handleTextChange("registrationPlate", val)
                   }
                   placeholder="Enter Registration Plate"
-                  style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base text-xs`}
+                  style={tw`border border-gray-300 rounded-lg p-3 bg-white text-xs`}
                 />
               </View>
 
@@ -481,7 +483,19 @@ export default function InspectionWizardStepOne({ navigation }) {
             </View>
           </ScrollView>
 
-          {/* Date Picker for Android */}
+          {/* Bottom Button */}
+          <View style={tw` bottom-0 left-0 right-0 px-4 mb-10 bg-white`}>
+            <TouchableOpacity
+              style={tw`bg-green-700 py-3 rounded-xl`}
+              onPress={handleNext}
+            >
+              <Text style={tw`text-white text-center text-lg font-semibold`}>
+                Next
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Date Pickers... keep your date picker code here unchanged */}
           {showPicker && Platform.OS === "android" && (
             <DateTimePicker
               testID="dateTimePicker"
@@ -492,22 +506,16 @@ export default function InspectionWizardStepOne({ navigation }) {
             />
           )}
 
-          {/* Date Picker for iOS (Modal) */}
+          {/* iOS Picker modal */}
           {showPicker && Platform.OS === "ios" && (
             <Modal transparent animationType="slide">
-              <View style={tw`flex-1 justify-end bg-black/50 `}>
-                <View
-                  style={tw`bg-white text-black rounded-t-2xl p-4  text-red-900`}
-                >
+              <View style={tw`flex-1 justify-end bg-black/50`}>
+                <View style={tw`bg-white rounded-t-2xl p-4`}>
                   <DateTimePicker
-                    testID="dateTimePicker"
                     value={date || new Date()}
                     mode="date"
                     display="spinner"
                     onChange={onDateChange}
-                    color="#000000"
-                    themeVariant="light"
-                    // style={tw`bg-black color-black text-red-500`}
                   />
 
                   <View style={tw`flex-row justify-end mt-2`}>
@@ -518,9 +526,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={tw`mr-2 text-red-500`}
                       onPress={() => {
-                        // Confirm the selected date
                         const formatted = date.toLocaleDateString("en-GB");
                         dispatch(
                           setInspectionData({
@@ -540,18 +546,6 @@ export default function InspectionWizardStepOne({ navigation }) {
               </View>
             </Modal>
           )}
-
-          {/* Next Button */}
-          <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
-            <TouchableOpacity
-              style={tw`bg-green-700 py-2 rounded-xl`}
-              onPress={handleNext}
-            >
-              <Text style={tw`text-white text-center text-lg font-semibold`}>
-                Next
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaWrapper>
