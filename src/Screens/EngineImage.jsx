@@ -49,7 +49,7 @@ export default function EngineImage({ navigation }) {
   const inspection = useSelector((state) => state.inspection);
 
   const partKey = "engineImage";
-  console.log("savedImages:", savedImages);
+  // console.log("savedImages:", savedImages);
   const [images, setLocalImages] = useState(savedImages || {});
   const [urlInput, setUrlInput] = useState("");
   const [uploading, setUploading] = useState(false);

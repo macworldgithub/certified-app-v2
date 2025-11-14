@@ -150,6 +150,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -179,7 +180,7 @@ export default function InspectionWizardStepTwo({ navigation }) {
 
   const [showDropdown, setShowDropdown] = useState(null);
   const [odometerImageUrl, setOdometerImageUrl] = useState(null);
-
+  const [uploading, setUploading] = useState(false);
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
     setShowDropdown(null);
@@ -191,69 +192,122 @@ export default function InspectionWizardStepTwo({ navigation }) {
 
   const handleBack = () => navigation.goBack();
 
+  // const handleCaptureOdometer = async () => {
+  //   try {
+  //     // 1. Capture photo
+  //     const result = await ImagePicker.launchCamera({
+  //       mediaType: "photo",
+  //       quality: 0.8,
+  //       includeBase64: false,
+  //     });
+
+  //     if (result.didCancel) return;
+
+  //     const uri = result?.assets?.[0]?.uri;
+  //     if (!uri) return;
+
+  //     // 2. Request presigned URL from your backend
+  //     const presigned = await fetch(`${API_BASE_URL}/inspections/presigned`, {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "*/*",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ fileType: "image/jpeg" }),
+  //     });
+
+  //     const { url, key } = await presigned.json();
+
+  //     // console.log("Presigned URL:", url);
+  //     console.log("Upload Key:", key);
+
+  //     // 3. Convert iPhone "ph://" or "file://" URI to blob
+  //     const imgResp = await fetch(uri);
+  //     const imgBlob = await imgResp.blob();
+
+  //     // 4. Upload to S3 using the presigned URL
+  //     const upload = await fetch(url, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "image/jpeg",
+  //       },
+  //       body: imgBlob,
+  //     });
+
+  //     if (!upload.ok) {
+  //       throw new Error("Upload failed: " + upload.status);
+  //     }
+
+  //     console.log("✅ Upload SUCCESS on iPhone");
+
+  //     // 5. Store ONLY the S3 key
+  //     dispatch(
+  //       setInspectionData({
+  //         field: "odometerImage",
+  //         value: key,
+  //       })
+  //     );
+  //   } catch (err) {
+  //     console.log("Error:", err);
+  //   }
+  // };
+
   const handleCaptureOdometer = async () => {
     try {
-      // 1. Capture photo
+      setUploading(true); // ← Start loading
+
       const result = await ImagePicker.launchCamera({
         mediaType: "photo",
         quality: 0.8,
         includeBase64: false,
       });
 
-      if (result.didCancel) return;
+      if (result.didCancel) {
+        setUploading(false);
+        return;
+      }
 
       const uri = result?.assets?.[0]?.uri;
-      if (!uri) return;
+      if (!uri) {
+        setUploading(false);
+        return;
+      }
 
-      // 2. Request presigned URL from your backend
-      const presigned = await fetch(
-        `${API_BASE_URL}/inspections/presigned`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ fileType: "image/jpeg" }),
-        }
-      );
+      // Presigned URL
+      const presigned = await fetch(`${API_BASE_URL}/inspections/presigned`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileType: "image/jpeg" }),
+      });
+
+      if (!presigned.ok) throw new Error("Presigned URL failed");
 
       const { url, key } = await presigned.json();
 
-      // console.log("Presigned URL:", url);
-      console.log("Upload Key:", key);
-
-      // 3. Convert iPhone "ph://" or "file://" URI to blob
+      // Upload to S3
       const imgResp = await fetch(uri);
       const imgBlob = await imgResp.blob();
 
-      // 4. Upload to S3 using the presigned URL
       const upload = await fetch(url, {
         method: "PUT",
-        headers: {
-          "Content-Type": "image/jpeg",
-        },
+        headers: { "Content-Type": "image/jpeg" },
         body: imgBlob,
       });
 
-      if (!upload.ok) {
-        throw new Error("Upload failed: " + upload.status);
-      }
+      if (!upload.ok) throw new Error("Upload failed");
 
-      console.log("✅ Upload SUCCESS on iPhone");
+      // Save key
+      dispatch(setInspectionData({ field: "odometerImage", value: key }));
 
-      // 5. Store ONLY the S3 key
-      dispatch(
-        setInspectionData({
-          field: "odometerImage",
-          value: key,
-        })
-      );
+      // Optional: Show success
+      // Alert.alert("Success", "Odometer image uploaded!");
     } catch (err) {
-      console.log("Error:", err);
+      console.log("Upload error:", err);
+      Alert.alert("Upload Failed", err.message || "Try again.");
+    } finally {
+      setUploading(false); // ← Stop loading
     }
   };
-
   useEffect(() => {
     const loadSignedUrl = async () => {
       if (odometerImage) {
@@ -331,7 +385,7 @@ export default function InspectionWizardStepTwo({ navigation }) {
               />
             )}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={handleCaptureOdometer}
               style={tw`border border-green-700 py-3 rounded-xl flex-row justify-center items-center mb-4`}
             >
@@ -339,6 +393,24 @@ export default function InspectionWizardStepTwo({ navigation }) {
               <Text style={tw`text-green-800 ml-2 font-semibold`}>
                 Capture Odometer Image
               </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              onPress={handleCaptureOdometer}
+              disabled={uploading}
+              style={tw`border border-green-700 py-3 rounded-xl flex-row justify-center items-center mb-4`}
+            >
+              {uploading ? (
+                <ActivityIndicator color="#065f46" size="small" />
+              ) : (
+                <>
+                  <AppIcon name="camera" size={20} color="#065f46" />
+                  <Text style={tw`text-green-800 ml-2 font-semibold`}>
+                    {odometerImage
+                      ? "Change Odometer Image"
+                      : "Capture Odometer Image"}
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
 
             {/* 🔢 Odometer Reading (After Image) */}

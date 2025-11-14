@@ -19,7 +19,6 @@ const initialState = {
     leftImage: null,
     InteriorFront: null,
     InteriorBack: null,
-    bookImages: null,
   },
   odometer: "", // From InspectionWizardStepTwo
   odometerImage: null, // From InspectionWizardStepTwo
@@ -33,10 +32,7 @@ const initialState = {
   serviceBookPresent: "", // From InspectionWizardStepFour
   serviceHistoryPresent: "", // From InspectionWizardStepFour
   serviceHistoryAvailable: false, // derived in StepFour
-  // bookImages: [
-  //   "uploads/service_book/page1.jpg",
-  //   "uploads/service_book/page2.jpg",
-  // ],
+  bookImages: [],
   lastServiceDate: "",
   serviceCenterName: "",
   odometerAtLastService: 0,
@@ -60,18 +56,24 @@ const inspectionSlice = createSlice({
     // Universal field updater for all Wizard steps
     setInspectionData: (state, action) => {
       const { field, value } = action.payload;
-      // if (field in state || (field in state.images && value !== null)) {
-      //   if (field in state.images) {
-      //     state.images[field] = value;
-      //   } else {
-      //     state[field] = value;
-      //   }
-      // }
 
       if (field in state) {
         state[field] = value;
       } else if (field in state.images && value !== null) {
         state.images[field] = value;
+      }
+      // ← YEH ADD KARO: bookImages ke liye
+      // else if (field === "bookImages") {
+      //   state.bookImages = value || []; // null nahi hoga kabhi
+      // } else if (field === "damages") {
+      //   state.damages = value || [];
+      // }
+      else if (field === "damages") {
+        state.damages = Array.isArray(value) ? value : [];
+      } else if (field === "bookImages") {
+        state.bookImages = Array.isArray(value)
+          ? value.filter((i) => i && i.key)
+          : [];
       }
     },
 
@@ -105,7 +107,6 @@ const inspectionSlice = createSlice({
         "VINPlate",
         "InteriorFront",
         "InteriorBack",
-        "bookImages",
       ];
 
       imageFields.forEach((field) => {
@@ -161,7 +162,6 @@ const inspectionSlice = createSlice({
         VINPlate: null,
         InteriorFront: null,
         InteriorBack: null,
-        bookImages: null,
       };
       // state.odometer = "";
       state.odometerReading = "";
@@ -177,10 +177,7 @@ const inspectionSlice = createSlice({
       state.serviceBookPresent = "";
       state.serviceHistoryPresent = "";
       state.serviceHistoryAvailable = false;
-      // state.bookImages = [
-      //   "uploads/service_book/page1.jpg",
-      //   "uploads/service_book/page2.jpg",
-      // ];
+      state.bookImages = null;
       state.lastServiceDate = "";
       state.serviceCenterName = "";
       state.odometerAtLastService = "";
