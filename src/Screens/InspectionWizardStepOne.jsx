@@ -347,7 +347,7 @@ export default function InspectionWizardStepOne({ navigation }) {
               Inspection Wizard
             </Text>
           </View>
-   
+
           {/* Scrollable Content */}
           <ScrollView
             style={tw`px-4`}
