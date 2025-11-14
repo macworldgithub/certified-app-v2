@@ -1332,26 +1332,14 @@ export default function InspectionWizardStepFour({ navigation }) {
                 </View>
 
                 {/* Uploaded Images with Preview */}
+                {/* Uploaded Images with Preview */}
                 <View style={tw`flex-row flex-wrap mt-2`}>
                   {(bookImages || []).map((img, index) => (
                     <View
                       key={img.key || index}
                       style={tw`w-24 h-28 m-1 relative`}
                     >
-                      {previewUrls[img.key] ? (
-                        <Image
-                          source={{ uri: previewUrls[img.key] }}
-                          style={tw`w-full h-full rounded-lg`}
-                          resizeMode="cover"
-                        />
-                      ) : (
-                        <View
-                          style={tw`w-full h-full bg-gray-200 rounded-lg items-center justify-center`}
-                        >
-                          <ActivityIndicator size="small" color="#065f46" />
-                        </View>
-                      )}
-
+                      {/* YEHI NEW CODE */}
                       {deletingIndex === index ? (
                         <View
                           style={tw`w-full h-full bg-gray-300 rounded-lg items-center justify-center`}
@@ -1362,6 +1350,7 @@ export default function InspectionWizardStepFour({ navigation }) {
                         <Image
                           source={{ uri: previewUrls[img.key] }}
                           style={tw`w-full h-full rounded-lg`}
+                          resizeMode="cover"
                         />
                       ) : (
                         <View
