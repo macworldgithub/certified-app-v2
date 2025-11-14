@@ -68,12 +68,20 @@ const inspectionSlice = createSlice({
       // } else if (field === "damages") {
       //   state.damages = value || [];
       // }
-      else if (field === "damages") {
-        state.damages = Array.isArray(value) ? value : [];
+      // In inspectionSlice.js → setInspection
+      if (Array.isArray(payload.damages)) {
+        state.damages = payload.damages.map((d) => ({
+          key: d.damageImage || d.key,
+          description: d.damageDescription,
+          severity: d.damageSeverity?.toLowerCase() || "minor",
+          repairRequired: d.repairRequired === "Yes",
+          _id: d._id,
+        }));
       } else if (field === "bookImages") {
-        state.bookImages = Array.isArray(value)
-          ? value.filter((i) => i && i.key)
-          : [];
+        const raw = Array.isArray(value) ? value : [];
+        state.bookImages = raw
+          .map((item) => (typeof item === "string" ? { key: item } : item))
+          .filter((img) => img && img.key);
       }
     },
 
