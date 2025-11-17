@@ -277,7 +277,7 @@ export default function InspectionWizardStepOne({ navigation }) {
         { key: "year", label: "Year" },
         { key: "make", label: "Make" },
         { key: "model", label: "Model" },
-        { key: "mileAge", label: "Mileage" },
+        { key: "mileAge", label: "mileAge" },
         { key: "registrationPlate", label: "Registration Plate" },
         { key: "buildDate", label: "Build Date" },
         { key: "complianceDate", label: "Compliance Date" },
@@ -421,7 +421,7 @@ export default function InspectionWizardStepOne({ navigation }) {
             <View style={tw`mt-6`}>
               <Text style={tw`text-gray-500 mb-2`}>Mileage</Text>
               <TextInput
-                value={mileAge}
+                value={String(mileAge)}
                 onChangeText={(val) => handleTextChange("mileAge", val)}
                 placeholder="Enter Mileage"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}

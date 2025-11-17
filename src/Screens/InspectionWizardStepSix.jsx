@@ -1476,6 +1476,7 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import API_BASE_URL from "../../utils/config";
 import { signUrl } from "../../utils/inspectionFunctions";
 import axios from "axios";
+
 export default function InspectionWizardStepSix({ navigation }) {
   const dispatch = useDispatch();
   const inspectionData = useSelector((state) => state.inspection);
@@ -1486,9 +1487,7 @@ export default function InspectionWizardStepSix({ navigation }) {
     roadTestComments,
     generalComments,
   } = inspectionData;
-
-  const inspectionId = useSelector((state) => state.inspection._id);
-  // const damages = useSelector((state) => state.inspection);
+  const inspectionId = inspectionData._id;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -1500,48 +1499,37 @@ export default function InspectionWizardStepSix({ navigation }) {
 
   const [damageData, setDamageData] = useState({
     key: null,
-    uri: null,
     description: "",
     severity: "minor",
     repairRequired: false,
   });
 
+  // Load all damage previews
   useEffect(() => {
-    console.log(damages, "hekkkkkk", damagePresent);
-  }, []);
-
-  // Load previews
-  useEffect(() => {
-    const loadDamagePreviews = async () => {
+    const loadPreviews = async () => {
       const urls = { ...previewUrls };
-      let hasNew = false;
+      let changed = false;
 
       for (const d of damages) {
-        const key = typeof d === "string" ? d : d.key;
-        if (key && !urls[key]) {
+        if (d.key && !urls[d.key]) {
           try {
-            const signed = await signUrl(key);
+            const signed = await signUrl(d.key);
             if (signed) {
-              urls[key] = signed;
-              hasNew = true;
+              urls[d.key] = signed;
+              changed = true;
             }
           } catch (err) {
-            console.log("Failed to sign damage URL:", key, err);
+            console.log("Failed to sign URL:", d.key);
           }
         }
       }
-
-      if (hasNew) {
-        setPreviewUrls(urls);
-      }
+      if (changed) setPreviewUrls(urls);
     };
 
-    if (damages?.length > 0) {
-      loadDamagePreviews();
-    }
+    if (damages.length > 0) loadPreviews();
   }, [damages]);
 
-  // Pick + Upload Image
+  // Upload image
   const pickAndUploadDamageImage = async () => {
     try {
       setUploading(true);
@@ -1556,62 +1544,50 @@ export default function InspectionWizardStepSix({ navigation }) {
       }
 
       const uri = result.assets[0].uri;
-
       const res = await fetch(`${API_BASE_URL}/inspections/presigned`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileType: "image/jpeg" }),
       });
-
-      if (!res.ok) throw new Error("Presigned URL failed");
+      if (!res.ok) throw new Error("Presigned failed");
       const { url: presignedUrl, key } = await res.json();
 
       const imgResp = await fetch(uri);
       const blob = await imgResp.blob();
       const uploadRes = await fetch(presignedUrl, {
         method: "PUT",
-        headers: { "Content-Type": "image/jpeg" },
         body: blob,
+        headers: { "Content-Type": "image/jpeg" },
       });
-
       if (!uploadRes.ok) throw new Error("Upload failed");
 
-      // Save key + generate preview
-      setDamageData((prev) => ({ ...prev, key, uri }));
+      setDamageData((prev) => ({ ...prev, key }));
       const signed = await signUrl(key);
-      if (signed) {
-        setPreviewUrls((prev) => ({ ...prev, [key]: signed })); // ← YEH THA MISSING
-      }
+      if (signed) setPreviewUrls((prev) => ({ ...prev, [key]: signed }));
     } catch (err) {
-      Alert.alert("Upload Failed", "Could not upload photo.");
+      Alert.alert("Upload Failed", err.message);
     } finally {
       setUploading(false);
     }
   };
 
-  // ADD DAMAGE
-
+  // Add Damage
   const handleAddDamage = async () => {
     if (!damageData.key || !damageData.description) {
-      Alert.alert("Incomplete", "Upload photo and add description.");
+      Alert.alert("Incomplete", "Photo and description required.");
       return;
     }
 
     const newDamage = {
+      _id: null, // will be set by server
       key: damageData.key,
       description: damageData.description,
       severity: damageData.severity,
       repairRequired: damageData.repairRequired,
     };
 
-    const updatedDamages = [...damages, newDamage];
-    dispatch(setInspectionData({ field: "damages", value: updatedDamages }));
-
-    // Inside pickAndUploadDamageImage → after upload
-    const signed = await signUrl(key);
-    if (signed) {
-      setPreviewUrls((prev) => ({ ...prev, [key]: signed }));
-    }
+    const updated = [...damages, newDamage];
+    dispatch(setInspectionData({ field: "damages", value: updated }));
 
     setSyncing(true);
     if (inspectionId) {
@@ -1624,7 +1600,6 @@ export default function InspectionWizardStepSix({ navigation }) {
             damageData.severity.slice(1),
           repairRequired: damageData.repairRequired ? "Yes" : "No",
         };
-
         const res = await fetch(
           `${API_BASE_URL}/inspections/${inspectionId}/damages`,
           {
@@ -1633,14 +1608,12 @@ export default function InspectionWizardStepSix({ navigation }) {
             body: JSON.stringify(payload),
           }
         );
-
-        if (!res.ok) throw new Error("Failed to save");
-
+        if (!res.ok) throw new Error("Save failed");
         const saved = await res.json();
-        const withId = { ...newDamage, _id: saved._id };
-        dispatch(
-          setInspectionData({ field: "damages", value: [...damages, withId] })
+        const final = updated.map((d) =>
+          d.key === newDamage.key ? { ...d, _id: saved._id } : d
         );
+        dispatch(setInspectionData({ field: "damages", value: final }));
       } catch (err) {
         Alert.alert("Sync Failed", "Saved locally.");
         dispatch(setInspectionData({ field: "damages", value: damages }));
@@ -1653,34 +1626,32 @@ export default function InspectionWizardStepSix({ navigation }) {
     resetModal();
   };
 
-  // EDIT DAMAGE (PATCH API)
+  // Edit Damage
   const handleEditDamage = async () => {
     if (!damageData.key || !damageData.description) {
       Alert.alert("Incomplete", "Photo and description required.");
       return;
     }
 
-    const oldDamage = damages[editingIndex];
+    const old = damages[editingIndex];
     const updatedDamage = {
-      ...oldDamage,
+      ...old,
       key: damageData.key,
       description: damageData.description,
       severity: damageData.severity,
       repairRequired: damageData.repairRequired,
     };
 
-    // Optimistic UI
-    const updatedDamages = damages.map((d, i) =>
+    const optimistic = damages.map((d, i) =>
       i === editingIndex ? updatedDamage : d
     );
-    dispatch(setInspectionData({ field: "damages", value: updatedDamages }));
+    dispatch(setInspectionData({ field: "damages", value: optimistic }));
 
     const signed = await signUrl(damageData.key);
-    if (signed)
-      setPreviewUrls((prev) => ({ ...prev, [damageData.key]: signed }));
+    if (signed) setPreviewUrls((p) => ({ ...p, [damageData.key]: signed }));
 
     setSyncing(true);
-    if (inspectionId && oldDamage._id) {
+    if (inspectionId && old._id) {
       try {
         const payload = {
           damageImage: damageData.key,
@@ -1690,82 +1661,65 @@ export default function InspectionWizardStepSix({ navigation }) {
             damageData.severity.slice(1),
           repairRequired: damageData.repairRequired ? "Yes" : "No",
         };
-
         const res = await fetch(
-          `${API_BASE_URL}/inspections/${inspectionId}/damages/${oldDamage._id}`,
+          `${API_BASE_URL}/inspections/${inspectionId}/damages/${old._id}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           }
         );
-
         if (!res.ok) throw new Error("Update failed");
-
-        // Success → keep updated
-        console.log("Damage updated:", oldDamage._id);
       } catch (err) {
-        Alert.alert("Update Failed", "Reverting changes.");
+        Alert.alert("Update Failed", "Reverting...");
         dispatch(setInspectionData({ field: "damages", value: damages }));
-        setPreviewUrls(previewUrls);
       }
     }
     setSyncing(false);
     resetModal();
   };
 
-  // DELETE DAMAGE
+  // Delete
   const handleDeleteDamage = async (index) => {
-    const damage = damages[index];
-    if (!damage?._id && inspectionId) return;
-
+    const dmg = damages[index];
     setDeletingIndex(index);
-    const updated = damages.filter((_, i) => i !== index);
-    dispatch(setInspectionData({ field: "damages", value: updated }));
-
+    const filtered = damages.filter((_, i) => i !== index);
+    dispatch(setInspectionData({ field: "damages", value: filtered }));
     const p = { ...previewUrls };
-    delete p[damage.key];
+    delete p[dmg.key];
     setPreviewUrls(p);
 
-    if (inspectionId && damage._id) {
+    if (inspectionId && dmg._id) {
       try {
         const res = await fetch(
-          `${API_BASE_URL}/inspections/${inspectionId}/damages/${damage._id}`,
+          `${API_BASE_URL}/inspections/${inspectionId}/damages/${dmg._id}`,
           { method: "DELETE" }
         );
         if (!res.ok) throw new Error("Delete failed");
       } catch (err) {
-        Alert.alert("Sync Failed", "Reverting delete.");
+        Alert.alert("Delete Failed", "Reverting...");
         dispatch(setInspectionData({ field: "damages", value: damages }));
-        setPreviewUrls(previewUrls);
       }
     }
     setDeletingIndex(null);
   };
 
-  // Open Edit Modal
+  // Open Edit Modal — FULL AUTO-FILL
   const openEditModal = async (index) => {
     const d = damages[index];
-    const key = d.key;
 
-    // Load signed URL if not already
-    if (key && !previewUrls[key]) {
+    if (d.key && !previewUrls[d.key]) {
       try {
-        const signed = await signUrl(key);
-        if (signed) {
-          setPreviewUrls((prev) => ({ ...prev, [key]: signed }));
-        }
-      } catch (err) {
-        console.log("Failed to load image for edit:", err);
-      }
+        const signed = await signUrl(d.key);
+        if (signed) setPreviewUrls((p) => ({ ...p, [d.key]: signed }));
+      } catch (_) {}
     }
 
     setDamageData({
       key: d.key,
-      uri: null,
       description: d.description || "",
       severity: d.severity || "minor",
-      repairRequired: d.repairRequired || false,
+      repairRequired: !!d.repairRequired,
     });
 
     setEditingIndex(index);
@@ -1773,26 +1727,21 @@ export default function InspectionWizardStepSix({ navigation }) {
     setIsModalVisible(true);
   };
 
-  // Reset Modal
   const resetModal = () => {
     setIsModalVisible(false);
     setIsEditMode(false);
     setEditingIndex(null);
     setDamageData({
       key: null,
-      uri: null,
       description: "",
       severity: "minor",
       repairRequired: false,
     });
-    // setPreviewUrl(null);
   };
-
   const handleSelect = (field, value) =>
     dispatch(setInspectionData({ field, value }));
   const handleTextChange = (field, value) =>
     dispatch(setInspectionData({ field, value }));
-
   const handleSubmit = async () => {
     try {
       console.log(
@@ -1804,7 +1753,6 @@ export default function InspectionWizardStepSix({ navigation }) {
         Alert.alert("Invalid VIN", "VIN must be 17 characters.");
         return;
       }
-
       const finalPayload = {
         vin: inspectionData.vin,
         make: inspectionData.make,
@@ -1876,27 +1824,21 @@ export default function InspectionWizardStepSix({ navigation }) {
         tyreConditionRearRight: inspectionData.tyreConditionRearRight || "Fair",
         tyreConditionRearLeft: inspectionData.tyreConditionRearLeft || "Fair",
         damagePresent: damagePresent || "Yes",
-        // damages: damages.map((d) => ({
-        //   original: d.damagePhoto, // ← S3 key
-        //   description: d.damageDescription,
-        //   type: d.damageSeverity,
-        // })),
-        damages: (damages || [])
+        damages: damages
           .filter((d) => d && d.key)
           .map((d) => ({
-            damageImage: d.key, // S3 key
+            damageImage: d.key,
             damageDescription: d.description || "",
             damageSeverity:
-              d.severity.charAt(0).toUpperCase() + d.severity.slice(1), // "minor" → "Minor"
-            repairRequired: d.repairRequired ? "Yes" : "No", // String "Yes"/"No"
+              d.severity.charAt(0).toUpperCase() + d.severity.slice(1),
+            repairRequired: d.repairRequired ? "Yes" : "No",
           })),
-        roadTest: roadTest === "Yes",
+        roadTest: roadTest || "Yes",
         roadTestComments: roadTestComments || "",
         generalComments: generalComments || "",
       };
 
       console.log("Sending Payload:", JSON.stringify(finalPayload, null, 2));
-
       if (inspectionData._id) {
         await axios.put(
           `${API_BASE_URL}/inspections/${inspectionData._id}`,
@@ -1916,8 +1858,6 @@ export default function InspectionWizardStepSix({ navigation }) {
     }
   };
 
-  const handleBack = () => navigation.goBack();
-
   return (
     <SafeAreaWrapper>
       <KeyboardAvoidingView
@@ -1927,7 +1867,10 @@ export default function InspectionWizardStepSix({ navigation }) {
         <View style={tw`flex-1 bg-white`}>
           {/* Header */}
           <View style={tw`flex-row items-center mb-6 px-4 pt-4`}>
-            <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={tw`mr-4`}
+            >
               <AppIcon name="arrow-left" size={24} color="#065f46" />
             </TouchableOpacity>
             <Text style={tw`text-lg font-bold text-green-800`}>
@@ -1942,18 +1885,25 @@ export default function InspectionWizardStepSix({ navigation }) {
                 Is There Any Damage Present
               </Text>
               <View style={tw`flex-row justify-between`}>
-                {["Yes", "No"].map((option) => (
+                {["Yes", "No"].map((opt) => (
                   <TouchableOpacity
-                    key={option}
+                    key={opt}
                     style={tw.style(
                       "flex-1 items-center justify-center border rounded-lg py-6 mx-1",
-                      damagePresent === option
+                      damagePresent === opt
                         ? "border-green-600 bg-green-50"
                         : "border-gray-300 bg-white"
                     )}
-                    onPress={() => handleSelect("damagePresent", option)}
+                    onPress={() =>
+                      dispatch(
+                        setInspectionData({
+                          field: "damagePresent",
+                          value: opt,
+                        })
+                      )
+                    }
                   >
-                    <Text style={tw`text-gray-700`}>{option}</Text>
+                    <Text style={tw`text-gray-700`}>{opt}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -1966,7 +1916,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                   <Text style={tw`text-gray-700 font-semibold`}>
                     Recorded Damages
                   </Text>
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     onPress={() => {
                       setIsEditMode(false);
                       setIsModalVisible(true);
@@ -1976,70 +1926,65 @@ export default function InspectionWizardStepSix({ navigation }) {
                     <Text style={tw`text-white font-semibold`}>
                       + Add Damage
                     </Text>
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
                 </View>
 
-                {damages?.length > 0 ? (
-                  damages.map((d, i) =>
-                    d && d.key ? (
-                      <View
-                        key={d.key}
-                        style={tw`border border-gray-300 rounded-lg p-3 mb-3 relative`}
-                      >
-                        {deletingIndex === i && (
-                          <View
-                            style={tw`absolute inset-0 bg-gray-300 bg-opacity-80 rounded-lg items-center justify-center z-10`}
-                          >
-                            <ActivityIndicator size="small" color="#fff" />
-                          </View>
-                        )}
+                {damages.length > 0 ? (
+                  damages.map((d, i) => (
+                    <View
+                      key={d._id || d.key} // UNIQUE KEY: _id first, then key
+                      style={tw`border border-gray-300 rounded-lg p-3 mb-3 relative`}
+                    >
+                      {deletingIndex === i && (
+                        <View
+                          style={tw`absolute inset-0 bg-gray-300 bg-opacity-80 rounded-lg items-center justify-center z-10`}
+                        >
+                          <ActivityIndicator size="small" color="#fff" />
+                        </View>
+                      )}
 
+                      {previewUrls[d.key] ? (
                         <Image
                           source={{ uri: previewUrls[d.key] }}
                           style={tw`w-full h-40 rounded-lg mb-2`}
                           resizeMode="cover"
-                          onError={() => {
-                            signUrl(d.key).then((url) => {
-                              if (url)
-                                setPreviewUrls((prev) => ({
-                                  ...prev,
-                                  [d.key]: url,
-                                }));
-                            });
-                          }}
                         />
-                        <Text style={tw`font-medium`}>{d.description}</Text>
-                        <Text style={tw`text-sm text-gray-600`}>
-                          Severity: {d.Severity}
-                        </Text>
-                        <Text style={tw`text-sm text-gray-600`}>
-                          Repair: {d.repairRequired ? "Yes" : "No"}
-                        </Text>
-
-                        {/* EDIT BUTTON */}
-                        <TouchableOpacity
-                          onPress={() => openEditModal(i)}
-                          style={tw`absolute top-2 left-2 bg-blue-600 p-1 rounded-full`}
+                      ) : (
+                        <View
+                          style={tw`w-full h-40 bg-gray-200 rounded-lg items-center justify-center mb-2`}
                         >
-                          <AppIcon name="pencil" size={16} color="white" />
-                        </TouchableOpacity>
+                          <ActivityIndicator size="small" color="#065f46" />
+                        </View>
+                      )}
 
-                        {/* DELETE BUTTON */}
-                        <TouchableOpacity
-                          onPress={() => handleDeleteDamage(i)}
-                          style={tw`absolute top-2 right-2 bg-red-600 p-1 rounded-full`}
-                        >
-                          <AppIcon name="close" size={16} color="white" />
-                        </TouchableOpacity>
-                      </View>
-                    ) : null
-                  )
+                      <Text style={tw`font-medium`}>{d.description}</Text>
+                      <Text style={tw`text-sm text-gray-600`}>
+                        Severity: {d.severity}
+                      </Text>
+                      <Text style={tw`text-sm text-gray-600`}>
+                        Repair: {d.repairRequired ? "Yes" : "No"}
+                      </Text>
+
+                      <TouchableOpacity
+                        onPress={() => openEditModal(i)}
+                        style={tw`absolute top-2 left-2 bg-blue-600 p-1 rounded-full`}
+                      >
+                        <AppIcon name="pencil" size={16} color="white" />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => handleDeleteDamage(i)}
+                        style={tw`absolute top-2 right-2 bg-red-600 p-1 rounded-full`}
+                      >
+                        <AppIcon name="close" size={16} color="white" />
+                      </TouchableOpacity>
+                    </View>
+                  ))
                 ) : (
                   <Text style={tw`text-gray-500`}>No damages recorded.</Text>
                 )}
               </View>
             )}
-
             {/* Road Test */}
             <View style={tw`mt-6`}>
               <Text style={tw`text-gray-500 mb-1`}>Road Test</Text>
@@ -2087,10 +2032,8 @@ export default function InspectionWizardStepSix({ navigation }) {
             </View>
           </ScrollView>
 
-          {/* Submit */}
-          <View
-            style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-2`}
-          >
+          {/* Submit Button */}
+          <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white`}>
             <TouchableOpacity
               style={tw`bg-green-700 py-3 rounded-xl`}
               onPress={handleSubmit}
@@ -2103,7 +2046,7 @@ export default function InspectionWizardStepSix({ navigation }) {
         </View>
       </KeyboardAvoidingView>
 
-      {/* Add/Edit Modal */}
+      {/* Modal */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={tw`flex-1 justify-center bg-black bg-opacity-50 px-4`}>
           <View style={tw`bg-white rounded-xl p-5`}>
@@ -2120,43 +2063,30 @@ export default function InspectionWizardStepSix({ navigation }) {
                 <ActivityIndicator color="white" />
               ) : (
                 <Text style={tw`text-white font-semibold`}>
-                  {damageData.key ? "Change Photo" : "Upload from Gallery"}
+                  {damageData.key ? "Change Photo" : "Upload Photo"}
                 </Text>
               )}
             </TouchableOpacity>
 
-            {/* Image Preview */}
-            {damageData.key ? (
-              previewUrls[damageData.key] ? (
-                <Image
-                  source={{ uri: previewUrls[damageData.key] }}
-                  style={tw`w-full h-48 rounded-lg mb-3`}
-                  resizeMode="cover"
-                  onError={() => {
-                    signUrl(damageData.key).then((url) => {
-                      if (url)
-                        setPreviewUrls((prev) => ({
-                          ...prev,
-                          [damageData.key]: url,
-                        }));
-                    });
-                  }}
-                />
-              ) : (
-                <View
-                  style={tw`w-full h-48 bg-gray-200 rounded-lg items-center justify-center mb-3`}
-                >
-                  <ActivityIndicator size="small" color="#065f46" />
-                  <Text style={tw`text-xs mt-1 text-gray-600`}>Loading...</Text>
-                </View>
-              )
+            {damageData.key && previewUrls[damageData.key] ? (
+              <Image
+                source={{ uri: previewUrls[damageData.key] }}
+                style={tw`w-full h-48 rounded-lg mb-3`}
+                resizeMode="cover"
+              />
+            ) : damageData.key ? (
+              <View
+                style={tw`w-full h-48 bg-gray-200 rounded-lg items-center justify-center mb-3`}
+              >
+                <ActivityIndicator size="small" color="#065f46" />
+              </View>
             ) : null}
 
             <TextInput
-              placeholder="Damage description (required)"
+              placeholder="Description (required)"
               value={damageData.description}
               onChangeText={(t) =>
-                setDamageData({ ...damageData, description: t })
+                setDamageData((p) => ({ ...p, description: t }))
               }
               style={tw`border border-gray-300 rounded-lg p-3 mb-3`}
             />
@@ -2166,7 +2096,7 @@ export default function InspectionWizardStepSix({ navigation }) {
               {["minor", "moderate", "severe"].map((s) => (
                 <TouchableOpacity
                   key={s}
-                  onPress={() => setDamageData({ ...damageData, severity: s })}
+                  onPress={() => setDamageData((p) => ({ ...p, severity: s }))}
                   style={tw.style(
                     "flex-1 mx-1 py-2 rounded-lg border items-center",
                     damageData.severity === s
@@ -2181,10 +2111,10 @@ export default function InspectionWizardStepSix({ navigation }) {
 
             <TouchableOpacity
               onPress={() =>
-                setDamageData({
-                  ...damageData,
-                  repairRequired: !damageData.repairRequired,
-                })
+                setDamageData((p) => ({
+                  ...p,
+                  repairRequired: !p.repairRequired,
+                }))
               }
               style={tw`flex-row items-center mb-4`}
             >
