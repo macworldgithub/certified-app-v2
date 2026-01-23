@@ -65,7 +65,6 @@ const CarCard: React.FC<CarCardProps> = ({
           <Text style={styles.title}>
             {make} ({year})
           </Text>
-        
         </View>
         <Text style={styles.sub}>VIN: {vin}</Text>
         {Platform.OS === "android" ? (
@@ -88,21 +87,21 @@ const CarCard: React.FC<CarCardProps> = ({
         <View style={styles.actions}>
           <TouchableOpacity
             onPress={() => onDelete?.(id)}
-            style={[styles.actionBtn, { backgroundColor: "#ef4444" }]}
+            style={[styles.actionBtn, { backgroundColor: "#2f855a" }]}
           >
             <Text style={styles.actionText}>Delete</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => onEdit?.(id)}
-            style={[styles.actionBtn, { backgroundColor: "#3b82f6" }]}
+            style={[styles.actionBtn, { backgroundColor: "#2f855a" }]}
           >
             <Text style={styles.actionText}>Edit</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => onRating?.(id, vin)}
-            style={[styles.actionBtn, { backgroundColor: "#f59e0b" }]}
+            style={[styles.actionBtn, { backgroundColor: "#2f855a" }]}
           >
             <Text style={styles.actionText}>Rating</Text>
           </TouchableOpacity>

@@ -405,10 +405,10 @@ export default function VehicleReport() {
                   style={tw`bg-white rounded-xl shadow p-4 mb-4`}
                 >
                   <View style={tw`flex-row justify-between items-center`}>
-                    <Text style={tw`text-green-800 font-bold mb-2`}>
+                    <Text style={tw`font-bold mb-2`}>
                       {item.make} {item.Model || item.model} ({item.year})
                     </Text>
-                    <Text style={tw`text-yellow-500 font-bold`}>
+                    <Text style={tw`font-bold`}>
                       {item.overallRating ?? 0}/10
                     </Text>
                   </View>
@@ -441,7 +441,7 @@ export default function VehicleReport() {
                       style={tw`items-center`}
                       onPress={() => handleDownloadPDF(item._id)}
                     >
-                      <AppIcon name="download" size={16} color="#22c55e" />
+                      <AppIcon name="download" size={16} color="#2f855a" />
                       <Text style={tw`text-green-600 text-xs`}>
                         {downloadingId === item._id
                           ? "Downloading..."
@@ -453,7 +453,7 @@ export default function VehicleReport() {
                       style={tw`items-center`}
                       onPress={() => handlePredictMarketValue(item._id)}
                     >
-                      <AppIcon name="dollar" size={16} color="#22c55e" />
+                      <AppIcon name="dollar" size={16} color="#2f855a" />
                       <Text style={tw`text-green-600 text-xs`}>
                         {predictingId === item._id
                           ? "Predicting..."
@@ -465,7 +465,7 @@ export default function VehicleReport() {
                       style={tw`items-center`}
                       onPress={() => handleAdjustedPrice(item._id)}
                     >
-                      <AppIcon name="balance-scale" size={16} color="#22c55e" />
+                      <AppIcon name="balance-scale" size={16} color="#2f855a" />
                       <Text style={tw`text-green-600 text-xs`}>
                         {adjustingId === item._id
                           ? "Adjusting..."

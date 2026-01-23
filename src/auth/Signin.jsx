@@ -236,51 +236,6 @@ const Signin = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Divider */}
-        <View style={tw`flex-row items-center mb-6`}>
-          <View style={tw`flex-1 h-px bg-gray-300`} />
-          <Text style={tw`px-2 text-sm text-gray-400`}>or sign in with</Text>
-          <View style={tw`flex-1 h-px bg-gray-300`} />
-        </View>
-
-        {/* Social Buttons */}
-        <View style={tw`mb-4`}>
-          <TouchableOpacity
-            style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white mb-3`}
-          >
-            <Image
-              source={{
-                uri: "https://img.icons8.com/color/48/google-logo.png",
-              }}
-              style={{ width: 20, height: 20, marginRight: 10 }}
-            />
-            <Text style={tw`text-sm`}>Sign in with Google</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white mb-3`}
-          >
-            <Image
-              source={{
-                uri: "https://img.icons8.com/color/48/facebook-new.png",
-              }}
-              style={{ width: 20, height: 20, marginRight: 10 }}
-            />
-            <Text style={tw`text-sm`}>Sign in with Facebook</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={tw`flex-row items-center justify-center border rounded-xl py-3 bg-white`}
-          >
-            <Image
-              source={{
-                uri: "https://img.icons8.com/ios-filled/50/mac-os.png",
-              }}
-              style={{ width: 20, height: 20, marginRight: 10 }}
-            />
-            <Text style={tw`text-sm`}>Sign in with Apple</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

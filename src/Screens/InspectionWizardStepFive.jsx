@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React from "react";
 import {
   View,
   Text,
@@ -9,7 +10,6 @@ import {
   Platform,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
@@ -34,6 +34,59 @@ export default function InspectionWizardStepFive({ navigation }) {
 
   const handleBack = () => navigation.goBack();
 
+  const renderTyreSection = (label, field, value, imageSource) => (
+    <View style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-2`}>
+      <Text style={tw`text-gray-400 mb-3 font-medium`}>{label}</Text>
+      <View style={tw`flex-row items-center justify-between`}>
+        <View style={tw`flex-row flex-1`}>
+          <TouchableOpacity
+            style={tw.style(
+              "flex-1 items-center justify-center border rounded-lg py-4 mr-2",
+              value === "Pass"
+                ? "border-green-600 bg-green-50"
+                : "border-gray-300 bg-white",
+            )}
+            onPress={() => handleSelect(field, "Pass")}
+          >
+            <Text
+              style={tw.style(
+                "text-gray-700 font-medium",
+                value === "Pass" && "text-green-700",
+              )}
+            >
+              Pass
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={tw.style(
+              "flex-1 items-center justify-center border rounded-lg py-4 ml-2",
+              value === "Fail"
+                ? "border-green-600 bg-green-50"
+                : "border-gray-300 bg-white",
+            )}
+            onPress={() => handleSelect(field, "Fail")}
+          >
+            <Text
+              style={tw.style(
+                "text-gray-700 font-medium",
+                value === "Fail" && "text-green-700",
+              )}
+            >
+              Fail
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Image
+          source={imageSource}
+          style={tw`w-20 h-20 ml-4`}
+          resizeMode="contain"
+        />
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaWrapper>
       <KeyboardAvoidingView
@@ -41,146 +94,61 @@ export default function InspectionWizardStepFive({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
-        <View style={tw`flex-1 bg-white`}>
+        <View style={tw`flex-1 bg-gray-100`}>
           {/* Header */}
-          <View style={tw`flex-row items-center mb-6 px-4 pt-4`}>
+          <View style={tw`flex-row items-center mb-4 px-4 pt-4`}>
             <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>
               <AppIcon name="arrow-left" size={24} color="#065f46" />
             </TouchableOpacity>
-            <Text style={tw`text-lg font-bold text-green-800`}>
+            <Text style={tw`text-lg font-bold text-green-800 ml-16`}>
               Inspection Wizard
             </Text>
           </View>
 
+          {/* Progress Bar (≈40-50% like screenshot) */}
+          <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
+            <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+          </View>
+
           {/* Scrollable Content */}
-          <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-32`}>
-            {/* Tyre Condition - Front Left */}
-            <View style={tw`mt-4`}>
-              <Text style={tw`text-gray-500 mb-1`}>
-                Tyre Condition - Front Left
-              </Text>
-              <View style={tw`flex-row items-center justify-between`}>
-                {["Pass", "Fail"].map((option) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={tw.style(
-                      "w-16 w-24 items-center justify-center border rounded-lg py-4 mx-2",
-                      tyreConditionFrontLeft === option
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300 bg-white"
-                    )}
-                    onPress={() =>
-                      handleSelect("tyreConditionFrontLeft", option)
-                    }
-                  >
-                    <Text style={tw`text-gray-700 text-sm`}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-                <Image
-                  source={require("../../assets/tyreFrontLeft.png")}
-                  style={tw`w-16 h-16`}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
+          <ScrollView
+            style={tw`px-4`}
+            contentContainerStyle={tw`pb-40`}
+            showsVerticalScrollIndicator={false}
+          >
+            {renderTyreSection(
+              "Tyre Condition - Front Left",
+              "tyreConditionFrontLeft",
+              tyreConditionFrontLeft,
+              require("../../assets/tyreFrontLeft.png"),
+            )}
 
-            {/* Tyre Condition - Front Right */}
-            <View style={tw`mt-4`}>
-              <Text style={tw`text-gray-500 mb-1`}>
-                Tyre Condition - Front Right
-              </Text>
-              <View style={tw`flex-row items-center justify-between`}>
-                {["Pass", "Fail"].map((option) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={tw.style(
-                      "w-16 w-24 items-center justify-center border rounded-lg py-4 mx-2",
-                      tyreConditionFrontRight === option
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300 bg-white"
-                    )}
-                    onPress={() =>
-                      handleSelect("tyreConditionFrontRight", option)
-                    }
-                  >
-                    <Text style={tw`text-gray-700 text-sm`}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-                <Image
-                  source={require("../../assets/tyreFrontRight.png")}
-                  style={tw`w-16 h-16`}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
+            {renderTyreSection(
+              "Tyre Condition - Front Right",
+              "tyreConditionFrontRight",
+              tyreConditionFrontRight,
+              require("../../assets/tyreFrontRight.png"),
+            )}
 
-            {/* Tyre Condition - Rear Right */}
-            <View style={tw`mt-4`}>
-              <Text style={tw`text-gray-500 mb-1`}>
-                Tyre Condition - Rear Right
-              </Text>
-              <View style={tw`flex-row items-center justify-between`}>
-                {["Pass", "Fail"].map((option) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={tw.style(
-                      "w-16 w-24 items-center justify-center border rounded-lg py-4 mx-2",
-                      tyreConditionRearRight === option
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300 bg-white"
-                    )}
-                    onPress={() =>
-                      handleSelect("tyreConditionRearRight", option)
-                    }
-                  >
-                    <Text style={tw`text-gray-700 text-sm`}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-                <Image
-                  source={require("../../assets/tyreRearRight.png")}
-                  style={tw`w-16 h-16`}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
+            {renderTyreSection(
+              "Tyre Condition - Rear Right",
+              "tyreConditionRearRight",
+              tyreConditionRearRight,
+              require("../../assets/tyreRearRight.png"),
+            )}
 
-            {/* Tyre Condition - Rear Left */}
-            <View style={tw`mt-4`}>
-              <Text style={tw`text-gray-500 mb-1`}>
-                Tyre Condition - Rear Left
-              </Text>
-              <View style={tw`flex-row items-center justify-between`}>
-                {["Pass", "Fail"].map((option) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={tw.style(
-                      "w-16 w-24 items-center justify-center border rounded-lg py-4 mx-2",
-                      tyreConditionRearLeft === option
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300 bg-white"
-                    )}
-                    onPress={() =>
-                      handleSelect("tyreConditionRearLeft", option)
-                    }
-                  >
-                    <Text style={tw`text-gray-700 text-sm`}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-                <Image
-                  source={require("../../assets/tyreRearLeft.png")}
-                  style={tw`w-16 h-16`}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
+            {renderTyreSection(
+              "Tyre Condition - Rear Left",
+              "tyreConditionRearLeft",
+              tyreConditionRearLeft,
+              require("../../assets/tyreRearLeft.png"),
+            )}
           </ScrollView>
 
-          {/* Next Button */}
-          <View
-            style={tw`absolute bottom-0 left-0 right-0 px-4 pb-4 bg-white mb-8`}
-          >
+          {/* Next Button - fixed bottom */}
+          <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white`}>
             <TouchableOpacity
-              style={tw`bg-green-700 py-2 rounded-xl`}
+              style={tw`bg-green-700 py-3 rounded-xl shadow-md`}
               onPress={handleNext}
             >
               <Text style={tw`text-white text-center text-lg font-semibold`}>

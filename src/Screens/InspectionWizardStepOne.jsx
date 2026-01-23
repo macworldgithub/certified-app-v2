@@ -48,7 +48,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     dispatch(setInspectionData({ field, value }));
   };
 
-  const handleNext = () => navigation.navigate("FrontImage");
+  const handleNext = () => navigation.navigate("InspectionWizardStepTwo");
   const handleBack = () => navigation.goBack();
 
   const showDatePicker = (field) => {
@@ -192,7 +192,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     if (!vin || vin.trim().length === 0) {
       Alert.alert(
         "VIN required",
-        "Please enter a VIN/Chassis number before fetching."
+        "Please enter a VIN/Chassis number before fetching.",
       );
       return;
     }
@@ -212,7 +212,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       if (basic) {
         if (basic.year)
           dispatch(
-            setInspectionData({ field: "year", value: String(basic.year) })
+            setInspectionData({ field: "year", value: String(basic.year) }),
           );
         if (basic.make)
           dispatch(setInspectionData({ field: "make", value: basic.make }));
@@ -220,25 +220,25 @@ export default function InspectionWizardStepOne({ navigation }) {
           dispatch(setInspectionData({ field: "model", value: basic.model }));
         if (basic.mileAge)
           dispatch(
-            setInspectionData({ field: "mileAge", value: basic.mileAge })
+            setInspectionData({ field: "mileAge", value: basic.mileAge }),
           );
         if (basic.buildDate)
           dispatch(
-            setInspectionData({ field: "buildDate", value: basic.buildDate })
+            setInspectionData({ field: "buildDate", value: basic.buildDate }),
           );
         if (basic.compliancePlate)
           dispatch(
             setInspectionData({
               field: "complianceDate",
               value: basic.compliancePlate,
-            })
+            }),
           );
         if (basic.plate)
           dispatch(
             setInspectionData({
               field: "registrationPlate",
               value: basic.plate,
-            })
+            }),
           );
       }
 
@@ -246,29 +246,35 @@ export default function InspectionWizardStepOne({ navigation }) {
       if (additional) {
         if (additional.colour)
           dispatch(
-            setInspectionData({ field: "color", value: additional.colour })
+            setInspectionData({ field: "color", value: additional.colour }),
           );
         if (additional.fuelType)
           dispatch(
-            setInspectionData({ field: "fuelType", value: additional.fuelType })
+            setInspectionData({
+              field: "fuelType",
+              value: additional.fuelType,
+            }),
           );
         if (additional.transmissionType)
           dispatch(
             setInspectionData({
               field: "transmission",
               value: additional.transmissionType,
-            })
+            }),
           );
         if (additional.driveType)
           dispatch(
             setInspectionData({
               field: "driveTrain",
               value: additional.driveType,
-            })
+            }),
           );
         if (additional.bodyType)
           dispatch(
-            setInspectionData({ field: "bodyType", value: additional.bodyType })
+            setInspectionData({
+              field: "bodyType",
+              value: additional.bodyType,
+            }),
           );
       }
 
@@ -296,7 +302,7 @@ export default function InspectionWizardStepOne({ navigation }) {
 
       const missingFields = requiredFields
         .filter(
-          (f) => !collectedData[f.key] || collectedData[f.key].trim() === ""
+          (f) => !collectedData[f.key] || collectedData[f.key].trim() === "",
         )
         .map((f) => f.label);
 
@@ -323,7 +329,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       Alert.alert(
         "Fetch failed",
         err?.message ||
-          "Failed to fetch vehicle info. Check the VIN and network."
+          "Failed to fetch vehicle info. Check the VIN and network.",
       );
     } finally {
       setLoading(false);
@@ -335,7 +341,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       <KeyboardAvoidingView
         style={tw`flex-1`}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // increased for iOS
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
         <View style={tw`flex-1 bg-white`}>
           {/* Header */}
@@ -351,7 +357,7 @@ export default function InspectionWizardStepOne({ navigation }) {
           {/* Scrollable content */}
           <ScrollView
             style={tw`px-4`}
-            contentContainerStyle={tw`pb-10`} // More padding at bottom to avoid keyboard
+            contentContainerStyle={tw`pb-10`}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
@@ -366,7 +372,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                   placeholder="Enter VIN/Chassis Number"
                   style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
-                  maxLength={17} // ✅ VIN won't go beyond 17 characters
+                  maxLength={17}
                 />
 
                 <TouchableOpacity
@@ -484,9 +490,9 @@ export default function InspectionWizardStepOne({ navigation }) {
           </ScrollView>
 
           {/* Bottom Button */}
-          <View style={tw` bottom-0 left-0 right-0 px-4 mb-10 bg-white`}>
+          <View style={tw` bottom-0 left-0 right-0 px-4 mb-2 bg-white`}>
             <TouchableOpacity
-              style={tw`bg-green-700 py-3 rounded-xl`}
+              style={tw`bg-green-700 py-2 rounded-xl`}
               onPress={handleNext}
             >
               <Text style={tw`text-white text-center text-lg font-semibold`}>
@@ -532,7 +538,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                           setInspectionData({
                             field: showPicker,
                             value: formatted,
-                          })
+                          }),
                         );
                         setShowPicker(null);
                       }}

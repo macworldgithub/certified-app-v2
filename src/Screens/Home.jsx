@@ -85,7 +85,7 @@
 //           ]}
 //         >
 //           <View>
-//             <Text style={tw`text-lg font-bold text-green-800`}>
+//             <Text style={tw`text-lg font-bold `}>
 //               Certified Inspect
 //             </Text>
 //             <Text style={tw`text-gray-500`}>
@@ -113,7 +113,7 @@
 //         </View>
 
 //         {/* Quick Actions */}
-//         <Text style={tw`text-green-800 font-bold text-lg mt-6`}>
+//         <Text style={tw` font-bold text-lg mt-6`}>
 //           Quick Actions
 //         </Text>
 //         {quickActions.map((action, index) => (
@@ -145,7 +145,7 @@
 //         ))}
 
 //         {/* Recent Inspections */}
-//         <Text style={tw`text-green-800 font-bold text-lg mt-6`}>
+//         <Text style={tw` font-bold text-lg mt-6`}>
 //           Recent Inspections
 //         </Text>
 //         {recentInspections.map((inspection, index) => (
@@ -180,7 +180,6 @@
 //   );
 // }
 
-
 import React from "react";
 import {
   View,
@@ -207,17 +206,17 @@ const quickActions = [
   {
     title: "New Inspection",
     subtitle: "Start AI-powered walkround",
-    icon: "camera", 
+    icon: "camera",
   },
   {
     title: "View Reports",
     subtitle: "Access inspection reports",
-    icon: "file", 
+    icon: "file",
   },
   {
     title: "Transport",
     subtitle: "Coordinate vehicle movement",
-    icon: "car", 
+    icon: "car",
   },
 ];
 
@@ -266,16 +265,13 @@ export default function Home() {
           ]}
         >
           <View>
-            <Text style={tw`text-lg font-bold text-green-800`}>
-              Certified Inspect
-            </Text>
+            <Text style={tw`text-lg font-bold `}>Certified Inspect</Text>
             <Text style={tw`text-gray-500`}>
               AI-Powered Vehicle Inspections
             </Text>
           </View>
           <TouchableOpacity>
             <AppIcon name="user-circle" size={24} color="#474745ff" />
-
           </TouchableOpacity>
         </View>
 
@@ -286,7 +282,7 @@ export default function Home() {
               key={index}
               style={tw`items-center border border-gray-300 rounded-lg p-3 flex-1 mx-1`}
             >
-              <Text style={tw`text-xl font-bold text-blue-600`}>
+              <Text style={tw`text-xl font-bold text-green-700`}>
                 {item.value}
               </Text>
               <Text style={tw`text-gray-500`}>{item.label}</Text>
@@ -295,13 +291,11 @@ export default function Home() {
         </View>
 
         {/* Quick Actions */}
-        <Text style={tw`text-green-800 font-bold text-lg mt-6`}>
-          Quick Actions
-        </Text>
+        <Text style={tw` font-bold text-lg mt-6`}>Quick Actions</Text>
         {quickActions.map((action, index) => (
           <TouchableOpacity
             key={index}
-            style={tw`flex-row items-center bg-white p-4 mt-2 rounded-xl shadow`}
+            style={tw`flex-row items-center bg-white p-4 mt-2 rounded-xl shadow text-gray-900`}
             onPress={() => {
               if (action.title === "New Inspection")
                 navigation.navigate("InspectionWizardStepOne");
@@ -311,28 +305,18 @@ export default function Home() {
                 navigation.navigate("TransportActive");
             }}
           >
-             {/* <Ionicons
-              name={`${action.icon}-outline`}
-              size={24}
-              color="#FFC302"
-            /> */}
-
             {/* ✅ CHANGED: replaced Ionicons with AppIcon (FontAwesome) */}
-            <AppIcon name={action.icon} size={22} color="#FFC302" />
+            <AppIcon name={action.icon} size={22} color="#2f855a" />
 
             <View style={tw`ml-4`}>
-              <Text style={tw`font-semibold text-green-500`}>
-                {action.title}
-              </Text>
+              <Text style={tw`font-semibold`}>{action.title}</Text>
               <Text style={tw`text-gray-500`}>{action.subtitle}</Text>
             </View>
           </TouchableOpacity>
         ))}
 
         {/* Recent Inspections */}
-        <Text style={tw`text-green-800 font-bold text-lg mt-6`}>
-          Recent Inspections
-        </Text>
+        <Text style={tw` font-bold text-lg mt-6`}>Recent Inspections</Text>
         {recentInspections.map((inspection, index) => (
           <View key={index} style={tw`bg-white p-4 mt-3 rounded-xl shadow`}>
             <View style={tw`flex-row justify-between`}>

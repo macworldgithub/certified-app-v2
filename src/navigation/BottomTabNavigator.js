@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 // ✅ UPDATED: TabBarIcon now uses AppIcon instead of Ionicons
 const TabBarIcon = ({ focused, color, size, iconName }) => (
   <View style={tw`items-center justify-center`}>
-    <AppIcon name={iconName} size={size} color="#FFC302" />
+    <AppIcon name={iconName} size={size} color="#2f855a" />
   </View>
 );
 

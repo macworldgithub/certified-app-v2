@@ -441,14 +441,14 @@ export default function InspectionList() {
   const fetchInspections = async (
     search?: string,
     pageNumber: number = 1,
-    append: boolean = false
+    append: boolean = false,
   ) => {
     try {
       if (pageNumber === 1 && !append) setLoading(true);
       if (pageNumber > 1) setLoadingMore(true);
 
       let url = `https://apiv2.certifiedinspect.com.au/inspections?email=${encodeURIComponent(
-        email
+        email,
       )}&sortBy=createdAt&sortOrder=desc&page=${pageNumber}&limit=${limit}`;
 
       if (search && search.trim().length > 0) {
@@ -483,7 +483,7 @@ export default function InspectionList() {
       setPage(1);
       fetchInspections(text, 1, false);
     }, 500),
-    []
+    [],
   );
 
   const handleChange = (text: string) => {
@@ -505,7 +505,7 @@ export default function InspectionList() {
     try {
       const res = await fetch(
         `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
-        { headers: { accept: "application/json" } }
+        { headers: { accept: "application/json" } },
       );
       const inspection = await res.json();
 
@@ -529,7 +529,7 @@ export default function InspectionList() {
           headers: {
             accept: "application/json",
           },
-        }
+        },
       );
 
       const json = await res.json();
@@ -570,14 +570,14 @@ export default function InspectionList() {
           prev.map((item) =>
             item.vin === vin
               ? { ...item, overallRating: json.overallRating }
-              : item
-          )
+              : item,
+          ),
         );
 
         alert(
           `Inspection analyzed successfully!\nOverall Rating: ${
             json.overallRating || "N/A"
-          }`
+          }`,
         );
 
         console.log("Analyze response:", json);
@@ -598,14 +598,14 @@ export default function InspectionList() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Inspection List</Text>
+          <Text style={styles.title}>Test Inspector</Text>
           <TouchableOpacity
             style={styles.addBtn}
             onPress={() =>
               navigation.navigate("InspectionWizardStepOne" as never)
             }
           >
-            <Text style={styles.addBtnText}>+ Inspection</Text>
+            <Text style={styles.addBtnText}>+ Inspect</Text>
           </TouchableOpacity>
         </View>
 
@@ -767,10 +767,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   cancelBtn: {
-    backgroundColor: "#e2e8f0",
+    backgroundColor: "#2f855a",
   },
   confirmBtn: {
-    backgroundColor: "#dc2626",
+    backgroundColor: "#2f855a",
   },
   cancelText: {
     color: "#0f172a",

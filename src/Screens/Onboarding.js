@@ -33,7 +33,7 @@ export default function Onboarding({ navigation }) {
         }}
       >
         {/* Bottom content */}
-        <View style={{ marginBottom: 48 ,paddingLeft: 10 ,paddingRight:10}}>
+        <View style={{ marginBottom: 48, paddingLeft: 10, paddingRight: 10 }}>
           {/* Title */}
           <Text
             style={{
@@ -96,7 +96,14 @@ export default function Onboarding({ navigation }) {
               borderRadius: 12,
               alignItems: "center",
             }}
-            onPress={() => navigation.navigate("MainTabs")}
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  { name: "MainTabs", params: { screen: "InspectionList" } },
+                ],
+              });
+            }}
           >
             <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
               Next
