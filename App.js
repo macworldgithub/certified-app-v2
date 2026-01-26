@@ -46,6 +46,7 @@ import EngineImage from "./src/Screens/EngineImage";
 import VINPlate from "./src/Screens/VINPlate";
 import InteriorFront from "./src/Screens/InteriorFront";
 import InteriorBack from "./src/Screens/InteriorBack";
+import ReviewInspection from "./src/Screens/ReviewInspection";
 import { KeyboardAvoidingView, View, Text } from "react-native";
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -149,6 +150,7 @@ export default function App() {
                 <Stack.Screen name="VINPlate" component={VINPlate} />
                 <Stack.Screen name="InteriorFront" component={InteriorFront} />
                 <Stack.Screen name="InteriorBack" component={InteriorBack} />
+                <Stack.Screen name="ReviewInspection" component={ReviewInspection}/>
 
                 {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
               </Stack.Navigator>

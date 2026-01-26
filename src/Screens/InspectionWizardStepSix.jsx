@@ -432,7 +432,7 @@ export default function InspectionWizardStepSix({ navigation }) {
 
           {/* Progress Bar */}
           <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4 mt-4`}>
-            <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+            <View style={tw`w-6/6 h-1 bg-green-600 rounded-full`} />
           </View>
 
           <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>

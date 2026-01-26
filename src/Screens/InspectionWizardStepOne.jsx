@@ -187,154 +187,154 @@ export default function InspectionWizardStepOne({ navigation }) {
   // };
 
   // --- New: fetch vehicle info flow ---
-  const handleFetchVehicleInfo = async () => {
-    // Basic validation
-    if (!vin || vin.trim().length === 0) {
-      Alert.alert(
-        "VIN required",
-        "Please enter a VIN/Chassis number before fetching.",
-      );
-      return;
-    }
+  // const handleFetchVehicleInfo = async () => {
+  //   // Basic validation
+  //   if (!vin || vin.trim().length === 0) {
+  //     Alert.alert(
+  //       "VIN required",
+  //       "Please enter a VIN/Chassis number before fetching.",
+  //     );
+  //     return;
+  //   }
 
-    try {
-      setLoading(true);
+  //   try {
+  //     setLoading(true);
 
-      // 1) Ensure token present
-      await fetchAndStoreInfoAgentToken();
+  //     // 1) Ensure token present
+  //     await fetchAndStoreInfoAgentToken();
 
-      // 2) Call vehicle report endpoint
-      await fetchVehicleReport(vin.trim());
+  //     // 2) Call vehicle report endpoint
+  //     await fetchVehicleReport(vin.trim());
 
-      // 3) Read basic info
-      const basic = await getVehicleBasicInfo();
+  //     // 3) Read basic info
+  //     const basic = await getVehicleBasicInfo();
 
-      if (basic) {
-        if (basic.year)
-          dispatch(
-            setInspectionData({ field: "year", value: String(basic.year) }),
-          );
-        if (basic.make)
-          dispatch(setInspectionData({ field: "make", value: basic.make }));
-        if (basic.model)
-          dispatch(setInspectionData({ field: "model", value: basic.model }));
-        if (basic.mileAge)
-          dispatch(
-            setInspectionData({ field: "mileAge", value: basic.mileAge }),
-          );
-        if (basic.buildDate)
-          dispatch(
-            setInspectionData({ field: "buildDate", value: basic.buildDate }),
-          );
-        if (basic.compliancePlate)
-          dispatch(
-            setInspectionData({
-              field: "complianceDate",
-              value: basic.compliancePlate,
-            }),
-          );
-        if (basic.plate)
-          dispatch(
-            setInspectionData({
-              field: "registrationPlate",
-              value: basic.plate,
-            }),
-          );
-      }
+  //     if (basic) {
+  //       if (basic.year)
+  //         dispatch(
+  //           setInspectionData({ field: "year", value: String(basic.year) }),
+  //         );
+  //       if (basic.make)
+  //         dispatch(setInspectionData({ field: "make", value: basic.make }));
+  //       if (basic.model)
+  //         dispatch(setInspectionData({ field: "model", value: basic.model }));
+  //       if (basic.mileAge)
+  //         dispatch(
+  //           setInspectionData({ field: "mileAge", value: basic.mileAge }),
+  //         );
+  //       if (basic.buildDate)
+  //         dispatch(
+  //           setInspectionData({ field: "buildDate", value: basic.buildDate }),
+  //         );
+  //       if (basic.compliancePlate)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "complianceDate",
+  //             value: basic.compliancePlate,
+  //           }),
+  //         );
+  //       if (basic.plate)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "registrationPlate",
+  //             value: basic.plate,
+  //           }),
+  //         );
+  //     }
 
-      const additional = await getVehicleAdditionalInfo();
-      if (additional) {
-        if (additional.colour)
-          dispatch(
-            setInspectionData({ field: "color", value: additional.colour }),
-          );
-        if (additional.fuelType)
-          dispatch(
-            setInspectionData({
-              field: "fuelType",
-              value: additional.fuelType,
-            }),
-          );
-        if (additional.transmissionType)
-          dispatch(
-            setInspectionData({
-              field: "transmission",
-              value: additional.transmissionType,
-            }),
-          );
-        if (additional.driveType)
-          dispatch(
-            setInspectionData({
-              field: "driveTrain",
-              value: additional.driveType,
-            }),
-          );
-        if (additional.bodyType)
-          dispatch(
-            setInspectionData({
-              field: "bodyType",
-              value: additional.bodyType,
-            }),
-          );
-      }
+  //     const additional = await getVehicleAdditionalInfo();
+  //     if (additional) {
+  //       if (additional.colour)
+  //         dispatch(
+  //           setInspectionData({ field: "color", value: additional.colour }),
+  //         );
+  //       if (additional.fuelType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "fuelType",
+  //             value: additional.fuelType,
+  //           }),
+  //         );
+  //       if (additional.transmissionType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "transmission",
+  //             value: additional.transmissionType,
+  //           }),
+  //         );
+  //       if (additional.driveType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "driveTrain",
+  //             value: additional.driveType,
+  //           }),
+  //         );
+  //       if (additional.bodyType)
+  //         dispatch(
+  //           setInspectionData({
+  //             field: "bodyType",
+  //             value: additional.bodyType,
+  //           }),
+  //         );
+  //     }
 
-      const requiredFields = [
-        { key: "vin", label: "VIN/Chassis Number" },
-        { key: "year", label: "Year" },
-        { key: "make", label: "Make" },
-        { key: "model", label: "Model" },
-        { key: "mileAge", label: "mileAge" },
-        { key: "registrationPlate", label: "Registration Plate" },
-        { key: "buildDate", label: "Build Date" },
-        { key: "complianceDate", label: "Compliance Date" },
-      ];
+  //     const requiredFields = [
+  //       { key: "vin", label: "VIN/Chassis Number" },
+  //       { key: "year", label: "Year" },
+  //       { key: "make", label: "Make" },
+  //       { key: "model", label: "Model" },
+  //       { key: "mileAge", label: "mileAge" },
+  //       { key: "registrationPlate", label: "Registration Plate" },
+  //       { key: "buildDate", label: "Build Date" },
+  //       { key: "complianceDate", label: "Compliance Date" },
+  //     ];
 
-      const collectedData = {
-        vin: vin?.trim() || "",
-        year: basic?.year ? String(basic.year) : year,
-        make: basic?.make || make,
-        model: basic?.model || model,
-        mileAge: basic?.mileAge || mileAge,
-        registrationPlate: basic?.plate || registrationPlate,
-        buildDate: basic?.buildDate || buildDate,
-        complianceDate: basic?.compliancePlate || complianceDate,
-      };
+  //     const collectedData = {
+  //       vin: vin?.trim() || "",
+  //       year: basic?.year ? String(basic.year) : year,
+  //       make: basic?.make || make,
+  //       model: basic?.model || model,
+  //       mileAge: basic?.mileAge || mileAge,
+  //       registrationPlate: basic?.plate || registrationPlate,
+  //       buildDate: basic?.buildDate || buildDate,
+  //       complianceDate: basic?.compliancePlate || complianceDate,
+  //     };
 
-      const missingFields = requiredFields
-        .filter(
-          (f) => !collectedData[f.key] || collectedData[f.key].trim() === "",
-        )
-        .map((f) => f.label);
+  //     const missingFields = requiredFields
+  //       .filter(
+  //         (f) => !collectedData[f.key] || collectedData[f.key].trim() === "",
+  //       )
+  //       .map((f) => f.label);
 
-      let validationStatus = false;
-      let validationMessage = "";
+  //     let validationStatus = false;
+  //     let validationMessage = "";
 
-      if (missingFields.length > 0) {
-        validationStatus = false;
-        validationMessage = `Missing fields:\n${missingFields.join("\n")}`;
-        Alert.alert("⚠️ Missing Data", validationMessage);
-      } else {
-        validationStatus = true;
-        validationMessage = "✅ All fields have been successfully populated.";
-        Alert.alert("Success", validationMessage);
-      }
+  //     if (missingFields.length > 0) {
+  //       validationStatus = false;
+  //       validationMessage = `Missing fields:\n${missingFields.join("\n")}`;
+  //       Alert.alert("⚠️ Missing Data", validationMessage);
+  //     } else {
+  //       validationStatus = true;
+  //       validationMessage = "✅ All fields have been successfully populated.";
+  //       Alert.alert("Success", validationMessage);
+  //     }
 
-      console.log({
-        missingFields,
-        validationStatus,
-        validationMessage,
-      });
-    } catch (err) {
-      console.error("Error in fetch flow:", err);
-      Alert.alert(
-        "Fetch failed",
-        err?.message ||
-          "Failed to fetch vehicle info. Check the VIN and network.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     console.log({
+  //       missingFields,
+  //       validationStatus,
+  //       validationMessage,
+  //     });
+  //   } catch (err) {
+  //     console.error("Error in fetch flow:", err);
+  //     Alert.alert(
+  //       "Fetch failed",
+  //       err?.message ||
+  //         "Failed to fetch vehicle info. Check the VIN and network.",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <SafeAreaWrapper>
@@ -349,7 +349,7 @@ export default function InspectionWizardStepOne({ navigation }) {
             <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>
               <AppIcon name="arrow-left" size={24} color="#065f46" />
             </TouchableOpacity>
-            <Text style={tw`text-lg font-bold text-green-800`}>
+            <Text style={tw`text-lg font-bold text-green-800 ml-8`}>
               Basic Vehicle Information
             </Text>
           </View>
@@ -361,6 +361,11 @@ export default function InspectionWizardStepOne({ navigation }) {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
+            {/* Progress Bar*/}
+            <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
+              <View style={tw`w-1/6 h-1 bg-green-600 rounded-full`} />
+            </View>
+
             {/* VIN */}
             <View>
               <Text style={tw`text-gray-500 mb-2`}>VIN/Chassis Number</Text>
@@ -375,7 +380,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                   maxLength={17}
                 />
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={handleFetchVehicleInfo}
                   style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
                   disabled={loading}
@@ -385,7 +390,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                   ) : (
                     <Text style={tw`text-white font-semibold`}>Fetch</Text>
                   )}
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
 
@@ -492,7 +497,7 @@ export default function InspectionWizardStepOne({ navigation }) {
           {/* Bottom Button */}
           <View style={tw` bottom-0 left-0 right-0 px-4 mb-2 bg-white`}>
             <TouchableOpacity
-              style={tw`bg-green-700 py-2 rounded-xl`}
+              style={tw`bg-green-700 py-3 rounded-xl`}
               onPress={handleNext}
             >
               <Text style={tw`text-white text-center text-lg font-semibold`}>

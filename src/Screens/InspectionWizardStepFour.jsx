@@ -123,7 +123,7 @@ export default function InspectionWizardStepFour({ navigation }) {
 
           {/* Progress Bar */}
           <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
-            <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+            <View style={tw`w-5/6 h-1 bg-green-600 rounded-full`} />
           </View>
 
           <ScrollView
@@ -144,15 +144,13 @@ export default function InspectionWizardStepFour({ navigation }) {
                     key={opt}
                     onPress={() => handleSelect("serviceBookPresent", opt)}
                     style={tw.style(
-                      "flex-1 items-center justify-center border rounded-lg py-6 mx-1",
+                      "flex-1 items-center justify-center border rounded-lg py-4 mx-1",
                       serviceBookPresent === opt
                         ? "border-green-600 bg-green-50"
                         : "border-gray-300 bg-white",
                     )}
                   >
-                    <Text style={tw`text-lg font-semibold text-gray-800`}>
-                      {opt}
-                    </Text>
+                    <Text style={tw`text-lg text-gray-500`}>{opt}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -263,7 +261,7 @@ export default function InspectionWizardStepFour({ navigation }) {
                         "font-medium text-base",
                         serviceHistoryPresent === option
                           ? "text-green-700"
-                          : "text-gray-700",
+                          : "text-gray-500",
                       )}
                     >
                       {option}

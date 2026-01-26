@@ -98,7 +98,7 @@ export default function InteriorBack({ navigation }) {
 
         <NextButton
           navigation={navigation}
-          nextScreen="InspectionWizardStepTwo"
+          nextScreen="ReviewInspection"
         />
       </View>
     </SafeAreaWrapper>

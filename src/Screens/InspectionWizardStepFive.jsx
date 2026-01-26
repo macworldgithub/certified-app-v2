@@ -107,7 +107,7 @@ export default function InspectionWizardStepFive({ navigation }) {
 
           {/* Progress Bar (≈40-50% like screenshot) */}
           <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
-            <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+            <View style={tw`w-4/6 h-1 bg-green-600 rounded-full`} />
           </View>
 
           {/* Scrollable Content */}

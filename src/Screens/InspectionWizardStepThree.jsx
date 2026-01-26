@@ -64,7 +64,7 @@ export default function InspectionWizardStepThree({ navigation }) {
           >
             {/* Progress Bar (matching screenshot style) */}
             <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
-              <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+              <View style={tw`w-3/6 h-1 bg-green-600 rounded-full`} />
             </View>
 
             {/* Color Field */}

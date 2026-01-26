@@ -289,7 +289,7 @@ const ImageActions = ({
 }) => (
   <>
     <TouchableOpacity
-      style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
+      style={tw`bg-green-700 p-3 rounded-lg mt-4`}
       onPress={() =>
         handlePickFromGallery({
           partKey,
@@ -304,7 +304,7 @@ const ImageActions = ({
     </TouchableOpacity>
 
     <TouchableOpacity
-      style={tw`bg-purple-600 p-3 rounded-lg mt-4`}
+      style={tw`bg-green-700 p-3 rounded-lg mt-4`}
       onPress={() =>
         handleImageCapture({
           partKey,

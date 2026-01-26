@@ -176,7 +176,7 @@ export default function InspectionWizardStepTwo({ navigation }) {
           >
             {/* Progress Bar (matching screenshot style) */}
             <View style={tw`w-full h-1 bg-gray-200 rounded-full mb-4`}>
-              <View style={tw`w-3/5 h-1 bg-green-600 rounded-full`} />
+              <View style={tw`w-2/6 h-1 bg-green-600 rounded-full`} />
             </View>
             <View
               style={tw`mb-6 bg-white border border-gray-300 rounded-xl p-4`}
