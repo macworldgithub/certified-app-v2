@@ -36,6 +36,13 @@ export default function InspectionWizardStepTwo({ navigation }) {
     bodyType,
   } = useSelector((state) => state.inspection);
 
+  const isFormComplete =
+    odometer?.toString().trim() &&
+    fuelType &&
+    driveTrain &&
+    transmission &&
+    bodyType;
+
   const [showDropdown, setShowDropdown] = useState(null);
   const [odometerImageUrl, setOdometerImageUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -244,12 +251,15 @@ export default function InspectionWizardStepTwo({ navigation }) {
           </ScrollView>
 
           {/* Next Button */}
-             <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white`}>
+          <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white`}>
             <TouchableOpacity
-              style={tw`bg-green-700 py-3 rounded-xl shadow-lg`}
+              style={tw`${isFormComplete ? "bg-green-700" : "bg-gray-300"} py-3 rounded-xl shadow-lg`}
               onPress={handleNext}
+              disabled={!isFormComplete}
             >
-              <Text style={tw`text-white text-center text-lg font-semibold`}>
+              <Text
+                style={tw`${isFormComplete ? "text-white" : "text-gray-500"} text-center text-lg font-semibold`}
+              >
                 Next
               </Text>
             </TouchableOpacity>

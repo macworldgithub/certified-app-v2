@@ -40,6 +40,17 @@ export default function InspectionWizardStepOne({ navigation }) {
     complianceDate,
   } = useSelector((state) => state.inspection);
 
+  const isFormComplete =
+    vin?.trim().length === 17 &&
+    year?.trim() &&
+    make?.trim() &&
+    model?.trim() &&
+    mileAge?.toString().trim() &&
+    registrationPlate?.trim() &&
+    registrationExpiry &&
+    buildDate &&
+    complianceDate;
+
   const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
@@ -527,11 +538,13 @@ export default function InspectionWizardStepOne({ navigation }) {
           {/* Bottom Button */}
           <View style={tw` bottom-0 left-0 right-0 px-4 mb-2 bg-white`}>
             <TouchableOpacity
-              style={tw`bg-green-700 py-3 rounded-xl`}
-              // onPress={handleNext}
+              style={tw`${isFormComplete ? "bg-green-700" : "bg-gray-300"} py-3 rounded-xl`}
               onPress={validateAndGoNext}
+              disabled={!isFormComplete}
             >
-              <Text style={tw`text-white text-center text-lg font-semibold`}>
+              <Text
+                style={tw`${isFormComplete ? "text-white" : "text-gray-500"} text-center text-lg font-semibold`}
+              >
                 Next
               </Text>
             </TouchableOpacity>

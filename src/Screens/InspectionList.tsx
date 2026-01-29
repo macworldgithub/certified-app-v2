@@ -55,7 +55,7 @@
 //       if (pageNumber === 1 && !append) setLoading(true);
 //       if (pageNumber > 1) setLoadingMore(true);
 
-//       let url = `https://apiv2.certifiedinspect.com.au/inspections?email=${encodeURIComponent(
+//       let url = `http://192.168.100.110:5000/inspections?email=${encodeURIComponent(
 //         email
 //       )}&sortBy=createdAt&sortOrder=desc&page=${pageNumber}&limit=${limit}`;
 
@@ -112,7 +112,7 @@
 //   const handleEdit = async (id: string) => {
 //     try {
 //       const res = await fetch(
-//         `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
+//         `http://192.168.100.110:5000/inspections/${id}`,
 //         { headers: { accept: "application/json" } }
 //       );
 //       const inspection = await res.json();
@@ -131,7 +131,7 @@
 
 //     try {
 //       const res = await fetch(
-//         `https://apiv2.certifiedinspect.com.au/inspections/${selectedVin}`,
+//         `http://192.168.100.110:5000/inspections/${selectedVin}`,
 //         {
 //           method: "DELETE",
 //           headers: {
@@ -160,7 +160,7 @@
 //     try {
 //       setLoading(true);
 
-//       const url = `https://apiv2.certifiedinspect.com.au/inspections/${vin}/analyze`;
+//       const url = `http://192.168.100.110:5000/inspections/${vin}/analyze`;
 
 //       const response = await fetch(url, {
 //         method: "POST",
@@ -409,6 +409,7 @@ import {
   setInspectionData,
 } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import API_BASE_URL from "../../utils/config";
 
 type CarItem = {
   _id: string;
@@ -504,7 +505,7 @@ export default function InspectionList() {
   const handleEdit = async (id: string) => {
     try {
       const res = await fetch(
-        `https://apiv2.certifiedinspect.com.au/inspections/${id}`,
+        `${API_BASE_URL}/inspections/${id}`,
         { headers: { accept: "application/json" } },
       );
       const inspection = await res.json();
@@ -523,7 +524,7 @@ export default function InspectionList() {
 
     try {
       const res = await fetch(
-        `https://apiv2.certifiedinspect.com.au/inspections/${selectedVin}`,
+        `${API_BASE_URL}/inspections/${selectedVin}`,
         {
           method: "DELETE",
           headers: {
@@ -552,7 +553,7 @@ export default function InspectionList() {
     try {
       setLoading(true);
 
-      const url = `https://apiv2.certifiedinspect.com.au/inspections/${vin}/analyze`;
+      const url = `${API_BASE_URL}/inspections/${vin}/analyze`;
 
       const response = await fetch(url, {
         method: "POST",
@@ -605,7 +606,7 @@ export default function InspectionList() {
               navigation.navigate("InspectionWizardStepOne" as never)
             }
           >
-            <Text style={styles.addBtnText}>+ Inspect</Text>
+            <Text style={styles.addBtnText}>Add Inspect</Text>
           </TouchableOpacity>
         </View>
 

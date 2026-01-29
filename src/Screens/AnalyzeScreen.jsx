@@ -4,6 +4,7 @@ import axios from "axios";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { setAnalysisData } from "../redux/slices/inspectionSlice";
+import API_BASE_URL from "../../utils/config";
 
 export default function AnalyzeScreen() {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export default function AnalyzeScreen() {
   const handleAnalyze = async () => {
     try {
       const resp = await axios.post(
-        `http://192.168.18.11:5000/inspections/${vinNumber}/analyze`,
+        `${API_BASE_URL}/${vinNumber}/analyze`,
         {} // empty body
       );
 

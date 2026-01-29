@@ -483,7 +483,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                       style={tw`bg-green-600 px-3 py-2 rounded-lg`}
                     >
                       <Text style={tw`text-white font-semibold`}>
-                        + Add Damage
+                        Add Damage
                       </Text>
                     </TouchableOpacity>
                   </View>

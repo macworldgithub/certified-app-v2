@@ -32,6 +32,7 @@ export const uploadToS3 = async ({
     );
 
     const { url, key } = presignedResp.data;
+    console.log(url, "URL")
     // STEP 2: Convert local file to blob
     const fileResp = await fetch(fileUri);
     const blob = await fileResp.blob();
@@ -44,7 +45,7 @@ export const uploadToS3 = async ({
       },
       body: blob,
     });
-
+    console.log(uploadResp, "Upload...")
     if (uploadResp.ok) {
       console.log("✅ Image uploaded successfully to S3");
       Alert.alert("Success", "Image uploaded successfully");
@@ -243,7 +244,7 @@ export const signUrl = async (awsKey) => {
 //       console.log("🔑 Passing key to analyze:", key);
 
 //       const analyzeResp = await axios.post(
-//         `${API_BASE_URL}/inspections/analyze`,
+//         `http://192.168.100.110:5000/inspections/analyze`,
 //         { key },
 //         {
 //           headers: {
