@@ -21,6 +21,7 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import AppIcon from "../components/AppIcon";
 import { Buffer } from "buffer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_BASE_URL from "../../utils/config";
 
 export default function VehicleReport() {
   const [data, setData] = useState([]);
@@ -50,7 +51,7 @@ export default function VehicleReport() {
       if (pageNumber === 1 && !append) setLoading(true);
       if (pageNumber > 1) setLoadingMore(true);
 
-      let url = `https://apiv2.certifiedinspect.com.au/inspections?email=${encodeURIComponent(
+      let url = `${API_BASE_URL}/inspections?email=${encodeURIComponent(
         email
       )}&sortBy=createdAt&sortOrder=desc&page=${pageNumber}&limit=${limit}`;
 
@@ -224,7 +225,7 @@ export default function VehicleReport() {
       }
 
       // 🔍 Log API URL
-      const url = `https://apiv2.certifiedinspect.com.au/inspections/${id}/pdf`;
+      const url = `${API_BASE_URL}/inspections/${id}/pdf`;
       console.log("🌍 API URL:", url);
 
       // 🔍 Start request
@@ -290,7 +291,7 @@ export default function VehicleReport() {
       setPredictingId(id);
       setPredictedData(null);
 
-      const url = `https://apiv2.certifiedinspect.com.au/inspections/${id}/predict-price`;
+      const url = `${API_BASE_URL}/inspections/${id}/predict-price`;
       const response = await axios.get(url, {
         headers: { Accept: "application/json" },
       });
@@ -329,7 +330,7 @@ export default function VehicleReport() {
       setAdjustingId(id);
       setAdjustedData(null);
 
-      const url = `https://apiv2.certifiedinspect.com.au/inspections/${id}/adjusted-price`;
+      const url = `${API_BASE_URL}/inspections/${id}/adjusted-price`;
       const response = await axios.get(url, {
         headers: { Accept: "application/json" },
       });
