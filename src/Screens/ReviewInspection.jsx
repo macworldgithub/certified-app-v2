@@ -6,60 +6,65 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Image,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
 export default function ReviewInspection({ navigation }) {
-  const dispatch = useDispatch();
   const inspection = useSelector((state) => state.inspection);
+  const { images } = inspection;
 
   const {
+    vin,
+    make,
+    model,
+    year,
+    mileAge,
+    registrationPlate,
+    registrationExpiry,
+    buildDate,
+    complianceDate,
     odometer,
-    FuelType,
-    DriveTrain,
-    Transmission,
+    fuelType,
+    driveTrain,
+    transmission,
     bodyType,
     color,
     frontWheelDiameter,
     rearWheelDiameter,
     keysPresent,
-    FrontLeft,
-    FrontRight,
-    RearRight,
-    RearLeft,
     serviceBookPresent,
-    ServiceHisoryPresent,
+    serviceHistoryPresent,
+    tyreConditionFrontLeft,
+    tyreConditionFrontRight,
+    tyreConditionRearRight,
+    tyreConditionRearLeft,
     damagePresent,
+    damages,
     roadTest,
+    roadTestComments,
     generalComments,
   } = inspection;
 
   const handleSubmit = async () => {
     try {
       console.log(
-        "Final Inspection Data:",
+        "Final Submission Payload:",
         JSON.stringify(inspection, null, 2),
       );
-
       Alert.alert("Success", "Inspection submitted!");
       navigation.navigate("MainTabs");
     } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      console.error("Submit error:", msg);
-      Alert.alert("Error", msg || "Failed to submit inspection");
+      Alert.alert("Error", "Failed to submit inspection");
     }
   };
 
   const renderSection = (title, children) => (
-    <View
-      style={tw`mb-6 bg-white border border-gray-200 rounded-xl p-4 shadow-sm`}
-    >
-      <Text
-        style={tw`text-gray-500 text-sm font-medium mb-3 uppercase tracking-wide`}
-      >
+    <View style={tw`mb-6 bg-white border border-gray-200 rounded-xl p-4`}>
+      <Text style={tw`text-gray-500 text-sm font-medium mb-3 uppercase`}>
         {title}
       </Text>
       {children}
@@ -75,85 +80,145 @@ export default function ReviewInspection({ navigation }) {
     </View>
   );
 
+  const renderImageCard = (title, imageObj) => {
+    if (!imageObj) return null; // changed to simpler check
+
+    const uri = imageObj.original || imageObj; // support both object & direct string
+
+    if (!uri) return null;
+
+    return (
+      <View style={tw`mb-4`}>
+        <Text style={tw`text-gray-600 text-sm mb-2 font-medium`}>{title}</Text>
+        <Image
+          source={{ uri }}
+          style={tw`w-full h-48 rounded-lg`}
+          resizeMode="cover"
+        />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaWrapper>
       <SafeAreaView style={tw`flex-1 bg-gray-50`}>
         {/* Header */}
         <View
-          style={tw`flex-row items-center justify-between px-4 pt-4 pb-3 bg-white border-b border-gray-200`}
+          style={tw`flex-row items-center px-4 pt-4 pb-3 bg-white border-b border-gray-200`}
         >
           <TouchableOpacity onPress={() => navigation.goBack()} style={tw`p-2`}>
             <AppIcon name="arrow-left" size={24} color="#065f46" />
           </TouchableOpacity>
-          <Text style={tw`text-lg font-bold text-green-800`}>
+          <Text style={tw`text-lg font-bold text-green-800 ml-2`}>
             Review Inspection
           </Text>
-          <View style={tw`w-10`} />
         </View>
 
         <ScrollView
           style={tw`flex-1`}
-          contentContainerStyle={tw`pb-32 px-4`}
+          contentContainerStyle={tw`pb-36 px-4`}
           showsVerticalScrollIndicator={false}
         >
-          {/* Body Type */}
+          {/* VEHICLE INFO */}
           {renderSection(
-            "Body Type",
-            renderField("Body Type", bodyType || "Coupe"),
-          )}
-
-          {/* Service / Wheel Diameter Section */}
-          {renderSection(
-            "SERVICE / WHEEL DIAMETER",
+            "Vehicle Information",
             <>
-              {renderField("Color", color || "Red")}
-              {renderField(
-                "Front Wheel Diameter",
-                frontWheelDiameter || "14 Inch",
-              )}
-              {renderField(
-                "Rear Wheel Diameter",
-                rearWheelDiameter || "14 Inch",
-              )}
-              {renderField(
-                "Keys",
-                keysPresent ? `${keysPresent} Keys` : "Not specified",
-              )}
+              {renderField("VIN", vin)}
+              {renderField("Make", make)}
+              {renderField("Model", model)}
+              {renderField("Year", year)}
+              {renderField("Mileage", mileAge)}
+              {renderField("Registration Plate", registrationPlate)}
+              {renderField("Registration Expiry", registrationExpiry)}
+              {renderField("Build Date", buildDate)}
+              {renderField("Compliance Date", complianceDate)}
             </>,
           )}
 
-          {/* Tyre Condition */}
+          {/* BASIC DETAILS */}
           {renderSection(
-            "TYRE CONDITION",
+            "Basic Details",
             <>
-              {renderField("Front Left", FrontLeft)}
-              {renderField("Front Right", FrontRight)}
-              {renderField("Rear Right", RearRight)}
-              {renderField("Rear Left", RearLeft)}
+              {renderField("Odometer Reading", odometer)}
+              {renderField("Fuel Type", fuelType)}
+              {renderField("Drive Train", driveTrain)}
+              {renderField("Transmission", transmission)}
+              {renderField("Body Type", bodyType)}
+              {renderField("Color", color)}
             </>,
           )}
 
-          {/* Service Documents */}
+          {/* WHEELS & KEYS */}
           {renderSection(
-            "SERVICE DOCUMENTS",
+            "Wheels & Keys",
+            <>
+              {renderField("Front Wheel Diameter", frontWheelDiameter || "N/A")}
+              {renderField("Rear Wheel Diameter", rearWheelDiameter || "N/A")}
+              {renderField("Keys Present", keysPresent)}
+            </>,
+          )}
+
+          {/* TYRE CONDITION */}
+          {renderSection(
+            "Tyre Condition",
+            <>
+              {renderField("Front Left", tyreConditionFrontLeft)}
+              {renderField("Front Right", tyreConditionFrontRight)}
+              {renderField("Rear Right", tyreConditionRearRight)}
+              {renderField("Rear Left", tyreConditionRearLeft)}
+            </>,
+          )}
+
+          {/* SERVICE DOCUMENTS */}
+          {renderSection(
+            "Service Documents",
             <>
               {renderField("Service Book Present", serviceBookPresent)}
-              {renderField("Service History Present", ServiceHisoryPresent)}
+              {renderField("Service History Present", serviceHistoryPresent)}
             </>,
           )}
 
-          {/* Additional */}
+          {/* DAMAGE & ROAD TEST */}
           {renderSection(
-            "ADDITIONAL",
+            "Damage & Road Test",
             <>
               {renderField("Damage Present", damagePresent)}
+              {damagePresent === "Yes" && damages?.length > 0 && (
+                <View style={tw`mt-2`}>
+                  <Text style={tw`text-gray-600 font-medium`}>Damages:</Text>
+                  {damages.map((d, i) => (
+                    <Text key={i} style={tw`text-gray-800 mt-1`}>
+                      • {d.damageDescription} ({d.damageSeverity})
+                    </Text>
+                  ))}
+                </View>
+              )}
               {renderField("Road Test", roadTest)}
-              {renderField("General Comments", generalComments)}
+              {roadTest === "Yes" &&
+                renderField("Road Test Comments", roadTestComments)}
+            </>,
+          )}
+
+          {/* GENERAL COMMENTS */}
+          {renderSection("General Comments", renderField("", generalComments))}
+
+          {/* IMAGES REVIEW */}
+          {renderSection(
+            "Images",
+            <>
+              {renderImageCard("Front Image", images?.frontImage)}
+              {renderImageCard("Rear Image", images?.rearImage)}
+              {renderImageCard("Left Image", images?.leftImage)}
+              {renderImageCard("Right Image", images?.rightImage)}
+              {renderImageCard("Engine Image", images?.engineImage)}
+              {renderImageCard("VIN Plate", images?.VINPlate)}
+              {renderImageCard("Interior Front", images?.InteriorFront)}
+              {renderImageCard("Interior Back", images?.InteriorBack)}
             </>,
           )}
         </ScrollView>
 
-        {/* Fixed Submit Button */}
+        {/* SUBMIT BUTTON */}
         <View
           style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white pt-4 border-t border-gray-200`}
         >

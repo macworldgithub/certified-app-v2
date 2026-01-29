@@ -447,7 +447,7 @@ export default function InspectionList() {
       if (pageNumber === 1 && !append) setLoading(true);
       if (pageNumber > 1) setLoadingMore(true);
 
-      let url = `http://192.168.100.25:5000/inspections?email=${encodeURIComponent(
+      let url = `http://192.168.18.129:5000/inspections?email=${encodeURIComponent(
         email,
       )}&sortBy=createdAt&sortOrder=desc&page=${pageNumber}&limit=${limit}`;
 
