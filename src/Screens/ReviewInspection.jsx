@@ -72,7 +72,7 @@ export default function ReviewInspection({ navigation }) {
   );
 
   const renderField = (label, value) => (
-    <View style={tw`py-2.5 border-b border-gray-100 last:border-b-0`}>
+    <View style={tw`py-2.5 border-b border-gray-100`}>
       <Text style={tw`text-gray-500 text-sm mb-1`}>{label}</Text>
       <Text style={tw`text-gray-800 font-medium text-base`}>
         {value || "Not provided"}
@@ -81,9 +81,9 @@ export default function ReviewInspection({ navigation }) {
   );
 
   const renderImageCard = (title, imageObj) => {
-    if (!imageObj) return null; // changed to simpler check
+    if (!imageObj) return null; 
 
-    const uri = imageObj.original || imageObj; // support both object & direct string
+    const uri = imageObj.original || imageObj; 
 
     if (!uri) return null;
 

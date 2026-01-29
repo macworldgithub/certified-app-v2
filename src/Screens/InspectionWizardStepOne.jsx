@@ -43,6 +43,7 @@ export default function InspectionWizardStepOne({ navigation }) {
   const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [vinError, setVinError] = useState("");
 
   const handleTextChange = (field, value) => {
     dispatch(setInspectionData({ field, value }));
@@ -63,6 +64,24 @@ export default function InspectionWizardStepOne({ navigation }) {
       dispatch(setInspectionData({ field: showPicker, value: formatted }));
     }
     setShowPicker(null); // close after selection
+  };
+
+  const validateAndGoNext = () => {
+    setVinError("");
+
+    const trimmedVin = vin?.trim() || "";
+
+    if (trimmedVin.length === 0) {
+      setVinError("VIN/Chassis Number is required");
+      return;
+    }
+
+    if (trimmedVin.length !== 17) {
+      setVinError("VIN must be exactly 17 characters");
+      return;
+    }
+
+    navigation.navigate("InspectionWizardStepTwo");
   };
 
   // --- New: fetch vehicle info flow ---
@@ -373,9 +392,14 @@ export default function InspectionWizardStepOne({ navigation }) {
               <View style={tw`flex-row items-center`}>
                 <TextInput
                   value={vin}
-                  onChangeText={(val) => handleTextChange("vin", val)}
+                  onChangeText={(val) => {
+                    handleTextChange("vin", val);
+                    setVinError("");
+                  }}
                   placeholder="Enter VIN/Chassis Number"
-                  style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                  style={tw`flex-1 border ${
+                    vinError ? "border-red-500" : "border-gray-300"
+                  } rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
                   maxLength={17}
                 />
@@ -392,6 +416,12 @@ export default function InspectionWizardStepOne({ navigation }) {
                   )}
                 </TouchableOpacity> */}
               </View>
+
+              {vinError ? (
+                <Text style={tw`text-red-600 text-sm mt-1 ml-1`}>
+                  {vinError}
+                </Text>
+              ) : null}
             </View>
 
             {/* Year */}
@@ -498,7 +528,8 @@ export default function InspectionWizardStepOne({ navigation }) {
           <View style={tw` bottom-0 left-0 right-0 px-4 mb-2 bg-white`}>
             <TouchableOpacity
               style={tw`bg-green-700 py-3 rounded-xl`}
-              onPress={handleNext}
+              // onPress={handleNext}
+              onPress={validateAndGoNext}
             >
               <Text style={tw`text-white text-center text-lg font-semibold`}>
                 Next

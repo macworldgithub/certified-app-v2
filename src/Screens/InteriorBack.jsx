@@ -230,12 +230,12 @@ export default function InteriorBack({ navigation }) {
 
       if (inspection._id) {
         await axios.put(
-          `http://192.168.18.129:5000/inspections/${inspection._id}`,
+          `http://192.168.100.25:5000/inspections/${inspection._id}`,
           finalPayload,
         );
       } else {
         await axios.post(
-          `http://192.168.18.129:5000/inspections`,
+          `http://192.168.100.25:5000/inspections`,
           finalPayload,
         );
       }
