@@ -48,7 +48,10 @@ export default function Signup() {
       const data = await response.json();
       setLoading(false);
 
-      if (response.ok && (data.status === "SIGNUP_SUCCESS" || data.status === "OTP_SENT")) {
+      if (
+        response.ok &&
+        (data.status === "SIGNUP_SUCCESS" || data.status === "OTP_SENT")
+      ) {
         Alert.alert("Success", data.message);
         navigation.replace("OTPVerification", {
           email: data.user.email,
@@ -58,7 +61,6 @@ export default function Signup() {
       } else {
         Alert.alert("Signup Failed", data.message || "Something went wrong.");
       }
-
     } catch (error) {
       setLoading(false);
       Alert.alert("Error", "Unable to connect to server.");

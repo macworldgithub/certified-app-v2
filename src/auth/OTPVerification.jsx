@@ -98,7 +98,7 @@ const OTPVerification = () => {
         style={tw`absolute top-10 left-4 z-10`}
         onPress={() => navigation.goBack()}
       >
-            <AppIcon name="arrow-left" size={24} color="#000" />
+        <AppIcon name="arrow-left" size={24} color="#000" />
       </TouchableOpacity>
 
       {/* OTP UI */}

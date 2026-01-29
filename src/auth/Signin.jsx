@@ -235,7 +235,6 @@ const Signin = () => {
             {loading ? "Signing in..." : "Sign in"}
           </Text>
         </TouchableOpacity>
-
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+} from "react-native";
 import axios from "axios";
 import tw from "tailwind-react-native-classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,8 +23,8 @@ export default function AnalyzeScreen() {
   const handleAnalyze = async () => {
     try {
       const resp = await axios.post(
-        `${API_BASE_URL}/${vinNumber}/analyze`,
-        {} // empty body
+        `${API_BASE_URL}/inspections/${vinNumber}/analyze`,
+        {}, // empty body
       );
 
       dispatch(setAnalysisData(resp.data)); // response ko redux mein save
@@ -61,7 +68,9 @@ export default function AnalyzeScreen() {
             Inspector: {analysis.inspectorEmail}
           </Text>
 
-          <Text style={tw`text-base font-bold mt-3 mb-1`}>Damages (Front Image)</Text>
+          <Text style={tw`text-base font-bold mt-3 mb-1`}>
+            Damages (Front Image)
+          </Text>
           {analysis.frontImage?.damages?.length > 0 ? (
             analysis.frontImage.damages.map((dmg, idx) => (
               <Text key={idx} style={tw`text-sm mb-1`}>

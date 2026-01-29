@@ -28,11 +28,11 @@ export const uploadToS3 = async ({
           "Content-Type": "application/json",
           accept: "*/*",
         },
-      }
+      },
     );
 
     const { url, key } = presignedResp.data;
-    console.log(url, "URL")
+    console.log(url, "URL");
     // STEP 2: Convert local file to blob
     const fileResp = await fetch(fileUri);
     const blob = await fileResp.blob();
@@ -45,7 +45,7 @@ export const uploadToS3 = async ({
       },
       body: blob,
     });
-    console.log(uploadResp, "Upload...")
+    console.log(uploadResp, "Upload...");
     if (uploadResp.ok) {
       console.log("✅ Image uploaded successfully to S3");
       Alert.alert("Success", "Image uploaded successfully");
@@ -156,7 +156,7 @@ const deleteFileFromS3 = async (key) => {
   } catch (error) {
     console.error(
       "❌ Error deleting file:",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
     throw error;
   }
@@ -181,7 +181,7 @@ export const handleDeleteFromS3 = async ({
         deleteFileFromS3(images[partKey].original).catch((err) => {
           console.error("❌ Failed to delete original from S3:", err);
           return null;
-        })
+        }),
       );
     }
 
@@ -191,7 +191,7 @@ export const handleDeleteFromS3 = async ({
         deleteFileFromS3(images[partKey].analyzed).catch((err) => {
           console.error("❌ Failed to delete analyzed from S3:", err);
           return null;
-        })
+        }),
       );
     }
 
@@ -226,7 +226,7 @@ export const signUrl = async (awsKey) => {
           "Content-Type": "application/json",
           accept: "*/*",
         },
-      }
+      },
     );
 
     // Your backend returns { status, url }
@@ -322,7 +322,7 @@ const analyzeInspection = async (key) => {
           "Content-Type": "application/json",
           accept: "*/*",
         },
-      }
+      },
     );
 
     console.log("🔍 Analyze Response:", analyzeResp.data);
@@ -372,7 +372,7 @@ export const handleAnalyzeImage = async ({
           ? `Detected damages: ${analysis.damages
               .map((d) => d.type)
               .join(", ")}`
-          : "No damages found!"
+          : "No damages found!",
       );
     }
   } catch (err) {
