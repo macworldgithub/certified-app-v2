@@ -12,8 +12,12 @@ import tw from "tailwind-react-native-classnames";
 import { useSelector } from "react-redux";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import { useDispatch } from "react-redux";
+
+import { resetInspection } from "../redux/slices/inspectionSlice";
 
 export default function ReviewInspection({ navigation }) {
+  const dispatch = useDispatch();
   const inspection = useSelector((state) => state.inspection);
   const { images } = inspection;
 
@@ -55,8 +59,13 @@ export default function ReviewInspection({ navigation }) {
         "Final Submission Payload:",
         JSON.stringify(inspection, null, 2),
       );
+      dispatch(resetInspection());
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MainTabs", params: { screen: "InspectionList" } }],
+      });
       Alert.alert("Success", "Inspection submitted!");
-      navigation.navigate("MainTabs");
+      // navigation.navigate("InspectionList");
     } catch (err) {
       Alert.alert("Error", "Failed to submit inspection");
     }
@@ -81,9 +90,9 @@ export default function ReviewInspection({ navigation }) {
   );
 
   const renderImageCard = (title, imageObj) => {
-    if (!imageObj) return null; 
+    if (!imageObj) return null;
 
-    const uri = imageObj.original || imageObj; 
+    const uri = imageObj.original || imageObj;
 
     if (!uri) return null;
 

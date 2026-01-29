@@ -240,7 +240,7 @@ export default function InteriorBack({ navigation }) {
         );
       }
 
-      dispatch(resetInspection());
+      // dispatch(resetInspection());
       Alert.alert("Success", "Inspection submitted successfully!");
       navigation.navigate("ReviewInspection");
     } catch (err) {
