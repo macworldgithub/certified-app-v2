@@ -92,7 +92,10 @@ export default function ReviewInspection({ navigation }) {
   const renderImageCard = (title, imageObj) => {
     if (!imageObj) return null;
 
-    const uri = imageObj.original || imageObj;
+    const uri =
+      typeof imageObj === "string"
+        ? imageObj
+        : imageObj.analyzedUrl || imageObj.original || null;
 
     if (!uri) return null;
 
@@ -101,7 +104,7 @@ export default function ReviewInspection({ navigation }) {
         <Text style={tw`text-gray-600 text-sm mb-2 font-medium`}>{title}</Text>
         <Image
           source={{ uri }}
-          style={tw`w-full h-48 rounded-lg`}
+          style={tw`w-full h-48 rounded-lg bg-gray-200`}
           resizeMode="cover"
         />
       </View>
