@@ -14,11 +14,16 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import * as Device from "expo-device";
 import API_BASE_URL from "../../utils/config";
 import AppIcon from "../components/AppIcon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { setAuthData } from "../redux/slices/authSlice";
+
 const OTPVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const route = useRoute();
 
   const { email, nextStep } = route.params || {};
@@ -75,6 +80,17 @@ const OTPVerification = () => {
         response.ok &&
         (data.status === "EMAIL_VERIFIED" || data.status === "OTP_VERIFIED")
       ) {
+        const { token, user } = data;
+
+        if (token && user) {
+          dispatch(setAuthData({ token, user }));
+
+          await AsyncStorage.setItem("authToken", token);
+          await AsyncStorage.setItem("userData", JSON.stringify(user));
+
+          console.log("Auth stored after OTP:", { token, user });
+        }
+
         Alert.alert("Success", data.message || "OTP Verified successfully!");
         navigation.replace("MainTabs");
       } else {

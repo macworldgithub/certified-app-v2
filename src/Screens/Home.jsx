@@ -270,9 +270,6 @@ export default function Home() {
               AI-Powered Vehicle Inspections
             </Text>
           </View>
-          <TouchableOpacity>
-            <AppIcon name="user-circle" size={24} color="#474745ff" />
-          </TouchableOpacity>
         </View>
 
         {/* Stats */}

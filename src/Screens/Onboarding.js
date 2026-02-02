@@ -100,7 +100,7 @@ export default function Onboarding({ navigation }) {
               navigation.reset({
                 index: 0,
                 routes: [
-                  { name: "MainTabs", params: { screen: "InspectionList" } },
+                  { name: "Signin" },
                 ],
               });
             }}

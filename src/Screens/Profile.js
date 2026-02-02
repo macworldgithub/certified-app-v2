@@ -24,7 +24,7 @@
 //       // Token uthao
 //       const token = await AsyncStorage.getItem("authToken");
 
-//       if (!token) { 
+//       if (!token) {
 //         Alert.alert("Error", "No token found. Please sign in again.");
 //         return;
 //       }
@@ -160,7 +160,7 @@
 //     </SafeAreaWrapper>
 //   );
 // }
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -187,6 +187,23 @@ export default function Profile() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("userData");
+
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (err) {
+        console.error("Failed to load user:", err);
+      }
+    };
+
+    loadUser();
+  }, []);
 
   const navigation = useNavigation();
 
@@ -211,7 +228,10 @@ export default function Profile() {
       if (name) body.name = name;
       if (newPassword) {
         if (!oldPassword) {
-          Alert.alert("Error", "Old password is required to set a new password.");
+          Alert.alert(
+            "Error",
+            "Old password is required to set a new password.",
+          );
           return;
         }
         body.oldPassword = oldPassword;
@@ -234,7 +254,7 @@ export default function Profile() {
       console.error("Profile Update Error:", err.response?.data || err.message);
       Alert.alert(
         "Error",
-        err.response?.data?.message || "Failed to update profile."
+        err.response?.data?.message || "Failed to update profile.",
       );
     } finally {
       setLoading(false);
@@ -257,7 +277,7 @@ export default function Profile() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (res.data?.status === "OTP_SENT") {
@@ -268,7 +288,7 @@ export default function Profile() {
       console.error("Logout All Error:", err.response?.data || err.message);
       Alert.alert(
         "Error",
-        err.response?.data?.message || "Failed to request logout all."
+        err.response?.data?.message || "Failed to request logout all.",
       );
     }
   };
@@ -291,8 +311,9 @@ export default function Profile() {
             source={require("../../assets/profile.png")}
             style={tw`w-20 h-20 rounded-full`}
           />
-          <Text style={tw`text-lg font-semibold`}>Emmie Watson</Text>
-          <Text style={tw`text-gray-500`}>emmie1709@gmail.com</Text>
+          <Text style={tw`text-lg font-semibold`}>{user?.name || "User"}</Text>
+
+          <Text style={tw`text-gray-500`}>{user?.email || ""}</Text>
         </View>
 
         {/* My Account */}
