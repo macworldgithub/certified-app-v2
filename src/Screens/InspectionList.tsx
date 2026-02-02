@@ -390,6 +390,7 @@
 //   },
 // });
 
+// @ts-nocheck
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -504,10 +505,9 @@ export default function InspectionList() {
 
   const handleEdit = async (id: string) => {
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/inspections/${id}`,
-        { headers: { accept: "application/json" } },
-      );
+      const res = await fetch(`${API_BASE_URL}/inspections/${id}`, {
+        headers: { accept: "application/json" },
+      });
       const inspection = await res.json();
 
       dispatch(setInspection(inspection)); // store in redux
@@ -523,15 +523,12 @@ export default function InspectionList() {
     if (!selectedVin) return;
 
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/inspections/${selectedVin}`,
-        {
-          method: "DELETE",
-          headers: {
-            accept: "application/json",
-          },
+      const res = await fetch(`${API_BASE_URL}/inspections/${selectedVin}`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
         },
-      );
+      });
 
       const json = await res.json();
       console.log("Delete response:", json);
@@ -634,7 +631,9 @@ export default function InspectionList() {
                 year={item.year}
                 mileage={item.mileAge}
                 inspectorEmail={item.inspectorEmail}
-                onPress={(id) => console.log("Pressed", id)}
+                onPress={() =>
+                  navigation.navigate("ViewInspection", { id: item._id })
+                }
                 onDelete={() => {
                   setSelectedVin(item.vin);
                   setShowConfirmModal(true);
