@@ -61,7 +61,7 @@ export const fetchVehicleReport = async (vin) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log("RES2", response.data)
+    console.log("RES2", response)
 
     // Save the response to AsyncStorage
     await AsyncStorage.setItem('vehicleReport', JSON.stringify(response.data));

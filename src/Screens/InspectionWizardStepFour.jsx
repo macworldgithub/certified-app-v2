@@ -20,6 +20,7 @@ import * as ImagePicker from "react-native-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import API_BASE_URL from "../../utils/config";
 import { signUrl } from "../../utils/inspectionFunctions";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 export default function InspectionWizardStepFour({ navigation }) {
   const dispatch = useDispatch();
@@ -67,8 +68,6 @@ export default function InspectionWizardStepFour({ navigation }) {
     loadPreviews();
   }, [bookImages]);
 
-  const pickAndUploadImage = async (source) => {};
-
   const handleSelect = (field, value) => {
     dispatch(setInspectionData({ field, value }));
 
@@ -97,12 +96,72 @@ export default function InspectionWizardStepFour({ navigation }) {
     }
   };
 
-  const handleDeleteImage = async (index) => {
-    // your full implementation here (unchanged)
+  const handleDeleteImage = (idx) => {
+    const updated = [...bookImages];
+    updated.splice(idx, 1);
+    dispatch(setInspectionData({ field: "bookImages", value: updated }));
   };
 
   const handleNext = () => navigation.navigate("InspectionWizardStepSix");
   const handleBack = () => navigation.goBack();
+
+  useEffect(() => {
+    if (serviceHistoryPresent === "No") {
+      dispatch(setInspectionData({ field: "serviceBookPresent", value: null }));
+    }
+  }, [serviceHistoryPresent]);
+
+  const pickAndUploadImage = async (source) => {
+    if (uploading) return;
+
+    const options = {
+      mediaType: "photo",
+      quality: 0.8,
+    };
+
+    try {
+      let result;
+      if (source === "camera") {
+        result = await launchCamera(options);
+      } else {
+        result = await launchImageLibrary(options);
+      }
+
+      if (!result || result.didCancel) {
+        console.log("User cancelled image picker");
+        return;
+      }
+
+      const asset = result.assets?.[0];
+      if (!asset) {
+        console.log("No image returned");
+        return;
+      }
+
+      const imageObj = {
+        key: asset.uri,
+        uri: asset.uri,
+        name: asset.fileName || "service-book.jpg",
+        type: asset.type || "image/jpeg",
+      };
+
+      setUploading(true);
+
+      // Simulate upload
+      setTimeout(() => {
+        dispatch(
+          setInspectionData({
+            field: "bookImages",
+            value: [...bookImages, imageObj],
+          }),
+        );
+        setUploading(false);
+      }, 1000);
+    } catch (error) {
+      console.log("Image picker error:", error);
+      setUploading(false);
+    }
+  };
 
   return (
     <SafeAreaWrapper>
@@ -131,111 +190,7 @@ export default function InspectionWizardStepFour({ navigation }) {
             contentContainerStyle={tw`pb-40`}
             showsVerticalScrollIndicator={false}
           >
-            {/* 1. Service Book Present */}
-            <View
-              style={tw`mb-6 bg-white border border-gray-300 rounded-xl p-4`}
-            >
-              <Text style={tw`text-gray-500 mb-1`}>
-                Is Service Book Present?
-              </Text>
-              <View style={tw`flex-row justify-between`}>
-                {["Yes", "No"].map((opt) => (
-                  <TouchableOpacity
-                    key={opt}
-                    onPress={() => handleSelect("serviceBookPresent", opt)}
-                    style={tw.style(
-                      "flex-1 items-center justify-center border rounded-lg py-4 mx-1",
-                      serviceBookPresent === opt
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300 bg-white",
-                    )}
-                  >
-                    <Text style={tw`text-lg text-gray-500`}>{opt}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {/* Upload Service Book Images */}
-              {serviceBookPresent === "Yes" && (
-                <View style={tw`mb-4`}>
-                  <Text style={tw`text-gray-500 mb-4 mt-4`}>
-                    Upload Service Book Pages
-                  </Text>
-
-                  {uploading && (
-                    <View style={tw`flex-row items-center mb-4`}>
-                      <ActivityIndicator size="small" color="#16a34a" />
-                      <Text style={tw`ml-2 text-green-600`}>Uploading...</Text>
-                    </View>
-                  )}
-
-                  <View style={tw`flex-row mb-3`}>
-                    <TouchableOpacity
-                      disabled={uploading}
-                      onPress={() => pickAndUploadImage("camera")}
-                      style={tw`flex-1 bg-green-700 py-4 rounded-xl mr-2`}
-                    >
-                      <Text style={tw`text-white text-center font-medium`}>
-                        Camera
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      disabled={uploading}
-                      onPress={() => pickAndUploadImage("gallery")}
-                      style={tw`flex-1 bg-green-700 py-4 rounded-xl`}
-                    >
-                      <Text style={tw`text-white text-center font-medium`}>
-                        Gallery
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Image Grid */}
-                  <View style={tw`flex-row flex-wrap -m-1`}>
-                    {bookImages.map((item, idx) => {
-                      const key = typeof item === "string" ? item : item.key;
-                      const url = previewUrls[key];
-
-                      return (
-                        <View
-                          key={`${key}-${idx}`}
-                          style={tw`w-28 h-32 m-1 relative bg-gray-100 rounded-xl overflow-hidden`}
-                        >
-                          {deletingIndex === idx ? (
-                            <View
-                              style={tw`absolute inset-0 bg-black bg-opacity-50 items-center justify-center`}
-                            >
-                              <ActivityIndicator color="white" />
-                            </View>
-                          ) : url ? (
-                            <Image
-                              source={{ uri: url }}
-                              style={tw`w-full h-full`}
-                              resizeMode="cover"
-                            />
-                          ) : (
-                            <View
-                              style={tw`w-full h-full items-center justify-center`}
-                            >
-                              <ActivityIndicator color="#065f46" />
-                            </View>
-                          )}
-
-                          <TouchableOpacity
-                            onPress={() => handleDeleteImage(idx)}
-                            style={tw`absolute top-1 right-1 bg-red-600 p-1.5 rounded-full`}
-                          >
-                            <AppIcon name="close" size={18} color="white" />
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    })}
-                  </View>
-                </View>
-              )}
-            </View>
-
-            {/* 2. Service History Present */}
+            {/* 1. Service History Present */}
             <View
               style={tw`mb-6 bg-white border border-gray-300 rounded-xl p-4`}
             >
@@ -279,7 +234,68 @@ export default function InspectionWizardStepFour({ navigation }) {
                 <Text style={tw`text-gray-400 mb-4 font-medium`}>
                   When Was The Last Service?
                 </Text>
+                <View style={tw`mb-4`}>
+                  <Text style={tw`text-gray-500 mb-4 mt-4`}>
+                    Upload Service Book Pages
+                  </Text>
 
+                  {uploading && (
+                    <View style={tw`flex-row items-center mb-4`}>
+                      <ActivityIndicator size="small" color="#16a34a" />
+                      <Text style={tw`ml-2 text-green-600`}>Uploading...</Text>
+                    </View>
+                  )}
+
+                  <View style={tw`flex-row mb-3`}>
+                    <TouchableOpacity
+                      disabled={uploading}
+                      onPress={() => pickAndUploadImage("camera")}
+                      style={tw`flex-1 bg-green-700 py-4 rounded-xl mr-2`}
+                    >
+                      <Text style={tw`text-white text-center font-medium`}>
+                        Camera
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      disabled={uploading}
+                      onPress={() => pickAndUploadImage("gallery")}
+                      style={tw`flex-1 bg-green-700 py-4 rounded-xl`}
+                    >
+                      <Text style={tw`text-white text-center font-medium`}>
+                        Gallery
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Image Grid */}
+                  <View style={tw`flex-row flex-wrap -m-1`}>
+                    {bookImages.map((item, idx) => {
+                      const key = item.key;
+                      const url = item.uri || item.key;
+
+                      return (
+                        <View
+                          key={`${key}-${idx}`}
+                          style={tw`w-28 h-32 m-1 relative bg-gray-100 rounded-xl overflow-hidden`}
+                        >
+                          <Image
+                            source={{ uri: url }}
+                            style={tw`w-full h-full`}
+                            resizeMode="cover"
+                          />
+
+                          <TouchableOpacity
+                            onPress={() => handleDeleteImage(idx)}
+                            style={tw`absolute top-1 right-1 bg-red-600 p-1.5 rounded-full`}
+                          >
+                            <AppIcon name="close" size={18} color="white" />
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
                 <Text style={tw`text-gray-500 mb-2`}>Last Service Date</Text>
                 <TouchableOpacity
                   style={tw`border border-gray-300 rounded-lg p-3.5 mb-4 bg-white`}
@@ -301,21 +317,6 @@ export default function InspectionWizardStepFour({ navigation }) {
                   />
                 )}
 
-                <Text style={tw`text-gray-500 mb-2`}>Service Center Name</Text>
-                <TextInput
-                  placeholder="Enter service center name"
-                  placeholderTextColor="#9CA3AF"
-                  value={serviceCenterName}
-                  onChangeText={(v) =>
-                    dispatch(
-                      setInspectionData({
-                        field: "serviceCenterName",
-                        value: v,
-                      }),
-                    )
-                  }
-                  style={tw`border border-gray-300 rounded-lg p-3.5 mb-4 bg-white text-gray-700`}
-                />
                 <Text style={tw`text-gray-500 mb-2`}>
                   Odometer At Last Service (KMS)
                 </Text>
@@ -333,24 +334,6 @@ export default function InspectionWizardStepFour({ navigation }) {
                     )
                   }
                   style={tw`border border-gray-300 rounded-lg p-3.5 mb-4 bg-white text-gray-700`}
-                />
-
-                <Text style={tw`text-gray-500 mb-2`}>
-                  Service Record Document Key
-                </Text>
-                <TextInput
-                  placeholder="Enter key"
-                  placeholderTextColor="#9CA3AF"
-                  value={serviceRecordDocumentKey}
-                  onChangeText={(v) =>
-                    dispatch(
-                      setInspectionData({
-                        field: "serviceRecordDocumentKey",
-                        value: v,
-                      }),
-                    )
-                  }
-                  style={tw`border border-gray-300 rounded-lg p-3.5 bg-white text-gray-700`}
                 />
               </View>
             )}

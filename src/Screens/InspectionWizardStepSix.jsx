@@ -52,6 +52,79 @@ export default function InspectionWizardStepSix({ navigation }) {
     repairRequired: false,
   });
 
+  const [damageImages, setDamageImages] = useState([]);
+  const [currentDamageData, setCurrentDamageData] = useState({
+    key: null,
+    description: "",
+    severity: "minor",
+    repairRequired: false,
+  });
+
+  const pickDamageImage = async (source) => {
+    try {
+      setUploading(true);
+
+      const options = {
+        mediaType: "photo",
+        quality: 0.8,
+      };
+
+      let result;
+      if (source === "camera") {
+        result = await ImagePicker.launchCamera(options);
+      } else {
+        result = await ImagePicker.launchImageLibrary({
+          ...options,
+          selectionLimit: 0,
+        });
+        // selectionLimit: 0 allows multiple selection on iOS 14+
+      }
+
+      if (result.didCancel || !result.assets?.length) return;
+
+      for (const asset of result.assets) {
+        const uri = asset.uri;
+        // get presigned URL
+        const res = await fetch(`${API_BASE_URL}/inspections/presigned`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileType: "image/jpeg" }),
+        });
+        if (!res.ok) throw new Error("Presigned failed");
+        const { url: presignedUrl, key } = await res.json();
+
+        // upload file
+        const imgResp = await fetch(uri);
+        const blob = await imgResp.blob();
+        const uploadRes = await fetch(presignedUrl, {
+          method: "PUT",
+          body: blob,
+          headers: { "Content-Type": "image/jpeg" },
+        });
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        // add to state
+        setDamageImages((prev) => [
+          ...prev,
+          {
+            key,
+            description: "",
+            severity: "minor",
+            repairRequired: false,
+          },
+        ]);
+
+        // preview
+        const signed = await signUrl(key);
+        if (signed) setPreviewUrls((p) => ({ ...p, [key]: signed }));
+      }
+    } catch (err) {
+      Alert.alert("Upload Failed", err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Load all damage previews
   useEffect(() => {
     const loadPreviews = async () => {
@@ -625,107 +698,179 @@ export default function InspectionWizardStepSix({ navigation }) {
       </KeyboardAvoidingView>
 
       {/* Modal */}
+      {/* Modal */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={tw`flex-1 justify-center bg-black bg-opacity-50 px-4`}>
-          <View style={tw`bg-white rounded-xl p-5`}>
+          <View style={tw`bg-white rounded-xl p-5 max-h-5/6`}>
             <Text style={tw`text-lg font-bold text-center mb-4`}>
-              {isEditMode ? "Edit Damage" : "Add Damage"}
+              {isEditMode ? "Edit Damages" : "Add Damages"}
             </Text>
 
-            <TouchableOpacity
-              onPress={pickAndUploadDamageImage}
-              disabled={uploading}
-              style={tw`bg-green-600 py-3 rounded-lg mb-3 items-center`}
-            >
-              {uploading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={tw`text-white font-semibold`}>
-                  {damageData.key ? "Change Photo" : "Upload Photo"}
-                </Text>
-              )}
-            </TouchableOpacity>
-
-            {damageData.key && previewUrls[damageData.key] ? (
-              <Image
-                source={{ uri: previewUrls[damageData.key] }}
-                style={tw`w-full h-48 rounded-lg mb-3`}
-                resizeMode="cover"
-              />
-            ) : damageData.key ? (
-              <View
-                style={tw`w-full h-48 bg-gray-200 rounded-lg items-center justify-center mb-3`}
+            {/* Pick Images */}
+            <View style={tw`flex-row justify-between mb-3`}>
+              <TouchableOpacity
+                onPress={() => pickDamageImage("camera")}
+                disabled={uploading}
+                style={tw`flex-1 bg-green-600 py-3 rounded-lg mr-2 items-center`}
               >
-                <ActivityIndicator size="small" color="#065f46" />
-              </View>
-            ) : null}
+                <Text style={tw`text-white font-semibold`}>Camera</Text>
+              </TouchableOpacity>
 
-            <TextInput
-              placeholder="Description (required)"
-              value={damageData.description}
-              onChangeText={(t) =>
-                setDamageData((p) => ({ ...p, description: t }))
-              }
-              style={tw`border border-gray-300 rounded-lg p-3 mb-3`}
-            />
-
-            <Text style={tw`text-gray-700 mb-2`}>Severity</Text>
-            <View style={tw`flex-row mb-3`}>
-              {["minor", "moderate", "severe"].map((s) => (
-                <TouchableOpacity
-                  key={s}
-                  onPress={() => setDamageData((p) => ({ ...p, severity: s }))}
-                  style={tw.style(
-                    "flex-1 mx-1 py-2 rounded-lg border items-center",
-                    damageData.severity === s
-                      ? "border-green-600 bg-green-50"
-                      : "border-gray-300",
-                  )}
-                >
-                  <Text style={tw`capitalize`}>{s}</Text>
-                </TouchableOpacity>
-              ))}
+              <TouchableOpacity
+                onPress={() => pickDamageImage("gallery")}
+                disabled={uploading}
+                style={tw`flex-1 bg-green-600 py-3 rounded-lg items-center`}
+              >
+                <Text style={tw`text-white font-semibold`}>Gallery</Text>
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              onPress={() =>
-                setDamageData((p) => ({
-                  ...p,
-                  repairRequired: !p.repairRequired,
-                }))
-              }
-              style={tw`flex-row items-center mb-4`}
-            >
-              <AppIcon
-                name={damageData.repairRequired ? "check-square-o" : "square-o"}
-                size={20}
-                color="#065f46"
-              />
-              <Text style={tw`ml-2 text-gray-700`}>Repair Required</Text>
-            </TouchableOpacity>
+            {uploading && (
+              <View style={tw`mb-2 flex-row items-center`}>
+                <ActivityIndicator color="#fff" />
+                <Text style={tw`ml-2 text-white`}>Uploading...</Text>
+              </View>
+            )}
 
+            {/* Scrollable list of images */}
+            <ScrollView style={tw`max-h-96 mb-4`}>
+              {damageImages.map((d, idx) => (
+                <View
+                  key={d.key}
+                  style={tw`mb-4 border border-gray-200 p-3 rounded-lg relative`}
+                >
+                  {/* Preview */}
+                  {previewUrls[d.key] ? (
+                    <Image
+                      source={{ uri: previewUrls[d.key] }}
+                      style={tw`w-full h-48 rounded-lg mb-2`}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      style={tw`w-full h-48 bg-gray-200 rounded-lg items-center justify-center mb-2`}
+                    >
+                      <ActivityIndicator size="small" color="#065f46" />
+                    </View>
+                  )}
+
+                  {/* Description */}
+                  <TextInput
+                    placeholder="Description (required)"
+                    value={d.description}
+                    onChangeText={(text) => {
+                      const updated = [...damageImages];
+                      updated[idx].description = text;
+                      setDamageImages(updated);
+                    }}
+                    style={tw`border border-gray-300 rounded-lg p-3 mb-2`}
+                  />
+
+                  {/* Severity */}
+                  <View style={tw`flex-row mb-2`}>
+                    {["minor", "moderate", "severe"].map((s) => (
+                      <TouchableOpacity
+                        key={s}
+                        onPress={() => {
+                          const updated = [...damageImages];
+                          updated[idx].severity = s;
+                          setDamageImages(updated);
+                        }}
+                        style={tw.style(
+                          "flex-1 mx-1 py-2 rounded-lg border items-center",
+                          damageImages[idx].severity === s
+                            ? "border-green-600 bg-green-50"
+                            : "border-gray-300",
+                        )}
+                      >
+                        <Text style={tw`capitalize`}>{s}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                  {/* Repair Required */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      const updated = [...damageImages];
+                      updated[idx].repairRequired =
+                        !updated[idx].repairRequired;
+                      setDamageImages(updated);
+                    }}
+                    style={tw`flex-row items-center mb-2`}
+                  >
+                    <AppIcon
+                      name={
+                        damageImages[idx].repairRequired
+                          ? "check-square-o"
+                          : "square-o"
+                      }
+                      size={20}
+                      color="#065f46"
+                    />
+                    <Text style={tw`ml-2 text-gray-700`}>Repair Required</Text>
+                  </TouchableOpacity>
+
+                  {/* Remove button */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      const updated = damageImages.filter((_, i) => i !== idx);
+                      setDamageImages(updated);
+                    }}
+                    style={tw`absolute top-2 right-2 bg-red-600 p-1 rounded-full`}
+                  >
+                    <AppIcon name="close" size={16} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              {damageImages.length === 0 && !uploading && (
+                <Text style={tw`text-gray-500 text-center mt-4`}>
+                  No images uploaded yet
+                </Text>
+              )}
+            </ScrollView>
+
+            {/* Action Buttons */}
             <View style={tw`flex-row justify-between`}>
               <TouchableOpacity
-                onPress={resetModal}
+                onPress={() => {
+                  setDamageImages([]);
+                  resetModal();
+                }}
                 style={tw`bg-gray-400 px-4 py-2 rounded-lg`}
               >
                 <Text style={tw`text-white`}>Cancel</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                onPress={isEditMode ? handleEditDamage : handleAddDamage}
-                disabled={syncing || !damageData.key || !damageData.description}
+                onPress={() => {
+                  const validDamages = damageImages.filter(
+                    (d) => d.description,
+                  );
+                  if (!validDamages.length) {
+                    Alert.alert(
+                      "Validation",
+                      "All images require a description.",
+                    );
+                    return;
+                  }
+
+                  const updated = [...damages, ...validDamages];
+                  dispatch(
+                    setInspectionData({ field: "damages", value: updated }),
+                  );
+
+                  // Reset modal
+                  setDamageImages([]);
+                  resetModal();
+                }}
                 style={tw.style(
                   "bg-green-700 px-4 py-2 rounded-lg",
-                  (!damageData.key || !damageData.description) && "opacity-50",
+                  damageImages.length === 0 && "opacity-50",
                 )}
+                disabled={damageImages.length === 0}
               >
-                {syncing ? (
-                  <ActivityIndicator size="small" color="white" />
-                ) : (
-                  <Text style={tw`text-white`}>
-                    {isEditMode ? "Update" : "Save"}
-                  </Text>
-                )}
+                <Text style={tw`text-white`}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>

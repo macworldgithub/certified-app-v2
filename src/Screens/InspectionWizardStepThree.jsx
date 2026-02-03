@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   View,
@@ -17,7 +16,16 @@ import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { Image } from "react-native";
 
-const wheelOptions = ["13 Inch", "14 Inch", "15 Inch", "16 Inch"];
+const wheelOptions = [
+  "13 Inch",
+  "14 Inch",
+  "15 Inch",
+  "16 Inch",
+  "17 Inch",
+  "18 Inch",
+  "19 Inch",
+  "20 Inch",
+];
 
 export default function InspectionWizardStepThree({ navigation }) {
   const dispatch = useDispatch();
@@ -203,7 +211,7 @@ export default function InspectionWizardStepThree({ navigation }) {
             >
               <Text style={tw`text-gray-400 mb-3`}>How Many Keys Present</Text>
               <View style={tw`flex-row justify-between`}>
-                {[1, 2].map((num) => (
+                {[1, 2, 3].map((num) => (
                   <TouchableOpacity
                     key={num}
                     style={tw.style(
@@ -225,7 +233,9 @@ export default function InspectionWizardStepThree({ navigation }) {
                       source={
                         num === 1
                           ? require("../../assets/singleKey.png")
-                          : require("../../assets/doubleKey.png")
+                          : num === 2
+                            ? require("../../assets/doubleKey.png")
+                            : require("../../assets/tripleKey.png")
                       }
                       style={tw`w-14 h-10 mb-3`}
                       resizeMode="contain"

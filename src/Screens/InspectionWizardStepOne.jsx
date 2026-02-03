@@ -68,6 +68,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     vin?.trim().length === 17 &&
     year?.trim() &&
     make?.trim() &&
+    mileAge?.toString().trim() &&
     model?.trim() &&
     registrationPlate?.trim() &&
     registrationExpiry &&
@@ -126,7 +127,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       return;
     }
 
-    navigation.navigate("InspectionWizardStepTwo");
+    navigation.navigate("InspectionWizardStepThree");
   };
 
   // --- New: fetch vehicle info flow ---
@@ -471,7 +472,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                   }}
                   placeholder="Enter VIN/Chassis Number"
                   style={tw`flex-1 border ${vinError ? "border-red-500" : "border-gray-300"
-                    } rounded-lg p-3 bg-white text-base`}
+                  } rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
                   maxLength={17}
                 />
@@ -535,6 +536,17 @@ export default function InspectionWizardStepOne({ navigation }) {
             {renderDropdown("fuelType", fuelOptions)}
             {renderDropdown("transmission", transmissionOptions)}
             {renderDropdown("driveTrain", driveTrainOptions)}
+
+            {/* Mileage */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>Mileage</Text>
+              <TextInput
+                value={String(mileAge)}
+                onChangeText={(val) => handleTextChange("mileAge", val)}
+                placeholder="Enter Mileage"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+              />
+            </View>
 
             {/* Color */}
             <View style={tw`mt-6`}>

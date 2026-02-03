@@ -49,6 +49,7 @@ const initialState = {
   roadTestVoiceMemo: null, // StepSix: recorded memo path (mock)
   fuelType: "", // Added: missing from initialState based on usage in setInspection
   odometerReading: "", // Added: used in resetInspectionData (alias/inconsistency with odometer?)
+  spareWheelCondition: null,
 };
 
 const inspectionSlice = createSlice({
@@ -218,6 +219,7 @@ const inspectionSlice = createSlice({
       state.roadTestComments = "";
       state.generalComments = "";
       state.roadTestVoiceMemo = null;
+      state.spareWheelCondition = null;
     },
   },
 });

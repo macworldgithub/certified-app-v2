@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   View,
@@ -22,6 +21,7 @@ export default function InspectionWizardStepFive({ navigation }) {
     tyreConditionFrontRight,
     tyreConditionRearRight,
     tyreConditionRearLeft,
+    spareWheelCondition,
   } = useSelector((state) => state.inspection);
 
   const handleSelect = (field, value) => {
@@ -142,6 +142,13 @@ export default function InspectionWizardStepFive({ navigation }) {
               "tyreConditionRearLeft",
               tyreConditionRearLeft,
               require("../../assets/tyreRearLeft.png"),
+            )}
+            
+            {renderTyreSection(
+              "Spare Wheel (Optional)",
+              "spareWheelCondition",
+              spareWheelCondition,
+              require("../../assets/tyreSpare.png"),
             )}
           </ScrollView>
 
