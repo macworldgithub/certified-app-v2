@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const fetchAndStoreInfoAgentToken = async () => {
   try {
+    console.log("1111");
     const response = await axios.post(
       'https://api.dev.infoagent.com.au/auth/v1/token/oauth',
       {
@@ -18,8 +19,9 @@ export const fetchAndStoreInfoAgentToken = async () => {
         },
       },
     );
+    console.log("RES 1", response.data);
 
-    const {access_token} = response.data;
+    const { access_token } = response.data;
     await AsyncStorage.setItem('InfoAgentToken', access_token);
     console.log('Token stored successfully.');
   } catch (error) {
@@ -37,6 +39,7 @@ export const fetchAndStoreInfoAgentToken = async () => {
 };
 
 export const fetchVehicleReport = async (vin) => {
+  console.log("2222");
   const url =
     'https://api.dev.infoagent.com.au/ivds/v1/au/vehicle-report/enhanced-basic';
 
@@ -51,13 +54,14 @@ export const fetchVehicleReport = async (vin) => {
     const data = {
       vin: vin,
     };
-
+    console.log("VIN", data)
     const response = await axios.post(url, data, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
+    console.log("RES2", response.data)
 
     // Save the response to AsyncStorage
     await AsyncStorage.setItem('vehicleReport', JSON.stringify(response.data));
@@ -71,17 +75,20 @@ export const fetchVehicleReport = async (vin) => {
 };
 
 export const getVehicleBasicInfo = async () => {
+  console.log("3333")
   try {
     const jsonValue = await AsyncStorage.getItem('vehicleReport');
+    console.log("Vehile Report", jsonValue)
     if (jsonValue !== null) {
       const report = JSON.parse(jsonValue);
+      console.log("REPORT", report)
       const details = report?.result?.vehicle?.details;
       const identification = report?.result?.vehicle?.identification;
 
       if (details && identification) {
-        const {year, make, model, buildDate, compliancePlate} = details;
+        const { year, make, model, buildDate, compliancePlate } = details;
 
-        const {plate} = identification;
+        const { plate } = identification;
 
         return {
           year,
@@ -106,33 +113,36 @@ export const getVehicleBasicInfo = async () => {
 };
 
 export const getVehicleAdditionalInfo = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('vehicleReport');
-      if (jsonValue !== null) {
-        const report = JSON.parse(jsonValue);
-        const details = report?.result?.vehicle?.details;
+  console.log("4444")
+  try {
+    const jsonValue = await AsyncStorage.getItem('vehicleReport');
+    console.log("Vehicle REport", jsonValue);
+    if (jsonValue !== null) {
+      const report = JSON.parse(jsonValue);
+      console.log("report", report)
+      const details = report?.result?.vehicle?.details;
 
-        if (details) {
-          const {fuelType, driveType, transmissionType, bodyType, colour} =
-            details;
+      if (details) {
+        const { fuelType, driveType, transmissionType, bodyType, colour } =
+          details;
 
-          return {
-            fuelType,
-            driveType,
-            transmissionType,
-            bodyType,
-            colour,
-          };
-        } else {
-          console.warn('Vehicle details missing in report.');
-          return null;
-        }
+        return {
+          fuelType,
+          driveType,
+          transmissionType,
+          bodyType,
+          colour,
+        };
       } else {
-        console.warn('No vehicle report found in AsyncStorage.');
+        console.warn('Vehicle details missing in report.');
         return null;
       }
-    } catch (error) {
-      console.error('Failed to get additional vehicle info:', error);
+    } else {
+      console.warn('No vehicle report found in AsyncStorage.');
       return null;
     }
-  };
+  } catch (error) {
+    console.error('Failed to get additional vehicle info:', error);
+    return null;
+  }
+};

@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
@@ -26,6 +27,24 @@ import {
   getVehicleAdditionalInfo,
 } from "../../utils/infoAgentApi";
 
+const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric", "other"];
+const driveTrainOptions = ["FWD", "RWD", "AWD", "4WD"];
+const transmissionOptions = ["Manual", "Automatic", "CVT"];
+const bodyTypeOptions = [
+  "Sedan",
+  "SUV",
+  "Hatchback",
+  "Truck",
+  "Van",
+  "Coupe",
+  "Wagon",
+  "Convertible",
+  "Ute",
+  "Minivan",
+  "Bus",
+  "other",
+];
+
 export default function InspectionWizardStepOne({ navigation }) {
   const dispatch = useDispatch();
   const {
@@ -38,6 +57,11 @@ export default function InspectionWizardStepOne({ navigation }) {
     registrationExpiry,
     buildDate,
     complianceDate,
+    fuelType,
+    transmission,
+    driveTrain,
+    bodyType,
+    color,
   } = useSelector((state) => state.inspection);
 
   const isFormComplete =
@@ -45,19 +69,29 @@ export default function InspectionWizardStepOne({ navigation }) {
     year?.trim() &&
     make?.trim() &&
     model?.trim() &&
-    mileAge?.toString().trim() &&
     registrationPlate?.trim() &&
     registrationExpiry &&
     buildDate &&
-    complianceDate;
+    complianceDate &&
+    fuelType &&
+    transmission &&
+    driveTrain &&
+    bodyType &&
+    color;
 
   const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(null);
   const [vinError, setVinError] = useState("");
 
   const handleTextChange = (field, value) => {
     dispatch(setInspectionData({ field, value }));
+  };
+
+  const handleSelect = (field, value) => {
+    dispatch(setInspectionData({ field, value }));
+    setShowDropdown(null);
   };
 
   const handleNext = () => navigation.navigate("InspectionWizardStepTwo");
@@ -94,127 +128,6 @@ export default function InspectionWizardStepOne({ navigation }) {
 
     navigation.navigate("InspectionWizardStepTwo");
   };
-
-  // --- New: fetch vehicle info flow ---
-  // const handleFetchVehicleInfo = async () => {
-  //   // Basic validation
-  //   if (!vin || vin.trim().length === 0) {
-  //     Alert.alert(
-  //       "VIN required",
-  //       "Please enter a VIN/Chassis number before fetching."
-  //     );
-  //     return;
-  //   }
-
-  //   // Optionally check length 17 (common for VINs) — not mandatory
-  //   // if (vin.trim().length < 10) { /* ignore or warn */ }
-
-  //   try {
-  //     setLoading(true);
-
-  //     // 1) Ensure token present
-  //     await fetchAndStoreInfoAgentToken();
-
-  //     // 2) Call vehicle report endpoint (stores report in AsyncStorage inside api util)
-  //     await fetchVehicleReport(vin.trim());
-
-  //     // 3) Read basic info from saved report
-  //     const basic = await getVehicleBasicInfo();
-  //     // console.log("info", basic);
-  //     if (basic) {
-  //       // Map fields to your redux fields (use defensive checks)
-  //       // console.log("Basic info", basic);
-  //       if (basic.year)
-  //         dispatch(
-  //           setInspectionData({ field: "year", value: String(basic.year) })
-  //         );
-
-  //       if (basic.make)
-  //         dispatch(setInspectionData({ field: "make", value: basic.make }));
-  //       if (basic.model)
-  //         dispatch(setInspectionData({ field: "model", value: basic.model }));
-  //       if (basic.mileAge)
-  //         dispatch(
-  //           setInspectionData({ field: "mileAge", value: basic.mileAge })
-  //         );
-
-  //       // buildDate / compliancePlate (naming depends on API). Basic util returned buildDate & compliancePlate
-  //       if (basic.buildDate)
-  //         dispatch(
-  //           setInspectionData({ field: "buildDate", value: basic.buildDate })
-  //         );
-  //       if (basic.compliancePlate)
-  //         dispatch(
-  //           setInspectionData({
-  //             field: "complianceDate",
-  //             value: basic.compliancePlate,
-  //           })
-  //         );
-
-  //       // identification plate
-  //       if (basic.plate)
-  //         dispatch(
-  //           setInspectionData({
-  //             field: "registrationPlate",
-  //             value: basic.plate,
-  //           })
-  //         );
-  //     } else {
-  //       // basic null -> warn the user but continue to try additional info
-  //       console.warn("No basic info read from vehicleReport.");
-  //     }
-
-  //     // 4) Read additional info if you want to store/use it
-  //     const additional = await getVehicleAdditionalInfo();
-  //     if (additional) {
-  //       console.log("Additional info", additional);
-  //       // Example: if you want to store colour, fuelType etc. in inspection state,
-  //       // either extend your redux slice or temporarily store them under other fields.
-  //       // Below I show dispatches to fields named fuelType, driveType, etc.
-  //       if (additional.colour)
-  //         dispatch(
-  //           setInspectionData({ field: "color", value: additional.colour })
-  //         );
-  //       if (additional.fuelType)
-  //         dispatch(
-  //           setInspectionData({ field: "fuelType", value: additional.fuelType })
-  //         );
-  //       if (additional.transmissionType)
-  //         dispatch(
-  //           setInspectionData({
-  //             field: "transmission",
-  //             value: additional.transmissionType,
-  //           })
-  //         );
-  //       if (additional.driveType)
-  //         dispatch(
-  //           setInspectionData({
-  //             field: "driveTrain",
-  //             value: additional.driveType,
-  //           })
-  //         );
-  //       if (additional.bodyType)
-  //         dispatch(
-  //           setInspectionData({ field: "bodyType", value: additional.bodyType })
-  //         );
-  //     }
-
-  //     Alert.alert(
-  //       "Vehicle info loaded",
-  //       "Vehicle details have been populated from InfoAgent."
-  //     );
-  //   } catch (err) {
-  //     console.error("Error in fetch flow:", err);
-  //     // Show friendly message
-  //     Alert.alert(
-  //       "Fetch failed",
-  //       err?.message ||
-  //         "Failed to fetch vehicle info. Check the VIN and network."
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   // --- New: fetch vehicle info flow ---
   // const handleFetchVehicleInfo = async () => {
@@ -366,6 +279,155 @@ export default function InspectionWizardStepOne({ navigation }) {
   //   }
   // };
 
+  const renderDropdown = (field, options) => (
+    <View style={tw`mt-6`}>
+      <Text style={tw`text-gray-500 mb-2`}>
+        {field === "fuelType" && "Fuel Type"}
+        {field === "driveTrain" && "Drive Train"}
+        {field === "transmission" && "Transmission"}
+        {field === "bodyType" && "Body Type"}
+      </Text>
+      <TouchableOpacity
+        style={tw`flex-row justify-between items-center border border-gray-300 rounded-lg p-3 bg-white`}
+        onPress={() => setShowDropdown(showDropdown === field ? null : field)}
+      >
+        <Text style={tw`text-gray-600`}>
+          {field === "fuelType" && (fuelType || "Select Fuel Type")}
+          {field === "driveTrain" && (driveTrain || "Select Drive Train")}
+          {field === "transmission" && (transmission || "Select Transmission")}
+          {field === "bodyType" && (bodyType || "Select Body Type")}
+        </Text>
+        <Ionicons
+          name={showDropdown === field ? "chevron-up" : "chevron-down"}
+          size={20}
+          color="gray"
+        />
+      </TouchableOpacity>
+
+      {showDropdown === field && (
+        <View style={tw`bg-white border border-gray-300 rounded-lg mt-1`}>
+          {options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={tw`p-3 border-b border-gray-100`}
+              onPress={() => handleSelect(field, option)}
+            >
+              <Text style={tw`text-gray-700`}>{option}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+
+  // --- Active: fetch vehicle info flow ---
+  const handleFetchVehicleInfo = async () => {
+    // Basic validation
+    if (!vin || vin.trim().length === 0) {
+      Alert.alert(
+        "VIN required",
+        "Please enter a VIN/Chassis number before fetching."
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // 1) Ensure token present
+      await fetchAndStoreInfoAgentToken();
+
+      // 2) Call vehicle report endpoint
+      await fetchVehicleReport(vin.trim());
+
+      // 3) Read basic info
+      const basic = await getVehicleBasicInfo();
+
+      if (basic) {
+        if (basic.year)
+          dispatch(
+            setInspectionData({ field: "year", value: String(basic.year) })
+          );
+        if (basic.make)
+          dispatch(setInspectionData({ field: "make", value: basic.make }));
+        if (basic.model)
+          dispatch(setInspectionData({ field: "model", value: basic.model }));
+        if (basic.mileAge)
+          dispatch(
+            setInspectionData({ field: "mileAge", value: String(basic.mileAge) })
+          );
+        if (basic.buildDate)
+          dispatch(
+            setInspectionData({ field: "buildDate", value: basic.buildDate })
+          );
+        if (basic.compliancePlate)
+          dispatch(
+            setInspectionData({
+              field: "complianceDate",
+              value: basic.compliancePlate,
+            })
+          );
+        if (basic.plate)
+          dispatch(
+            setInspectionData({
+              field: "registrationPlate",
+              value: basic.plate,
+            })
+          );
+      }
+
+      const additional = await getVehicleAdditionalInfo();
+      if (additional) {
+        if (additional.colour)
+          dispatch(
+            setInspectionData({ field: "color", value: additional.colour })
+          );
+        if (additional.fuelType)
+          dispatch(
+            setInspectionData({
+              field: "fuelType",
+              value: additional.fuelType,
+            })
+          );
+        if (additional.transmissionType)
+          dispatch(
+            setInspectionData({
+              field: "transmission",
+              value: additional.transmissionType,
+            })
+          );
+        if (additional.driveType)
+          dispatch(
+            setInspectionData({
+              field: "driveTrain",
+              value: additional.driveType,
+            })
+          );
+        if (additional.bodyType)
+          dispatch(
+            setInspectionData({
+              field: "bodyType",
+              value: additional.bodyType,
+            })
+          );
+      }
+
+      Alert.alert(
+        "Vehicle info loaded",
+        "Vehicle details have been populated."
+      );
+    } catch (err) {
+      console.error("Error in fetch flow:", err);
+      Alert.alert(
+        "Fetch failed",
+        err?.message ||
+        "Failed to fetch vehicle info. Check the VIN and network."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaWrapper>
       <KeyboardAvoidingView
@@ -408,14 +470,13 @@ export default function InspectionWizardStepOne({ navigation }) {
                     setVinError("");
                   }}
                   placeholder="Enter VIN/Chassis Number"
-                  style={tw`flex-1 border ${
-                    vinError ? "border-red-500" : "border-gray-300"
-                  } rounded-lg p-3 bg-white text-base`}
+                  style={tw`flex-1 border ${vinError ? "border-red-500" : "border-gray-300"
+                    } rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
                   maxLength={17}
                 />
 
-                {/* <TouchableOpacity
+                <TouchableOpacity
                   onPress={handleFetchVehicleInfo}
                   style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
                   disabled={loading}
@@ -425,7 +486,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                   ) : (
                     <Text style={tw`text-white font-semibold`}>Fetch</Text>
                   )}
-                </TouchableOpacity> */}
+                </TouchableOpacity>
               </View>
 
               {vinError ? (
@@ -469,13 +530,19 @@ export default function InspectionWizardStepOne({ navigation }) {
               />
             </View>
 
-            {/* Mileage */}
+            {/* Spec Fields */}
+            {renderDropdown("bodyType", bodyTypeOptions)}
+            {renderDropdown("fuelType", fuelOptions)}
+            {renderDropdown("transmission", transmissionOptions)}
+            {renderDropdown("driveTrain", driveTrainOptions)}
+
+            {/* Color */}
             <View style={tw`mt-6`}>
-              <Text style={tw`text-gray-500 mb-2`}>Mileage</Text>
+              <Text style={tw`text-gray-500 mb-2`}>Color</Text>
               <TextInput
-                value={String(mileAge)}
-                onChangeText={(val) => handleTextChange("mileAge", val)}
-                placeholder="Enter Mileage"
+                value={color}
+                onChangeText={(val) => handleTextChange("color", val)}
+                placeholder="Enter Color"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
