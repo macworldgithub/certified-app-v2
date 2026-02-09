@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to upload service book pages.</string>
+	<string>This app needs camera access to capture inspection images.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access for videos (if needed)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to upload service book pages.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

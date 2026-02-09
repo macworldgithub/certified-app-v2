@@ -364,7 +364,7 @@ export default function InspectionWizardStepSix({ navigation }) {
     dispatch(setInspectionData({ field, value }));
 
   const handleNext = () => {
-    navigation.navigate("FrontImage");
+    navigation.navigate("CaptureWithSilhouette", { stepIndex: 0 });
   };
 
   // const handleSubmit = async () => {

@@ -49,6 +49,8 @@ import InteriorBack from "./src/Screens/InteriorBack";
 import ReviewInspection from "./src/Screens/ReviewInspection";
 import { KeyboardAvoidingView, View, Text } from "react-native";
 import ViewInspection from "./src/Screens/ViewInspection";
+import CaptureWithSilhouetteScreen from "./src/Screens/CaptureWithSilhouetteScreen";
+import ImageReviewScreen from "./src/Screens/ImageReviewScreen";
 enableScreens();
 const Stack = createNativeStackNavigator();
 
@@ -158,6 +160,17 @@ export default function App() {
                 <Stack.Screen
                   name="ViewInspection"
                   component={ViewInspection}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="CaptureWithSilhouette"
+                  component={CaptureWithSilhouetteScreen}
+                  options={{ headerShown: false }}
+                />
+
+                <Stack.Screen
+                  name="ImageReview"
+                  component={ImageReviewScreen}
                   options={{ headerShown: false }}
                 />
                 {/* <Stack.Screen name="Tabs" component={BottomTabNavigator} /> */}
