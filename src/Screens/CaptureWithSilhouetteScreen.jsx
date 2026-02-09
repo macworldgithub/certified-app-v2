@@ -16,7 +16,6 @@ import { Camera, useCameraDevice } from "react-native-vision-camera";
 import { INSPECTION_FLOW } from "../../utils/InspectionFlowConfig";
 import { setImages } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-import { API_BASE_URL } from "../../utils/config";
 
 export default function CaptureWithSilhouetteScreen({ navigation, route }) {
   const dispatch = useDispatch();
@@ -44,29 +43,42 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
     requestPermissions();
   }, []);
 
-  const uploadToS3 = async (uri) => {
-    const res = await fetch(`${API_BASE_URL}/inspections/presigned`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fileType: "image/jpeg" }),
-    });
+  const uploadToS3 = async (fileUri) => {
+    try {
+      const fileType = "image/jpeg";
+      console.log(fileType);
+      // 1) Get presigned URL
+      const presignedResp = await fetch(
+        `https://apiv2-backend.certifiedinspect.com.au/inspections/presigned`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileType }),
+        },
+      );
+      console.log(presignedResp, "RES");
+      if (!presignedResp.ok) throw new Error("Failed to get presigned URL");
 
-    if (!res.ok) throw new Error("Failed to get presigned URL");
+      const { url: presignedUrl, key } = await presignedResp.json();
 
-    const { url: presignedUrl, key } = await res.json();
+      // 2) Convert local file to blob
+      const imgResp = await fetch(fileUri);
+      const blob = await imgResp.blob();
 
-    const imgResp = await fetch(uri);
-    const blob = await imgResp.blob();
+      // 3) Upload blob to S3
+      const uploadRes = await fetch(presignedUrl, {
+        method: "PUT",
+        body: blob,
+        headers: { "Content-Type": fileType },
+      });
 
-    const uploadRes = await fetch(presignedUrl, {
-      method: "PUT",
-      body: blob,
-      headers: { "Content-Type": "image/jpeg" },
-    });
+      if (!uploadRes.ok) throw new Error("Upload failed");
 
-    if (!uploadRes.ok) throw new Error("Upload failed");
-
-    return key;
+      return key;
+    } catch (err) {
+      console.log("uploadToS3 error:", err);
+      throw err;
+    }
   };
 
   const saveOriginalToRedux = (partKey, uploadedKey) => {
@@ -90,14 +102,10 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
 
       setUploading(true);
 
-      const photo = await cameraRef.current.takePhoto({
-        flash: "off",
-      });
-      console.log(photo)
-      // Vision Camera returns file path like:
-      // photo.path = "/data/user/0/.../photo.jpg"
+      const photo = await cameraRef.current.takePhoto({ flash: "off" });
+
       const uri = `file://${photo.path}`;
-      console.log(uri)
+
       const uploadedKey = await uploadToS3(uri);
 
       saveOriginalToRedux(step.key, uploadedKey);
@@ -181,7 +189,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
             onPress={() => navigation.goBack()}
             style={tw`w-10 h-10 bg-white bg-opacity-10 rounded-full items-center justify-center`}
           >
-            <Ionicons name="arrow-back" size={22} color="white" />
+            <Ionicons name="arrow-back-outline" size={22} color="white" />
           </TouchableOpacity>
 
           <Text style={tw`text-white text-lg font-bold`}>{step.title}</Text>
@@ -235,7 +243,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
               uploading && "opacity-50",
             )}
           >
-            <Ionicons name="camera" size={22} color="white" />
+            <Ionicons name="camera-outline" size={22} color="white" />
             <Text style={tw`text-white font-bold text-base ml-2`}>
               Capture Photo
             </Text>
@@ -248,42 +256,53 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
 
         {/* Damage Modal */}
         <Modal visible={damageModalVisible} transparent animationType="fade">
-          <View style={tw`flex-1 bg-black bg-opacity-60 justify-center px-5`}>
-            <View style={tw`bg-white rounded-3xl p-6`}>
-              <Text style={tw`text-xl font-bold text-gray-900 mb-2`}>
-                Damage Check
-              </Text>
+          <View style={tw`flex-1 bg-black bg-opacity-70 justify-center px-5`}>
+            <View style={tw`bg-white rounded-3xl p-6 shadow-2xl`}>
+              {/* Header */}
+              <View style={tw`flex-row justify-between items-center mb-3`}>
+                <Text style={tw`text-lg font-bold text-gray-900`}>
+                  Damage Check
+                </Text>
 
-              <Text style={tw`text-gray-600 mb-6`}>
-                Do you see any damage in this image?
-              </Text>
-
-              <View style={tw`flex-row`}>
-                <TouchableOpacity
-                  onPress={handleNoDamage}
-                  style={tw`flex-1 bg-gray-100 py-4 rounded-2xl mr-2`}
-                >
-                  <Text style={tw`text-center font-bold text-gray-800`}>
-                    No Damage
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={handleYesDamage}
-                  style={tw`flex-1 bg-red-600 py-4 rounded-2xl ml-2`}
-                >
-                  <Text style={tw`text-center font-bold text-white`}>
-                    Yes, Damage
-                  </Text>
+                <TouchableOpacity onPress={() => setDamageModalVisible(false)}>
+                  <Ionicons name="close-outline" size={22} color="#6b7280" />
                 </TouchableOpacity>
               </View>
 
+              <Text style={tw`text-gray-600 mb-6 leading-5`}>
+                Please confirm whether there is any visible damage in this
+                photo.
+              </Text>
+
+              {/* Buttons */}
               <TouchableOpacity
-                onPress={() => setDamageModalVisible(false)}
-                style={tw`mt-5 py-3`}
+                onPress={handleNoDamage}
+                style={tw`bg-black py-4 rounded-2xl mb-3`}
+              >
+                <Text style={tw`text-center font-bold text-white text-base`}>
+                  No Damage
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleYesDamage}
+                style={tw`bg-black py-4 rounded-2xl mb-3`}
+              >
+                <Text style={tw`text-center font-bold text-white text-base`}>
+                  Yes, Damage Found
+                </Text>
+              </TouchableOpacity>
+
+              {/* Retake */}
+              <TouchableOpacity
+                onPress={() => {
+                  setDamageModalVisible(false);
+                  setLastUploadedKey(null);
+                }}
+                style={tw`py-3`}
               >
                 <Text style={tw`text-center text-gray-500 font-semibold`}>
-                  Cancel
+                  Retake Photo
                 </Text>
               </TouchableOpacity>
             </View>

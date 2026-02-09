@@ -201,7 +201,7 @@
 // };
 import React from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "tailwind-react-native-classnames";
 import ImageViewing from "react-native-image-viewing";
 import SignedImage from "./SignedImage";
@@ -214,15 +214,21 @@ import {
 import DamageList from "./DamageList";
 
 const Header = ({ title, onBack }) => (
-  <View style={tw`flex-row items-center mb-6`}>
+  <View style={tw`flex-row items-center justify-between mb-6`}>
     <TouchableOpacity
       onPress={onBack}
-      style={tw`w-10 h-10 rounded-full bg-gray-100 items-center justify-center`}
+      activeOpacity={0.8}
+      style={tw`w-11 h-11 rounded-full bg-white border border-gray-200 shadow-sm items-center justify-center`}
     >
-      <Ionicons name="arrow-back" size={22} color="#065f46" />
+      <Ionicons name="arrow-back-outline" size={22} color="#065f46" />
     </TouchableOpacity>
 
-    <Text style={tw`ml-3 text-xl font-bold text-gray-900`}>{title}</Text>
+    <Text
+      style={tw`flex-1 ml-4 text-xl font-extrabold text-gray-900`}
+      numberOfLines={1}
+    >
+      {title}
+    </Text>
   </View>
 );
 
@@ -234,10 +240,16 @@ const ImageComparison = ({
   previewVisible,
   setPreviewVisible,
 }) => (
-  <View style={tw`flex-row justify-between mb-6`}>
+  <View style={tw`flex-row justify-between mb-8`}>
     {/* Original */}
-    <View style={tw`flex-1 mr-2 bg-white rounded-2xl p-3 shadow-sm`}>
-      <Text style={tw`text-gray-800 font-bold mb-2`}>Original</Text>
+    <View
+      style={tw`flex-1 mr-2 bg-white rounded-3xl p-4 border border-gray-200 shadow-sm`}
+    >
+      <Text style={tw`text-gray-900 font-extrabold text-base mb-2`}>
+        Original
+      </Text>
+
+      <Text style={tw`text-gray-500 text-xs mb-3`}>Captured photo</Text>
 
       {images?.[partKey]?.original ? (
         <SignedImage
@@ -248,15 +260,24 @@ const ImageComparison = ({
           }}
         />
       ) : (
-        <Text style={tw`text-gray-400 text-sm mt-4 text-center`}>
-          No original image
-        </Text>
+        <View
+          style={tw`h-32 bg-gray-50 rounded-2xl border border-gray-200 items-center justify-center`}
+        >
+          <Ionicons name="image-outline" size={26} color="#9ca3af" />
+          <Text style={tw`text-gray-400 text-sm mt-2`}>No original image</Text>
+        </View>
       )}
     </View>
 
     {/* Analyzed */}
-    <View style={tw`flex-1 ml-2 bg-white rounded-2xl p-3 shadow-sm`}>
-      <Text style={tw`text-gray-800 font-bold mb-2`}>Analyzed</Text>
+    <View
+      style={tw`flex-1 ml-2 bg-white rounded-3xl p-4 border border-gray-200 shadow-sm`}
+    >
+      <Text style={tw`text-gray-900 font-extrabold text-base mb-2`}>
+        Analyzed
+      </Text>
+
+      <Text style={tw`text-gray-500 text-xs mb-3`}>AI processed result</Text>
 
       {images?.[partKey]?.analyzed ? (
         <SignedImage
@@ -267,9 +288,12 @@ const ImageComparison = ({
           }}
         />
       ) : (
-        <Text style={tw`text-gray-400 text-sm mt-4 text-center`}>
-          Not analyzed yet
-        </Text>
+        <View
+          style={tw`h-32 bg-gray-50 rounded-2xl border border-gray-200 items-center justify-center`}
+        >
+          <Ionicons name="sparkles-outline" size={26} color="#9ca3af" />
+          <Text style={tw`text-gray-400 text-sm mt-2`}>Not analyzed yet</Text>
+        </View>
       )}
     </View>
 
@@ -290,43 +314,69 @@ const ImageActions = ({
   setUploading,
   setProgress,
 }) => (
-  <>
-    <TouchableOpacity
-      style={tw`bg-green-700 p-3 rounded-lg mt-4`}
-      onPress={() =>
-        handlePickFromGallery({
-          partKey,
-          images,
-          saveImagesToRedux,
-          setUploading,
-          setProgress,
-        })
-      }
-    >
-      <Text style={tw`text-white text-center`}>Pick from Gallery</Text>
-    </TouchableOpacity>
+  <View style={tw`mb-6`}>
+    <Text style={tw`text-gray-900 font-extrabold text-lg mb-3`}>
+      Upload Options
+    </Text>
 
-    <TouchableOpacity
-      style={tw`bg-green-700 p-3 rounded-lg mt-4`}
-      onPress={() =>
-        handleImageCapture({
-          partKey,
-          images,
-          saveImagesToRedux,
-          setUploading,
-          setProgress,
-        })
-      }
-    >
-      <Text style={tw`text-white text-center`}>Capture from Camera</Text>
-    </TouchableOpacity>
-  </>
+    <View style={tw`bg-white rounded-3xl p-4 border border-gray-200 shadow-sm`}>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={tw`bg-green-700 py-4 rounded-2xl flex-row items-center justify-center`}
+        onPress={() =>
+          handlePickFromGallery({
+            partKey,
+            images,
+            saveImagesToRedux,
+            setUploading,
+            setProgress,
+          })
+        }
+      >
+        <View
+          style={tw`w-9 h-9 rounded-full bg-white bg-opacity-20 items-center justify-center mr-3`}
+        >
+          <Ionicons name="images" size={18} color="white" />
+        </View>
+
+        <Text style={tw`text-white font-extrabold text-base`}>
+          Pick from Gallery
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={tw`mt-3 bg-gray-900 py-4 rounded-2xl flex-row items-center justify-center`}
+        onPress={() =>
+          handleImageCapture({
+            partKey,
+            images,
+            saveImagesToRedux,
+            setUploading,
+            setProgress,
+          })
+        }
+      >
+        <View
+          style={tw`w-9 h-9 rounded-full bg-white bg-opacity-20 items-center justify-center mr-3`}
+        >
+          <Ionicons name="camera" size={18} color="white" />
+        </View>
+
+        <Text style={tw`text-white font-extrabold text-base`}>
+          Capture from Camera
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
 );
 
 const LoadingIndicator = ({ label }) => (
-  <View style={tw`flex-row items-center bg-green-50 p-4 rounded-2xl mb-4`}>
+  <View
+    style={tw`flex-row items-center bg-green-50 border border-green-200 p-4 rounded-2xl mb-4`}
+  >
     <ActivityIndicator size="small" color="#15803d" />
-    <Text style={tw`ml-3 text-green-800 font-bold`}>{label}...</Text>
+    <Text style={tw`ml-3 text-green-900 font-bold text-sm`}>{label}...</Text>
   </View>
 );
 
@@ -340,11 +390,14 @@ const AnalyzeDeleteButtons = ({
   if (!images?.[partKey]?.original) return null;
 
   return (
-    <View style={tw`flex-row justify-between mb-6`}>
+    <View style={tw`flex-row mb-8`}>
       <TouchableOpacity
+        activeOpacity={0.85}
         style={tw.style(
-          "flex-1 py-4 rounded-2xl flex-row justify-center items-center mr-2",
-          analyzing ? "bg-gray-300" : "bg-blue-600",
+          "flex-1 py-4 rounded-2xl flex-row justify-center items-center mr-2 border shadow-sm",
+          analyzing
+            ? "bg-gray-200 border-gray-200"
+            : "bg-black border-black-600",
         )}
         onPress={() =>
           handleAnalyzeImage({
@@ -357,15 +410,18 @@ const AnalyzeDeleteButtons = ({
         disabled={analyzing}
       >
         <Ionicons name="sparkles" size={18} color="white" />
-        <Text style={tw`text-white font-bold ml-2`}>
+        <Text style={tw`text-white font-extrabold ml-2 text-base`}>
           {analyzing ? "Analyzing..." : "Analyze"}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
+        activeOpacity={0.85}
         style={tw.style(
-          "flex-1 py-4 rounded-2xl flex-row justify-center items-center ml-2",
-          analyzing ? "bg-gray-300" : "bg-red-600",
+          "flex-1 py-4 rounded-2xl flex-row justify-center items-center ml-2 border shadow-sm",
+          analyzing
+            ? "bg-gray-200 border-gray-200"
+            : "bg-black border-red-600",
         )}
         onPress={() =>
           handleDeleteFromS3({ partKey, images, saveImagesToRedux })
@@ -373,7 +429,7 @@ const AnalyzeDeleteButtons = ({
         disabled={analyzing}
       >
         <Ionicons name="trash" size={18} color="white" />
-        <Text style={tw`text-white font-bold ml-2`}>Delete</Text>
+        <Text style={tw`text-white font-extrabold ml-2 text-base`}>Delete</Text>
       </TouchableOpacity>
     </View>
   );
@@ -385,22 +441,43 @@ const DamageSection = ({ inspection, partKey }) => {
   if (!damages || damages.length === 0) return null;
 
   return (
-    <View style={tw`bg-white rounded-3xl p-5 shadow-sm`}>
-      <Text style={tw`text-lg font-bold text-gray-900 mb-3`}>
-        Detected Damages
-      </Text>
+    <View
+      style={tw`bg-white rounded-3xl p-5 border border-gray-200 shadow-sm mb-8`}
+    >
+      <View style={tw`flex-row items-center mb-4`}>
+        <View
+          style={tw`w-10 h-10 rounded-full bg-red-50 items-center justify-center mr-3`}
+        >
+          <Ionicons name="warning-outline" size={20} color="#dc2626" />
+        </View>
+
+        <View>
+          <Text style={tw`text-lg font-extrabold text-gray-900`}>
+            Detected Damages
+          </Text>
+          <Text style={tw`text-gray-500 text-xs mt-1`}>
+            Review highlighted issues found in the image
+          </Text>
+        </View>
+      </View>
+
       <DamageList damages={damages} />
     </View>
   );
 };
 
-const NextButton = ({ onNext }) => (
-  <View style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white`}>
+const NextButton = ({ onNext, label = "Continue" }) => (
+  <View
+    style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white border-t border-gray-200`}
+  >
     <TouchableOpacity
+      activeOpacity={0.9}
       style={tw`bg-green-700 py-4 rounded-3xl shadow-lg`}
       onPress={onNext}
     >
-      <Text style={tw`text-white text-center text-lg font-bold`}>Continue</Text>
+      <Text style={tw`text-white text-center text-lg font-extrabold`}>
+        {label}
+      </Text>
     </TouchableOpacity>
   </View>
 );
