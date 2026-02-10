@@ -209,6 +209,14 @@ import {
   ScrollView,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import {
+  CameraIcon,
+  ArrowRightIcon,
+  SparklesIcon,
+  TrashIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+} from "react-native-heroicons/outline";
 import tw from "tailwind-react-native-classnames";
 import ImageViewing from "react-native-image-viewing";
 import SignedImage from "./SignedImage";
@@ -227,7 +235,7 @@ const Header = ({ title, onBack }) => (
       activeOpacity={0.8}
       style={tw`w-11 h-11 text-color items-center justify-center`}
     >
-      <Ionicons name="arrow-back" size={22} color="white" />
+      <ArrowRightIcon size={22} color="white" />
     </TouchableOpacity>
 
     <Text
@@ -298,7 +306,7 @@ const ImageComparison = ({
         <View
           style={tw`h-32 bg-gray-50 rounded-2xl border border-gray-200 items-center justify-center`}
         >
-          <Ionicons name="sparkles-outline" size={26} color="#9ca3af" />
+          <SparklesIcon size={26} color="#9ca3af" />
           <Text style={tw`text-gray-400 text-sm mt-2`}>Not analyzed yet</Text>
         </View>
       )}
@@ -343,7 +351,7 @@ const ImageActions = ({
         <View
           style={tw`w-9 h-9 rounded-full bg-white bg-opacity-20 items-center justify-center mr-3`}
         >
-          <Ionicons name="images" size={18} color="white" />
+          <CameraIcon size={18} color="white" />
         </View>
 
         <Text style={tw`text-white font-extrabold text-base`}>
@@ -367,7 +375,7 @@ const ImageActions = ({
         <View
           style={tw`w-9 h-9 rounded-full bg-white bg-opacity-20 items-center justify-center mr-3`}
         >
-          <Ionicons name="camera" size={18} color="white" />
+          <CameraIcon size={18} color="white" />
         </View>
 
         <Text style={tw`text-white font-extrabold text-base`}>
@@ -416,7 +424,7 @@ const AnalyzeDeleteButtons = ({
         }
         disabled={analyzing}
       >
-        <Ionicons name="sparkles" size={18} color="white" />
+        <SparklesIcon size={18} color="white" />
         <Text style={tw`text-white font-extrabold ml-2 text-base`}>
           {analyzing ? "Analyzing..." : "Analyze"}
         </Text>
@@ -433,7 +441,7 @@ const AnalyzeDeleteButtons = ({
         }
         disabled={analyzing}
       >
-        <Ionicons name="trash" size={18} color="white" />
+        <TrashIcon size={18} color="white" />
         <Text style={tw`text-white font-extrabold ml-2 text-base`}>Delete</Text>
       </TouchableOpacity>
     </View>
@@ -506,7 +514,7 @@ const DamageSection = ({ inspection, partKey }) => {
                 style.bg,
               )}
             >
-              <Ionicons name={style.icon} size={20} color="#111827" />
+              <SparklesIcon size={18} color="black" />
             </View>
 
             <View>
@@ -530,7 +538,6 @@ const DamageSection = ({ inspection, partKey }) => {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward-outline" size={18} color="#9ca3af" />
         </View>
 
         {/* Description */}
@@ -561,7 +568,7 @@ const DamageSection = ({ inspection, partKey }) => {
           <View
             style={tw`w-12 h-12 rounded-2xl bg-red-50 items-center justify-center mr-3`}
           >
-            <Ionicons name="warning-outline" size={24} color="#dc2626" />
+            <ExclamationTriangleIcon size={24} color="#dc2626" />
           </View>
 
           <View>
@@ -575,7 +582,7 @@ const DamageSection = ({ inspection, partKey }) => {
         </View>
 
         {/* Count Badge */}
-        <View style={tw`bg-red-100 px-3 py-1 rounded-full`}>
+        <View style={tw`bg-red-100 px-2 mb-3 py-2 rounded-full`}>
           <Text style={tw`text-red-700 font-extrabold text-xs`}>
             {damages.length} Found
           </Text>
@@ -608,7 +615,7 @@ const DamageSection = ({ inspection, partKey }) => {
       <View
         style={tw`mt-3 flex-row items-center bg-gray-50 border border-gray-200 p-3 rounded-2xl`}
       >
-        <Ionicons name="information-circle-outline" size={18} color="#4b5563" />
+        <InformationCircleIcon size={18} color="#4b5563" />
         <Text style={tw`text-gray-600 text-xs ml-2 leading-4 flex-1`}>
           Please confirm damages manually before submitting. AI detection may
           not always be accurate.

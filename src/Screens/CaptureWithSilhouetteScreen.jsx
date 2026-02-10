@@ -16,6 +16,12 @@ import backArrowIcon from "../../assets/backarrow.png";
 import { INSPECTION_FLOW } from "../../utils/InspectionFlowConfig";
 import { setImages } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
+import {
+  CameraIcon,
+  XMarkIcon,
+  ChevronRightIcon,
+} from "react-native-heroicons/outline";
+
 export default function CaptureWithSilhouetteScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const inspection = useSelector((state) => state.inspection);
@@ -253,7 +259,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
               uploading && "opacity-50",
             )}
           >
-            <Ionicons name="camera-outline" size={22} color="white" />
+            <CameraIcon size={22} color="white" />
             <Text style={tw`text-white font-bold text-base ml-2`}>
               Capture Photo
             </Text>
@@ -265,7 +271,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
             disabled={uploading}
             style={tw`bg-gray-700 py-4 rounded-2xl flex-row items-center justify-center mt-3`}
           >
-            <Ionicons name="arrow-forward-outline" size={22} color="white" />
+            <ChevronRightIcon size={18} color="#9ca3af" />
             <Text style={tw`text-white font-bold text-base ml-2`}>
               Skip Step
             </Text>
@@ -287,7 +293,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
                 </Text>
 
                 <TouchableOpacity onPress={() => setDamageModalVisible(false)}>
-                  <Ionicons name="close-outline" size={22} color="#6b7280" />
+                  <XMarkIcon size={22} color="#6b7280" />
                 </TouchableOpacity>
               </View>
 

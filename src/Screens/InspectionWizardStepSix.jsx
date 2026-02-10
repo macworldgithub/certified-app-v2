@@ -643,13 +643,13 @@ export default function InspectionWizardStepSix({ navigation }) {
 
               {roadTest === "Yes" && (
                 <View style={tw`mt-4`}>
-                  <Text style={tw`text-gray-500 mb-1`}>Road Test Comments</Text>
+                  <Text style={tw`text-gray-500 mb-1`}>Mechanical notes</Text>
                   <TextInput
                     value={roadTestComments}
                     onChangeText={(v) =>
                       handleTextChange("roadTestComments", v)
                     }
-                    placeholder="Enter comments"
+                    placeholder="Road Test Comments"
                     style={tw`border border-gray-300 rounded-lg p-3 h-20`}
                     multiline
                   />
