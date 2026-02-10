@@ -200,11 +200,18 @@
 //   AnalyzeDeleteButtons,
 // };
 import React from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "tailwind-react-native-classnames";
 import ImageViewing from "react-native-image-viewing";
 import SignedImage from "./SignedImage";
+import backArrowIcon from "../../assets/backarrow1.png";
 import {
   handleAnalyzeImage,
   handleDeleteFromS3,
@@ -218,9 +225,15 @@ const Header = ({ title, onBack }) => (
     <TouchableOpacity
       onPress={onBack}
       activeOpacity={0.8}
-      style={tw`w-11 h-11 rounded-full bg-white border border-gray-200 shadow-sm items-center justify-center`}
+      style={tw`w-11 h-11 text-color items-center justify-center`}
     >
-      <Ionicons name="arrow-back-outline" size={22} color="#065f46" />
+      {/* <Ionicons name="arrow-back" size={22} color="white" /> */}
+      <Image
+        source={backArrowIcon}
+        style={{ width: 18, height: 18 }}
+        resizeMode="contain"
+        // tintColor="white"                    
+      />
     </TouchableOpacity>
 
     <Text
@@ -419,9 +432,7 @@ const AnalyzeDeleteButtons = ({
         activeOpacity={0.85}
         style={tw.style(
           "flex-1 py-4 rounded-2xl flex-row justify-center items-center ml-2 border shadow-sm",
-          analyzing
-            ? "bg-gray-200 border-gray-200"
-            : "bg-black border-red-600",
+          analyzing ? "bg-gray-200 border-gray-200" : "bg-black ",
         )}
         onPress={() =>
           handleDeleteFromS3({ partKey, images, saveImagesToRedux })
@@ -442,14 +453,14 @@ const DamageSection = ({ inspection, partKey }) => {
 
   return (
     <View
-      style={tw`bg-white rounded-3xl p-5 border border-gray-200 shadow-sm mb-8`}
+      style={tw`bg-white rounded-3xl p-5 border border-gray-200 shadow-sm mb-2`}
     >
-      <View style={tw`flex-row items-center mb-4`}>
-        <View
+      <View style={tw`flex-row items-center mb-2`}>
+        {/* <View
           style={tw`w-10 h-10 rounded-full bg-red-50 items-center justify-center mr-3`}
         >
           <Ionicons name="warning-outline" size={20} color="#dc2626" />
-        </View>
+        </View> */}
 
         <View>
           <Text style={tw`text-lg font-extrabold text-gray-900`}>

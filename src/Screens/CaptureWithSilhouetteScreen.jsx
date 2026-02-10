@@ -12,11 +12,10 @@ import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
-
+import backArrowIcon from "../../assets/backarrow.png";
 import { INSPECTION_FLOW } from "../../utils/InspectionFlowConfig";
 import { setImages } from "../redux/slices/inspectionSlice";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-
 export default function CaptureWithSilhouetteScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const inspection = useSelector((state) => state.inspection);
@@ -187,9 +186,15 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
         <View style={tw`flex-row items-center justify-between px-4 py-4 z-20`}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            style={tw`w-10 h-10 bg-white bg-opacity-10 rounded-full items-center justify-center`}
+            style={tw`w-11 h-11 text-color items-center justify-center`}
           >
-            <Ionicons name="arrow-back-outline" size={22} color="white" />
+            {/* <Ionicons name="arrow-back" size={22} color="white" /> */}
+            <Image
+              source={backArrowIcon}
+              style={{ width: 28, height: 28 }}
+              resizeMode="contain"
+              // tintColor="black"
+            />
           </TouchableOpacity>
 
           <Text style={tw`text-white text-lg font-bold`}>{step.title}</Text>
