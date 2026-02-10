@@ -242,8 +242,9 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
           </Text>
         </View>
 
-        {/* Bottom Capture Button */}
+        {/* Bottom Capture & Skip Buttons */}
         <View style={tw`px-4 pb-6`}>
+          {/* Capture Button */}
           <TouchableOpacity
             onPress={capturePhoto}
             disabled={uploading}
@@ -255,6 +256,18 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
             <Ionicons name="camera-outline" size={22} color="white" />
             <Text style={tw`text-white font-bold text-base ml-2`}>
               Capture Photo
+            </Text>
+          </TouchableOpacity>
+
+          {/* Skip Button */}
+          <TouchableOpacity
+            onPress={goNextCapture}
+            disabled={uploading}
+            style={tw`bg-gray-700 py-4 rounded-2xl flex-row items-center justify-center mt-3`}
+          >
+            <Ionicons name="arrow-forward-outline" size={22} color="white" />
+            <Text style={tw`text-white font-bold text-base ml-2`}>
+              Skip Step
             </Text>
           </TouchableOpacity>
 
@@ -289,14 +302,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
                   onPress={() => {
                     setDamageModalVisible(false);
                     setLastUploadedKey(null);
-
-                    if (isCompliancePlate) {
-                      navigation.replace("CaptureWithSilhouette", {
-                        stepIndex: stepIndex + 1,
-                      });
-                    } else if (isOdometer) {
-                      navigation.navigate("InspectionWizardStepSix");
-                    }
+                    goNextCapture();
                   }}
                   style={tw`bg-black py-4 rounded-2xl mb-3`}
                 >

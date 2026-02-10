@@ -95,22 +95,18 @@ export default function ReviewInspection({ navigation }) {
 
   const handleSubmit = async () => {
     try {
-      // Force required string fields to have *something*
       const safeEngineNumber = (
         inspection.engineNumber || "NOT_SET_" + Date.now().toString().slice(-6)
       ).trim();
 
-      // Force numbers
       const safeMileAge = Number(mileAge) || 0;
-      const safeOdometer = odometer ? Number(odometer) : undefined; // ← try number first
-      // if number fails later → change to String(odometer || "")
+      const safeOdometer = odometer ? Number(odometer) : undefined; 
 
-      // Force booleans
       const safeKeysPresent =
         keysPresent === true ||
         keysPresent === "true" ||
         keysPresent === "Yes" ||
-        keysPresent === "3"; // ← your log shows "3"
+        keysPresent === "3"; 
       const safeServiceBook =
         serviceBookPresent === true ||
         serviceBookPresent === "true" ||
@@ -131,7 +127,7 @@ export default function ReviewInspection({ navigation }) {
         make: make?.trim() || "",
         carModel: model?.trim() || "",
         year: year?.trim() || "",
-        engineNumber: safeEngineNumber, // ← was the most suspicious field
+        engineNumber: safeEngineNumber,
 
         mileAge: safeMileAge,
 
@@ -142,9 +138,6 @@ export default function ReviewInspection({ navigation }) {
 
         inspectorEmail: inspection.inspectorEmail || "muhammadanasrashid18@gmail.com",
 
-        // ────────────────────────────────────────────────
-        // Images – make sure ALL required fields exist
-        // ────────────────────────────────────────────────
         frontImage: prepareImageAnalysis(images?.frontImage) || {
           original: "",
           damages: [],
@@ -175,7 +168,6 @@ export default function ReviewInspection({ navigation }) {
           damages: [],
         },
 
-        // odometer – try number first (most common source of 500)
         odometer: safeOdometer,
 
         odometerImage:
