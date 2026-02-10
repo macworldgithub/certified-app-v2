@@ -15,12 +15,14 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import { useDispatch } from "react-redux";
 
 import { resetInspection } from "../redux/slices/inspectionSlice";
+import API_BASE_URL from "../../utils/config";
 
 export default function ReviewInspection({ navigation }) {
   const dispatch = useDispatch();
   const inspection = useSelector((state) => state.inspection);
+  console.log(inspection, "INSPECTION...");
   const { images } = inspection;
-
+  console.log(images, "IMAGES...");
   const {
     vin,
     make,
@@ -53,24 +55,204 @@ export default function ReviewInspection({ navigation }) {
     generalComments,
   } = inspection;
 
+  // Helper – normalize image objects
+  function prepareImageAnalysis(img) {
+    if (!img) {
+      return { original: "", damages: [] };
+    }
+
+    const original = img.original || img.uri || String(img) || "";
+
+    const rawDamages = Array.isArray(img.damages) ? img.damages : [];
+
+    const damages = rawDamages.map((d) => {
+      const bbox = Array.isArray(d.bbox)
+        ? d.bbox
+        : Array.isArray(d.boundingBox)
+          ? d.boundingBox
+          : [0, 0, 0, 0];
+      return {
+        boundingBox: bbox.map(Number).slice(0, 4),
+        description: String(d.description || d.text || ""),
+        type: String(d.type || "unknown"),
+      };
+    });
+
+    return {
+      original: original.trim(),
+      analyzed: img.analyzedUrl || img.analyzed || undefined,
+      damages,
+    };
+  }
+
+  function toIsoDate(d) {
+    if (!d) return undefined;
+    // assuming input is DD/MM/YYYY
+    const [day, month, year] = d.split("/");
+    if (!day || !month || !year) return undefined;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
   const handleSubmit = async () => {
     try {
-      console.log(
-        "Final Submission Payload:",
-        JSON.stringify(inspection, null, 2),
-      );
+      // Force required string fields to have *something*
+      const safeEngineNumber = (
+        inspection.engineNumber || "NOT_SET_" + Date.now().toString().slice(-6)
+      ).trim();
+
+      // Force numbers
+      const safeMileAge = Number(mileAge) || 0;
+      const safeOdometer = odometer ? Number(odometer) : undefined; // ← try number first
+      // if number fails later → change to String(odometer || "")
+
+      // Force booleans
+      const safeKeysPresent =
+        keysPresent === true ||
+        keysPresent === "true" ||
+        keysPresent === "Yes" ||
+        keysPresent === "3"; // ← your log shows "3"
+      const safeServiceBook =
+        serviceBookPresent === true ||
+        serviceBookPresent === "true" ||
+        serviceBookPresent === "Yes";
+      const safeServiceHistory =
+        serviceHistoryPresent === true ||
+        serviceHistoryPresent === "true" ||
+        serviceHistoryPresent === "Yes";
+      const safeDamagePresent =
+        damagePresent === true ||
+        damagePresent === "Yes" ||
+        damagePresent === "true";
+      const safeRoadTest =
+        roadTest === true || roadTest === "Yes" || roadTest === "true";
+
+      const payload = {
+        vin: vin?.trim() || "",
+        make: make?.trim() || "",
+        carModel: model?.trim() || "",
+        year: year?.trim() || "",
+        engineNumber: safeEngineNumber, // ← was the most suspicious field
+
+        mileAge: safeMileAge,
+
+        registrationPlate: registrationPlate?.trim() || "",
+        registrationExpiry: toIsoDate(registrationExpiry),
+        buildDate: toIsoDate(buildDate),
+        complianceDate: toIsoDate(complianceDate),
+
+        inspectorEmail: inspection.inspectorEmail || "muhammadanasrashid18@gmail.com",
+
+        // ────────────────────────────────────────────────
+        // Images – make sure ALL required fields exist
+        // ────────────────────────────────────────────────
+        frontImage: prepareImageAnalysis(images?.frontImage) || {
+          original: "",
+          damages: [],
+        },
+        rearImage: prepareImageAnalysis(images?.rearImage) || {
+          original: "",
+          damages: [],
+        },
+        leftImage: prepareImageAnalysis(
+          images?.leftSideImage || images?.LHFImage,
+        ) || { original: "", damages: [] },
+        rightImage: prepareImageAnalysis(
+          images?.RightSideImage || images?.RHRImage,
+        ) || { original: "", damages: [] },
+        engineImage: prepareImageAnalysis(images?.UnderbonnetImage) || {
+          original: "",
+          damages: [],
+        },
+        plateImage: prepareImageAnalysis(images?.compliancePlateImage) || {
+          original: "",
+          damages: [],
+        },
+        interiorFrontImage: prepareImageAnalysis(
+          images?.DriversSeatImage || images?.FrontPassengerSeatImage,
+        ) || { original: "", damages: [] },
+        interiorBackImage: prepareImageAnalysis(images?.RearSeatImage) || {
+          original: "",
+          damages: [],
+        },
+
+        // odometer – try number first (most common source of 500)
+        odometer: safeOdometer,
+
+        odometerImage:
+          images?.OdoImage?.original || images?.odometerImage || "",
+
+        fuelType: fuelType?.trim() || "",
+        driveTrain: driveTrain?.trim() || "",
+        transmission: transmission?.trim() || "",
+        bodyType: bodyType?.trim() || "",
+        color: color?.trim() || "",
+
+        keysPresent: safeKeysPresent,
+        serviceBookPresent: safeServiceBook,
+        bookImages: inspection.bookImages || [],
+        serviceHistoryPresent: safeServiceHistory,
+
+        tyreConditionFrontLeft: tyreConditionFrontLeft?.trim() || "",
+        tyreConditionFrontRight: tyreConditionFrontRight?.trim() || "",
+        tyreConditionRearRight: tyreConditionRearRight?.trim() || "",
+        tyreConditionRearLeft: tyreConditionRearLeft?.trim() || "",
+
+        damagePresent: safeDamagePresent,
+        roadTest: safeRoadTest,
+        roadTestComments: roadTestComments?.trim() || "",
+        generalComments: generalComments?.trim() || "",
+
+        // Optional – only if backend added this field recently
+        // overallRating: undefined,
+        // lastServiceDate: toIsoDate(lastServiceDate),
+        // serviceCenterName: "",
+        // odometerAtLastService: Number(odometerAtLastService) || undefined,
+      };
+
+      console.log("Sending payload:", JSON.stringify(payload, null, 2));
+
+      const response = await fetch(`${API_BASE_URL}/inspections`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": `Bearer ${token}`,   ← add when you have auth
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorText = "";
+        try {
+          const errBody = await response.json();
+          errorText = errBody.message || JSON.stringify(errBody);
+        } catch {
+          errorText = await response.text().catch(() => "");
+        }
+        throw new Error(
+          `Server responded ${response.status}: ${errorText || "No message"}`,
+        );
+      }
+
+      const result = await response.json();
+
+      Alert.alert("Success", "Inspection submitted successfully!");
+
       dispatch(resetInspection());
+
       navigation.reset({
         index: 0,
         routes: [{ name: "MainTabs", params: { screen: "InspectionList" } }],
       });
-      Alert.alert("Success", "Inspection submitted!");
-      // navigation.navigate("InspectionList");
     } catch (err) {
-      Alert.alert("Error", "Failed to submit inspection");
+      console.error("Submission error:", err);
+      Alert.alert(
+        "Submission Failed",
+        err.message?.includes("500")
+          ? "Server error (500) – please check backend logs"
+          : err.message || "Cannot connect to server. Please try again later.",
+      );
     }
   };
-
   const renderSection = (title, children) => (
     <View style={tw`mb-6 bg-white border border-gray-200 rounded-xl p-4`}>
       <Text style={tw`text-gray-500 text-sm font-medium mb-3 uppercase`}>
@@ -267,7 +449,7 @@ export default function ReviewInspection({ navigation }) {
                   Uploaded Images: {uploadedCount} / {IMAGE_FIELDS.length}
                 </Text>
               </View>
-              
+
               {IMAGE_FIELDS.map((img) =>
                 renderImageCard(img.label, images?.[img.key]),
               )}
