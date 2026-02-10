@@ -57,13 +57,17 @@ import tw from "tailwind-react-native-classnames";
 
 import { signUrl } from "../../utils/inspectionFunctions";
 
-const SignedImage = ({ s3Key, onPress }) => {
+const SignedImage = ({ s3Key, onPress, style, resizeMode = "cover" }) => {
   const [url, setUrl] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
 
     if (s3Key) {
+      if (s3Key.startsWith("http")) {
+        setUrl(s3Key);
+        return;
+      }
       (async () => {
         try {
           const signed = await signUrl(s3Key);
@@ -84,7 +88,7 @@ const SignedImage = ({ s3Key, onPress }) => {
       <View
         style={[
           tw`w-full h-32 rounded-lg mt-2 justify-center items-center bg-gray-100`,
-          ,
+          style,
         ]}
       >
         <ActivityIndicator />
@@ -93,11 +97,11 @@ const SignedImage = ({ s3Key, onPress }) => {
   }
 
   return (
-    <TouchableOpacity onPress={() => onPress?.(url)}>
+    <TouchableOpacity onPress={() => onPress?.(url)} disabled={!onPress}>
       <Image
         source={{ uri: url }}
-        style={[tw`w-full h-32 rounded-lg mt-2`]}
-        resizeMode="cover"
+        style={[tw`w-full h-32 rounded-lg mt-2`, style]}
+        resizeMode={resizeMode as any}
       />
     </TouchableOpacity>
   );

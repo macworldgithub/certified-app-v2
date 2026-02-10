@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 
 import { resetInspection } from "../redux/slices/inspectionSlice";
 import API_BASE_URL from "../../utils/config";
+import SignedImage from "../components/SignedImage";
 
 export default function ReviewInspection({ navigation }) {
   const dispatch = useDispatch();
@@ -100,13 +101,13 @@ export default function ReviewInspection({ navigation }) {
       ).trim();
 
       const safeMileAge = Number(mileAge) || 0;
-      const safeOdometer = odometer ? Number(odometer) : undefined; 
+      const safeOdometer = odometer ? Number(odometer) : undefined;
 
       const safeKeysPresent =
         keysPresent === true ||
         keysPresent === "true" ||
         keysPresent === "Yes" ||
-        keysPresent === "3"; 
+        keysPresent === "3";
       const safeServiceBook =
         serviceBookPresent === true ||
         serviceBookPresent === "true" ||
@@ -287,7 +288,7 @@ export default function ReviewInspection({ navigation }) {
   ).length;
 
   const renderImageCard = (label, imageObj) => {
-    const uri =
+    const s3Key =
       typeof imageObj === "string"
         ? imageObj
         : imageObj?.analyzedUrl || imageObj?.original || null;
@@ -304,22 +305,26 @@ export default function ReviewInspection({ navigation }) {
           <View
             style={tw.style(
               "px-2 py-1 rounded-full",
-              uri ? "bg-green-100" : "bg-red-100",
+              s3Key ? "bg-green-100" : "bg-red-100",
             )}
           >
             <Text
               style={tw.style(
                 "text-xs font-semibold",
-                uri ? "text-green-700" : "text-red-700",
+                s3Key ? "text-green-700" : "text-red-700",
               )}
             >
-              {uri ? "Uploaded" : "Missing"}
+              {s3Key ? "Uploaded" : "Missing"}
             </Text>
           </View>
         </View>
 
-        {uri ? (
-          <Image source={{ uri }} style={tw`w-full h-44`} resizeMode="cover" />
+        {s3Key ? (
+          <SignedImage
+            s3Key={s3Key}
+            style={tw`w-full h-44 mt-0 rounded-none`}
+            resizeMode="cover"
+          />
         ) : (
           <View style={tw`w-full h-44 bg-gray-100 items-center justify-center`}>
             <Text style={tw`text-gray-400 font-medium`}>No Image Uploaded</Text>
@@ -442,9 +447,16 @@ export default function ReviewInspection({ navigation }) {
                 </Text>
               </View>
 
-              {IMAGE_FIELDS.map((img) =>
-                renderImageCard(img.label, images?.[img.key]),
-              )}
+              {IMAGE_FIELDS.map((img) => {
+                let imageObj = images?.[img.key];
+                if (!imageObj && img.key === "OdoImage") {
+                  imageObj = inspection?.odometerImage;
+                }
+                if (!imageObj && img.key === "compliancePlateImage") {
+                  imageObj = images?.VINPlate;
+                }
+                return renderImageCard(img.label, imageObj);
+              })}
             </>,
           )}
         </ScrollView>
