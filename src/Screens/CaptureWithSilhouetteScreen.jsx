@@ -208,7 +208,8 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
 
         {/* Camera + Silhouette */}
         <View style={tw`flex-1 px-4 pb-4`}>
-          <View style={tw`flex-1 rounded-3xl overflow-hidden bg-gray-900`}>
+          <View style={tw`flex-1 rounded-3xl overflow-hidden bg-black`}>
+            {/* CAMERA */}
             <Camera
               ref={cameraRef}
               style={tw`flex-1`}
@@ -217,14 +218,14 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
               photo={true}
             />
 
-            {/* Silhouette Overlay */}
+            {/* SILHOUETTE OVERLAY */}
             <Image
               source={step.silhouette}
               style={tw`absolute inset-0 w-full h-full opacity-60`}
               resizeMode="contain"
             />
 
-            {/* Uploading Overlay */}
+            {/* UPLOADING OVERLAY */}
             {uploading && (
               <View
                 style={tw`absolute inset-0 bg-black bg-opacity-60 items-center justify-center`}
@@ -236,7 +237,6 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
               </View>
             )}
           </View>
-
           <Text style={tw`text-gray-300 text-center mt-4`}>
             Align the vehicle with the silhouette and capture a clear image.
           </Text>

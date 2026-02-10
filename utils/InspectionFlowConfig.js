@@ -7,7 +7,7 @@ export const INSPECTION_FLOW = [
   {
     key: "LHFImage",
     title: "LHF Image",
-    silhouette: require("../assets/lhf.jpg"),
+    silhouette: require("../assets/lhf.png"),
   },
   {
     key: "leftSideImage",
@@ -27,7 +27,7 @@ export const INSPECTION_FLOW = [
   {
     key: "RHRImage",
     title: "RHR Image",
-    silhouette: require("../assets/rhr.jpg"),
+    silhouette: require("../assets/rhrr.png"),
   },
   {
     key: "RightSideImage",
@@ -37,7 +37,7 @@ export const INSPECTION_FLOW = [
   {
     key: "RHFImage",
     title: "RHF Image",
-    silhouette: require("../assets/rhf.jpg"),
+    silhouette: require("../assets/rhf.png"),
   },
   {
     key: "RoofImage",
@@ -57,7 +57,7 @@ export const INSPECTION_FLOW = [
   {
     key: "DriversSeatImage",
     title: "Drivers Seat Image",
-    silhouette: require("../assets/lhf.jpg"),
+    silhouette: require("../assets/lhf.png"),
   },
   {
     key: "FrontPassengerSeatImage",
