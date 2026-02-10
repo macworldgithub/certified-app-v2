@@ -22,6 +22,10 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
 
   const stepIndex = route?.params?.stepIndex ?? 0;
   const step = INSPECTION_FLOW[stepIndex];
+  const isCompliancePlate = step.key === "compliancePlateImage";
+  const isOdometer = step.key === "OdoImage";
+
+  const isComplianceOrOdo = isCompliancePlate || isOdometer;
 
   const cameraRef = useRef(null);
   const device = useCameraDevice("back");
@@ -123,7 +127,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
 
     if (nextIndex >= INSPECTION_FLOW.length) {
       Alert.alert("Inspection Completed", "All required images captured.");
-      navigation.navigate("MainTabs");
+      navigation.navigate("InspectionWizardStepSix");
       return;
     }
 
@@ -275,28 +279,56 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
               </View>
 
               <Text style={tw`text-gray-600 mb-6 leading-5`}>
-                Please confirm whether there is any visible damage in this
-                photo.
+                {isComplianceOrOdo
+                  ? "Image uploaded successfully."
+                  : "Please confirm whether there is any visible damage in this photo."}
               </Text>
 
-              {/* Buttons */}
-              <TouchableOpacity
-                onPress={handleNoDamage}
-                style={tw`bg-black py-4 rounded-2xl mb-3`}
-              >
-                <Text style={tw`text-center font-bold text-white text-base`}>
-                  No Damage
-                </Text>
-              </TouchableOpacity>
+              {isComplianceOrOdo ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setDamageModalVisible(false);
+                    setLastUploadedKey(null);
 
-              <TouchableOpacity
-                onPress={handleYesDamage}
-                style={tw`bg-black py-4 rounded-2xl mb-3`}
-              >
-                <Text style={tw`text-center font-bold text-white text-base`}>
-                  Yes, Damage Found
-                </Text>
-              </TouchableOpacity>
+                    if (isCompliancePlate) {
+                      navigation.replace("CaptureWithSilhouette", {
+                        stepIndex: stepIndex + 1,
+                      });
+                    } else if (isOdometer) {
+                      navigation.navigate("InspectionWizardStepSix");
+                    }
+                  }}
+                  style={tw`bg-black py-4 rounded-2xl mb-3`}
+                >
+                  <Text style={tw`text-center font-bold text-white text-base`}>
+                    Continue
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    onPress={handleNoDamage}
+                    style={tw`bg-black py-4 rounded-2xl mb-3`}
+                  >
+                    <Text
+                      style={tw`text-center font-bold text-white text-base`}
+                    >
+                      No Damage
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={handleYesDamage}
+                    style={tw`bg-black py-4 rounded-2xl mb-3`}
+                  >
+                    <Text
+                      style={tw`text-center font-bold text-white text-base`}
+                    >
+                      Yes, Damage Found
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
 
               {/* Retake */}
               <TouchableOpacity

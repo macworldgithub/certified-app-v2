@@ -89,24 +89,68 @@ export default function ReviewInspection({ navigation }) {
     </View>
   );
 
-  const renderImageCard = (title, imageObj) => {
-    if (!imageObj) return null;
+  const IMAGE_FIELDS = [
+    { key: "frontImage", label: "Front Image" },
+    { key: "LHFImage", label: "LHF Image" },
+    { key: "leftSideImage", label: "Left Side Image" },
+    { key: "LHRImage", label: "LHR Image" },
+    { key: "rearImage", label: "Rear Image" },
+    { key: "RHRImage", label: "RHR Image" },
+    { key: "RightSideImage", label: "Right Side Image" },
+    { key: "RHFImage", label: "RHF Image" },
+    { key: "RoofImage", label: "Roof Image" },
+    { key: "UnderbonnetImage", label: "Under Bonnet Image" },
+    { key: "InsideBonnetImage", label: "Inside Bonnet Image" },
+    { key: "DriversSeatImage", label: "Driver Seat Image" },
+    { key: "FrontPassengerSeatImage", label: "Front Passenger Seat Image" },
+    { key: "RearSeatImage", label: "Rear Seat Image" },
+    { key: "compliancePlateImage", label: "Compliance Plate" },
+    { key: "OdoImage", label: "Odometer Image" },
+  ];
 
+  const uploadedCount = IMAGE_FIELDS.filter(
+    (img) => images?.[img.key]?.original || images?.[img.key],
+  ).length;
+
+  const renderImageCard = (label, imageObj) => {
     const uri =
       typeof imageObj === "string"
         ? imageObj
-        : imageObj.analyzedUrl || imageObj.original || null;
-
-    if (!uri) return null;
+        : imageObj?.analyzedUrl || imageObj?.original || null;
 
     return (
-      <View style={tw`mb-4`}>
-        <Text style={tw`text-gray-600 text-sm mb-2 font-medium`}>{title}</Text>
-        <Image
-          source={{ uri }}
-          style={tw`w-full h-48 rounded-lg bg-gray-200`}
-          resizeMode="cover"
-        />
+      <View
+        style={tw`w-full mb-4 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden`}
+      >
+        <View
+          style={tw`px-3 py-2 bg-white border-b border-gray-200 flex-row justify-between items-center`}
+        >
+          <Text style={tw`text-gray-800 font-semibold text-sm`}>{label}</Text>
+
+          <View
+            style={tw.style(
+              "px-2 py-1 rounded-full",
+              uri ? "bg-green-100" : "bg-red-100",
+            )}
+          >
+            <Text
+              style={tw.style(
+                "text-xs font-semibold",
+                uri ? "text-green-700" : "text-red-700",
+              )}
+            >
+              {uri ? "Uploaded" : "Missing"}
+            </Text>
+          </View>
+        </View>
+
+        {uri ? (
+          <Image source={{ uri }} style={tw`w-full h-44`} resizeMode="cover" />
+        ) : (
+          <View style={tw`w-full h-44 bg-gray-100 items-center justify-center`}>
+            <Text style={tw`text-gray-400 font-medium`}>No Image Uploaded</Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -218,14 +262,15 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Images",
             <>
-              {renderImageCard("Front Image", images?.frontImage)}
-              {renderImageCard("Rear Image", images?.rearImage)}
-              {renderImageCard("Left Image", images?.leftImage)}
-              {renderImageCard("Right Image", images?.rightImage)}
-              {renderImageCard("Engine Image", images?.engineImage)}
-              {renderImageCard("VIN Plate", images?.VINPlate)}
-              {renderImageCard("Interior Front", images?.InteriorFront)}
-              {renderImageCard("Interior Back", images?.InteriorBack)}
+              <View style={tw`mb-3`}>
+                <Text style={tw`text-gray-700 font-semibold`}>
+                  Uploaded Images: {uploadedCount} / {IMAGE_FIELDS.length}
+                </Text>
+              </View>
+              
+              {IMAGE_FIELDS.map((img) =>
+                renderImageCard(img.label, images?.[img.key]),
+              )}
             </>,
           )}
         </ScrollView>

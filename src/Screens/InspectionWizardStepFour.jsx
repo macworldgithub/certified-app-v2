@@ -102,7 +102,9 @@ export default function InspectionWizardStepFour({ navigation }) {
     dispatch(setInspectionData({ field: "bookImages", value: updated }));
   };
 
-  const handleNext = () => navigation.navigate("InspectionWizardStepSix");
+  const handleNext = () => {
+    navigation.navigate("CaptureWithSilhouette", { stepIndex: 0 });
+  };
   const handleBack = () => navigation.goBack();
 
   useEffect(() => {
