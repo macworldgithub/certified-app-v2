@@ -206,12 +206,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  ScrollView,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "tailwind-react-native-classnames";
 import ImageViewing from "react-native-image-viewing";
 import SignedImage from "./SignedImage";
-import backArrowIcon from "../../assets/backarrow1.png";
 import {
   handleAnalyzeImage,
   handleDeleteFromS3,
@@ -227,13 +227,7 @@ const Header = ({ title, onBack }) => (
       activeOpacity={0.8}
       style={tw`w-11 h-11 text-color items-center justify-center`}
     >
-      {/* <Ionicons name="arrow-back" size={22} color="white" /> */}
-      <Image
-        source={backArrowIcon}
-        style={{ width: 18, height: 18 }}
-        resizeMode="contain"
-        // tintColor="white"                    
-      />
+      <Ionicons name="arrow-back" size={22} color="white" />
     </TouchableOpacity>
 
     <Text
@@ -451,28 +445,175 @@ const DamageSection = ({ inspection, partKey }) => {
 
   if (!damages || damages.length === 0) return null;
 
+  const isScrollable = damages.length > 3;
+
+  const getTypeStyle = (type) => {
+    switch ((type || "").toLowerCase()) {
+      case "dent":
+        return {
+          bg: "bg-red-50",
+          text: "text-red-700",
+          border: "border-red-200",
+          icon: "alert-circle-outline",
+        };
+      case "scratch":
+        return {
+          bg: "bg-yellow-50",
+          text: "text-yellow-700",
+          border: "border-yellow-200",
+          icon: "warning-outline",
+        };
+      case "broken glass":
+        return {
+          bg: "bg-purple-50",
+          text: "text-purple-700",
+          border: "border-purple-200",
+          icon: "sparkles-outline",
+        };
+      case "rust":
+        return {
+          bg: "bg-orange-50",
+          text: "text-orange-700",
+          border: "border-orange-200",
+          icon: "flame-outline",
+        };
+      default:
+        return {
+          bg: "bg-gray-50",
+          text: "text-gray-700",
+          border: "border-gray-200",
+          icon: "help-circle-outline",
+        };
+    }
+  };
+
+  const DamageItem = ({ damage, index }) => {
+    const style = getTypeStyle(damage?.type);
+
+    return (
+      <View
+        style={tw.style(
+          "bg-white rounded-2xl border p-4 mb-3 shadow-sm",
+          style.border,
+        )}
+      >
+        {/* Header Row */}
+        <View style={tw`flex-row items-center justify-between mb-2`}>
+          <View style={tw`flex-row items-center`}>
+            <View
+              style={tw.style(
+                "w-10 h-10 rounded-2xl items-center justify-center mr-3",
+                style.bg,
+              )}
+            >
+              <Ionicons name={style.icon} size={20} color="#111827" />
+            </View>
+
+            <View>
+              <Text style={tw`text-gray-900 font-extrabold text-sm`}>
+                Damage #{index + 1}
+              </Text>
+
+              <View
+                style={tw.style(
+                  "mt-1 px-3 py-1 rounded-full self-start border",
+                  style.bg,
+                  style.border,
+                )}
+              >
+                <Text
+                  style={tw.style("text-xs font-bold uppercase", style.text)}
+                >
+                  {damage?.type || "Unknown"}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <Ionicons name="chevron-forward-outline" size={18} color="#9ca3af" />
+        </View>
+
+        {/* Description */}
+        <Text style={tw`text-gray-700 text-sm leading-5`}>
+          {damage?.description || "No description provided"}
+        </Text>
+
+        {/* Footer */}
+        {damage?.bbox && (
+          <View style={tw`flex-row items-center mt-3`}>
+            <Ionicons name="scan-outline" size={15} color="#6b7280" />
+            <Text style={tw`text-gray-500 text-xs ml-2 font-semibold`}>
+              Region detected in image
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
     <View
-      style={tw`bg-white rounded-3xl p-5 border border-gray-200 shadow-sm mb-2`}
+      style={tw`bg-white rounded-3xl p-5 border border-gray-200 shadow-sm mb-4`}
     >
-      <View style={tw`flex-row items-center mb-2`}>
-        {/* <View
-          style={tw`w-10 h-10 rounded-full bg-red-50 items-center justify-center mr-3`}
-        >
-          <Ionicons name="warning-outline" size={20} color="#dc2626" />
-        </View> */}
+      {/* Top Header */}
+      <View style={tw`flex-row items-center justify-between mb-4`}>
+        <View style={tw`flex-row items-center`}>
+          <View
+            style={tw`w-12 h-12 rounded-2xl bg-red-50 items-center justify-center mr-3`}
+          >
+            <Ionicons name="warning-outline" size={24} color="#dc2626" />
+          </View>
 
-        <View>
-          <Text style={tw`text-lg font-extrabold text-gray-900`}>
-            Detected Damages
-          </Text>
-          <Text style={tw`text-gray-500 text-xs mt-1`}>
-            Review highlighted issues found in the image
+          <View>
+            <Text style={tw`text-lg font-extrabold text-gray-900`}>
+              Damage Report
+            </Text>
+            <Text style={tw`text-gray-500 text-xs mt-1`}>
+              AI detected possible issues in this image
+            </Text>
+          </View>
+        </View>
+
+        {/* Count Badge */}
+        <View style={tw`bg-red-100 px-3 py-1 rounded-full`}>
+          <Text style={tw`text-red-700 font-extrabold text-xs`}>
+            {damages.length} Found
           </Text>
         </View>
       </View>
 
-      <DamageList damages={damages} />
+      {/* Divider */}
+      <View style={tw`h-px bg-gray-200 mb-4`} />
+
+      {/* Damage List */}
+      {isScrollable ? (
+        <ScrollView
+          style={tw`max-h-72`}
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={true}
+        >
+          {damages.map((damage: any, index: any) => (
+            <DamageItem key={index} damage={damage} index={index} />
+          ))}
+        </ScrollView>
+      ) : (
+        <View>
+          {damages.map((damage: any, index: any) => (
+            <DamageItem key={index} damage={damage} index={index} />
+          ))}
+        </View>
+      )}
+
+      {/* Footer Disclaimer */}
+      <View
+        style={tw`mt-3 flex-row items-center bg-gray-50 border border-gray-200 p-3 rounded-2xl`}
+      >
+        <Ionicons name="information-circle-outline" size={18} color="#4b5563" />
+        <Text style={tw`text-gray-600 text-xs ml-2 leading-4 flex-1`}>
+          Please confirm damages manually before submitting. AI detection may
+          not always be accurate.
+        </Text>
+      </View>
     </View>
   );
 };
