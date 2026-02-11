@@ -199,7 +199,7 @@ import AppIcon from "../components/AppIcon";
 const inspectionsSummary = [
   { label: "Inspection", value: 247 },
   { label: "Accuracy", value: "92%" },
-  { label: "Avg score", value: 8.4 },
+  { label: "Avg. score", value: 8.4 },
 ];
 
 const quickActions = [
@@ -279,10 +279,10 @@ export default function Home() {
               key={index}
               style={tw`items-center border border-gray-300 rounded-lg p-3 flex-1 mx-1`}
             >
-              <Text style={tw`text-xl font-bold text-green-700`}>
+              <Text style={tw`text-lg font-bold text-green-700`}>
                 {item.value}
               </Text>
-              <Text style={tw`text-gray-500`}>{item.label}</Text>
+              <Text style={tw`text-gray-500 text-xs`}>{item.label}</Text>
             </View>
           ))}
         </View>

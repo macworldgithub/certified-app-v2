@@ -75,7 +75,7 @@ const CarCard: React.FC<CarCardProps> = ({
             ) : null}
           </>
         ) : (
-          <View style={styles.row}>
+          <View>
             <Text style={styles.mileage}>Mileage: {mileage} km</Text>
             {inspectorEmail ? (
               <Text style={styles.inspector}>{inspectorEmail}</Text>

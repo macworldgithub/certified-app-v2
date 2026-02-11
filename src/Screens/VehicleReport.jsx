@@ -25,11 +25,14 @@ import API_BASE_URL from "../../utils/config";
 
 export default function VehicleReport() {
   const [data, setData] = useState([]);
+  console.log(data, "DATA");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [selectedInspectionId, setSelectedInspectionId] = useState(null);
 
   const [downloadingId, setDownloadingId] = useState(null);
 
@@ -52,7 +55,7 @@ export default function VehicleReport() {
       if (pageNumber > 1) setLoadingMore(true);
 
       let url = `${API_BASE_URL}/inspections?email=${encodeURIComponent(
-        email
+        email,
       )}&sortBy=createdAt&sortOrder=desc&page=${pageNumber}&limit=${limit}`;
 
       if (search && search.trim().length > 0) {
@@ -103,7 +106,7 @@ export default function VehicleReport() {
       setPage(1);
       fetchInspections(text, 1, false);
     }, 500),
-    []
+    [],
   );
 
   const handleChange = (text) => {
@@ -209,7 +212,7 @@ export default function VehicleReport() {
             buttonNeutral: "Ask Me Later",
             buttonNegative: "Cancel",
             buttonPositive: "OK",
-          }
+          },
         );
 
         console.log("🧾 Storage permission result:", granted);
@@ -217,7 +220,7 @@ export default function VehicleReport() {
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           Alert.alert(
             "Permission Denied",
-            "Storage access is required to save PDF files."
+            "Storage access is required to save PDF files.",
           );
           setDownloadingId(null);
           return;
@@ -238,7 +241,7 @@ export default function VehicleReport() {
 
       // 🧩 Convert to Base64
       const base64Data = Buffer.from(response.data, "binary").toString(
-        "base64"
+        "base64",
       );
       const filePath = `${RNFS.DocumentDirectoryPath}/inspection_${id}.pdf`;
       console.log("📁 File path for saving PDF:", filePath);
@@ -260,7 +263,7 @@ export default function VehicleReport() {
       } else if (error.request) {
         console.log(
           "🚫 No response received. Error request object:",
-          error.request
+          error.request,
         );
       } else {
         console.log("⚙️ Error setting up request:", error.message);
@@ -269,12 +272,12 @@ export default function VehicleReport() {
       if (error.response?.status === 404) {
         Alert.alert(
           "Not Found",
-          "No inspection report found for this vehicle."
+          "No inspection report found for this vehicle.",
         );
       } else if (error.response?.status === 500) {
         Alert.alert(
           "Server Error (500)",
-          "The server failed to generate the report. Please try again later."
+          "The server failed to generate the report. Please try again later.",
         );
       } else {
         Alert.alert("❌ Error", "Failed to download report. Please try again.");
@@ -305,7 +308,7 @@ export default function VehicleReport() {
           const updatedData = prev.map((item) =>
             item._id === id
               ? { ...item, marketValue: response.data.prediction.retail_price }
-              : item
+              : item,
           );
           AsyncStorage.setItem("vehicleReports", JSON.stringify(updatedData));
           return updatedData;
@@ -317,7 +320,7 @@ export default function VehicleReport() {
       console.error("Error predicting market value:", error.message);
       Alert.alert(
         "❌ Error",
-        "Failed to predict market value. Please try again."
+        "Failed to predict market value. Please try again.",
       );
     } finally {
       setPredictingId(null);
@@ -344,7 +347,7 @@ export default function VehicleReport() {
           const updatedData = prev.map((item) =>
             item._id === id
               ? { ...item, adjustedPrice: response.data.AdjustedPrice }
-              : item
+              : item,
           );
           AsyncStorage.setItem("vehicleReports", JSON.stringify(updatedData));
           return updatedData;
@@ -356,11 +359,23 @@ export default function VehicleReport() {
       console.error("Error fetching adjusted price:", error.message);
       Alert.alert(
         "❌ Error",
-        "Failed to fetch adjusted price. Please try again."
+        "Failed to fetch adjusted price. Please try again.",
       );
     } finally {
       setAdjustingId(null);
     }
+  };
+
+  const handleDownloadPDFWithCheck = (item) => {
+    // if rating missing / 0 / null
+    if (!item.overallRating || item.overallRating === 0) {
+      setSelectedInspectionId(item._id);
+      setShowRatingModal(true);
+      return;
+    }
+
+    // otherwise run your existing handler
+    handleDownloadPDF(item._id);
   };
 
   return (
@@ -440,7 +455,7 @@ export default function VehicleReport() {
                   <View style={tw`flex-row justify-between mt-3`}>
                     <TouchableOpacity
                       style={tw`items-center`}
-                      onPress={() => handleDownloadPDF(item._id)}
+                      onPress={() => handleDownloadPDFWithCheck(item)}
                     >
                       <AppIcon name="download" size={16} color="#2f855a" />
                       <Text style={tw`text-green-600 text-xs`}>
@@ -563,6 +578,31 @@ export default function VehicleReport() {
                 onPress={() => setAdjustModalVisible(false)}
               >
                 <Text style={tw`text-white text-center font-bold`}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          visible={showRatingModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowRatingModal(false)}
+        >
+          <View style={tw`flex-1 bg-black/40 justify-center items-center`}>
+            <View style={tw`bg-white rounded-xl p-6 w-4/5`}>
+              <Text style={tw`text-lg font-semibold text-center mb-3`}>
+                Rating Required
+              </Text>
+
+              <Text style={tw`text-gray-600 text-center mb-5`}>
+                This inspection needs to be rated first before downloading PDF.
+              </Text>
+
+              <TouchableOpacity
+                style={tw`bg-green-600 py-2 rounded-lg`}
+                onPress={() => setShowRatingModal(false)}
+              >
+                <Text style={tw`text-white text-center font-semibold`}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>

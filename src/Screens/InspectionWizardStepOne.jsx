@@ -471,6 +471,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                     setVinError("");
                   }}
                   placeholder="Enter VIN/Chassis Number"
+                  placeholderTextColor="#000"
                   style={tw`flex-1 border ${vinError ? "border-red-500" : "border-gray-300"
                   } rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
@@ -504,6 +505,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={year}
                 onChangeText={(val) => handleTextChange("year", val)}
                 placeholder="Enter Year"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
                 keyboardType="numeric"
               />
@@ -516,6 +518,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={make}
                 onChangeText={(val) => handleTextChange("make", val)}
                 placeholder="Enter Make"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -527,6 +530,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={model}
                 onChangeText={(val) => handleTextChange("model", val)}
                 placeholder="Enter Model"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -544,6 +548,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={String(mileAge)}
                 onChangeText={(val) => handleTextChange("mileAge", val)}
                 placeholder="Enter Mileage"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -555,6 +560,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={color}
                 onChangeText={(val) => handleTextChange("color", val)}
                 placeholder="Enter Color"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -569,17 +575,18 @@ export default function InspectionWizardStepOne({ navigation }) {
                     handleTextChange("registrationPlate", val)
                   }
                   placeholder="Enter Registration Plate"
+                  placeholderTextColor="#000"
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white text-xs`}
                 />
               </View>
 
               <View style={tw`flex-1 ml-2`}>
-                <Text style={tw`text-gray-500 mb-2`}>Registration Expiry</Text>
+                <Text style={tw`text-black mb-2`}>Registration Expiry</Text>
                 <TouchableOpacity
                   onPress={() => showDatePicker("registrationExpiry")}
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
                 >
-                  <Text style={tw`text-base text-gray-800`}>
+                  <Text style={[tw`text-base`, { color: "#000" }]}>
                     {registrationExpiry || "Select Date"}
                   </Text>
                 </TouchableOpacity>
@@ -589,24 +596,24 @@ export default function InspectionWizardStepOne({ navigation }) {
             {/* Build & Compliance Dates */}
             <View style={tw`mt-6 flex-row justify-between`}>
               <View style={tw`flex-1 mr-2`}>
-                <Text style={tw`text-gray-500 mb-2`}>Build Date</Text>
+                <Text style={tw`text-black mb-2`}>Build Date</Text>
                 <TouchableOpacity
                   onPress={() => showDatePicker("buildDate")}
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
                 >
-                  <Text style={tw`text-base text-gray-800`}>
+                  <Text style={[tw`text-base`, { color: "#000" }]}>
                     {buildDate || "Select Date"}
                   </Text>
                 </TouchableOpacity>
               </View>
 
               <View style={tw`flex-1 ml-2`}>
-                <Text style={tw`text-gray-500 mb-2`}>Compliance Date</Text>
+                <Text style={tw`text-black mb-2`}>Compliance Date</Text>
                 <TouchableOpacity
                   onPress={() => showDatePicker("complianceDate")}
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
                 >
-                  <Text style={tw`text-base text-gray-800`}>
+                  <Text style={[tw`text-base`, { color: "#000" }]}>
                     {complianceDate || "Select Date"}
                   </Text>
                 </TouchableOpacity>

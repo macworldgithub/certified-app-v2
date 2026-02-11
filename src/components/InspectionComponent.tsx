@@ -272,8 +272,7 @@ const ImageComparison = ({
           onPress={(url) => {
             setPreviewUri(url);
             setPreviewVisible(true);
-          }}
-        />
+          } } style={undefined}        />
       ) : (
         <View
           style={tw`h-32 bg-gray-50 rounded-2xl border border-gray-200 items-center justify-center`}
@@ -300,8 +299,7 @@ const ImageComparison = ({
           onPress={(url) => {
             setPreviewUri(url);
             setPreviewVisible(true);
-          }}
-        />
+          } } style={undefined}        />
       ) : (
         <View
           style={tw`h-32 bg-gray-50 rounded-2xl border border-gray-200 items-center justify-center`}
@@ -582,11 +580,11 @@ const DamageSection = ({ inspection, partKey }) => {
         </View>
 
         {/* Count Badge */}
-        <View style={tw`bg-red-100 px-2 mb-3 py-2 rounded-full`}>
+        {/* <View style={tw`bg-red-100 px-2 mb-3 py-2 rounded-full`}>
           <Text style={tw`text-red-700 font-extrabold text-xs`}>
             {damages.length} Found
           </Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Divider */}

@@ -650,6 +650,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                       handleTextChange("roadTestComments", v)
                     }
                     placeholder="Road Test Comments"
+                    placeholderTextColor="#000"
                     style={tw`border border-gray-300 rounded-lg p-3 h-20`}
                     multiline
                   />
@@ -665,6 +666,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                 value={generalComments}
                 onChangeText={(v) => handleTextChange("generalComments", v)}
                 placeholder="Enter comments"
+                placeholderTextColor="#000"
                 style={tw`border border-gray-300 rounded-lg p-3 h-20`}
                 multiline
               />
