@@ -49,6 +49,7 @@ export default function InspectionWizardStepOne({ navigation }) {
   const dispatch = useDispatch();
   const {
     vin,
+    rego,
     year,
     make,
     model,
@@ -66,6 +67,7 @@ export default function InspectionWizardStepOne({ navigation }) {
 
   const isFormComplete =
     vin?.trim().length === 17 &&
+    rego?.trim() &&
     year?.trim() &&
     make?.trim() &&
     mileAge?.toString().trim() &&
@@ -288,16 +290,29 @@ export default function InspectionWizardStepOne({ navigation }) {
         {field === "transmission" && "Transmission"}
         {field === "bodyType" && "Body Type"}
       </Text>
+
       <TouchableOpacity
         style={tw`flex-row justify-between items-center border border-gray-300 rounded-lg p-3 bg-white`}
         onPress={() => setShowDropdown(showDropdown === field ? null : field)}
       >
-        <Text style={tw`text-gray-600`}>
+        <Text
+          style={tw`
+        ${
+          (field === "fuelType" && fuelType) ||
+          (field === "driveTrain" && driveTrain) ||
+          (field === "transmission" && transmission) ||
+          (field === "bodyType" && bodyType)
+            ? "text-black"
+            : "text-gray-400"
+        }
+      `}
+        >
           {field === "fuelType" && (fuelType || "Select Fuel Type")}
           {field === "driveTrain" && (driveTrain || "Select Drive Train")}
           {field === "transmission" && (transmission || "Select Transmission")}
           {field === "bodyType" && (bodyType || "Select Body Type")}
         </Text>
+
         <Ionicons
           name={showDropdown === field ? "chevron-up" : "chevron-down"}
           size={20}
@@ -327,7 +342,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     if (!vin || vin.trim().length === 0) {
       Alert.alert(
         "VIN required",
-        "Please enter a VIN/Chassis number before fetching."
+        "Please enter a VIN/Chassis number before fetching.",
       );
       return;
     }
@@ -347,7 +362,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       if (basic) {
         if (basic.year)
           dispatch(
-            setInspectionData({ field: "year", value: String(basic.year) })
+            setInspectionData({ field: "year", value: String(basic.year) }),
           );
         if (basic.make)
           dispatch(setInspectionData({ field: "make", value: basic.make }));
@@ -355,25 +370,28 @@ export default function InspectionWizardStepOne({ navigation }) {
           dispatch(setInspectionData({ field: "model", value: basic.model }));
         if (basic.mileAge)
           dispatch(
-            setInspectionData({ field: "mileAge", value: String(basic.mileAge) })
+            setInspectionData({
+              field: "mileAge",
+              value: String(basic.mileAge),
+            }),
           );
         if (basic.buildDate)
           dispatch(
-            setInspectionData({ field: "buildDate", value: basic.buildDate })
+            setInspectionData({ field: "buildDate", value: basic.buildDate }),
           );
         if (basic.compliancePlate)
           dispatch(
             setInspectionData({
               field: "complianceDate",
               value: basic.compliancePlate,
-            })
+            }),
           );
         if (basic.plate)
           dispatch(
             setInspectionData({
               field: "registrationPlate",
               value: basic.plate,
-            })
+            }),
           );
       }
 
@@ -381,48 +399,48 @@ export default function InspectionWizardStepOne({ navigation }) {
       if (additional) {
         if (additional.colour)
           dispatch(
-            setInspectionData({ field: "color", value: additional.colour })
+            setInspectionData({ field: "color", value: additional.colour }),
           );
         if (additional.fuelType)
           dispatch(
             setInspectionData({
               field: "fuelType",
               value: additional.fuelType,
-            })
+            }),
           );
         if (additional.transmissionType)
           dispatch(
             setInspectionData({
               field: "transmission",
               value: additional.transmissionType,
-            })
+            }),
           );
         if (additional.driveType)
           dispatch(
             setInspectionData({
               field: "driveTrain",
               value: additional.driveType,
-            })
+            }),
           );
         if (additional.bodyType)
           dispatch(
             setInspectionData({
               field: "bodyType",
               value: additional.bodyType,
-            })
+            }),
           );
       }
 
       Alert.alert(
         "Vehicle info loaded",
-        "Vehicle details have been populated."
+        "Vehicle details have been populated.",
       );
     } catch (err) {
       console.error("Error in fetch flow:", err);
       Alert.alert(
         "Fetch failed",
         err?.message ||
-        "Failed to fetch vehicle info. Check the VIN and network."
+          "Failed to fetch vehicle info. Check the VIN and network.",
       );
     } finally {
       setLoading(false);
@@ -471,8 +489,9 @@ export default function InspectionWizardStepOne({ navigation }) {
                     setVinError("");
                   }}
                   placeholder="Enter VIN/Chassis Number"
-                  placeholderTextColor="#000"
-                  style={tw`flex-1 border ${vinError ? "border-red-500" : "border-gray-300"
+                  placeholderTextColor="#0a09094d"
+                  style={tw`flex-1 border ${
+                    vinError ? "border-red-500" : "border-gray-300"
                   } rounded-lg p-3 bg-white text-base`}
                   autoCapitalize="characters"
                   maxLength={17}
@@ -498,6 +517,33 @@ export default function InspectionWizardStepOne({ navigation }) {
               ) : null}
             </View>
 
+            {/* Registration Plate */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
+              <TextInput
+                value={registrationPlate}
+                onChangeText={(val) =>
+                  handleTextChange("registrationPlate", val)
+                }
+                placeholder="Enter Registration Plate"
+                placeholderTextColor="#0a09094d"
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                autoCapitalize="characters"
+              />
+
+              <TouchableOpacity
+                onPress={handleFetchVehicleInfo}
+                style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={tw`text-white font-semibold`}>Fetch</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
             {/* Year */}
             <View style={tw`mt-6`}>
               <Text style={tw`text-gray-500 mb-2`}>Year</Text>
@@ -505,7 +551,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={year}
                 onChangeText={(val) => handleTextChange("year", val)}
                 placeholder="Enter Year"
-                placeholderTextColor="#000"
+                placeholderTextColor="#0a09094d"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
                 keyboardType="numeric"
               />
@@ -518,7 +564,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={make}
                 onChangeText={(val) => handleTextChange("make", val)}
                 placeholder="Enter Make"
-                placeholderTextColor="#000"
+                placeholderTextColor="#0a09094d"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -530,7 +576,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={model}
                 onChangeText={(val) => handleTextChange("model", val)}
                 placeholder="Enter Model"
-                placeholderTextColor="#000"
+                placeholderTextColor="#0a09094d"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -548,7 +594,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={String(mileAge)}
                 onChangeText={(val) => handleTextChange("mileAge", val)}
                 placeholder="Enter Mileage"
-                placeholderTextColor="#000"
+                placeholderTextColor="#0a09094d"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
@@ -560,37 +606,28 @@ export default function InspectionWizardStepOne({ navigation }) {
                 value={color}
                 onChangeText={(val) => handleTextChange("color", val)}
                 placeholder="Enter Color"
-                placeholderTextColor="#000"
+                placeholderTextColor="#0a09094d"
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
               />
             </View>
 
-            {/* Registration Plate & Expiry */}
-            <View style={tw`mt-6 flex-row justify-between`}>
-              <View style={tw`flex-1 mr-2`}>
-                <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
-                <TextInput
-                  value={registrationPlate}
-                  onChangeText={(val) =>
-                    handleTextChange("registrationPlate", val)
-                  }
-                  placeholder="Enter Registration Plate"
-                  placeholderTextColor="#000"
-                  style={tw`border border-gray-300 rounded-lg p-3 bg-white text-xs`}
-                />
-              </View>
+            {/* Registration Expiry */}
+            <View style={tw`mt-6`}>
+              <Text style={tw`text-black mb-2`}>Registration Expiry</Text>
 
-              <View style={tw`flex-1 ml-2`}>
-                <Text style={tw`text-black mb-2`}>Registration Expiry</Text>
-                <TouchableOpacity
-                  onPress={() => showDatePicker("registrationExpiry")}
-                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+              <TouchableOpacity
+                onPress={() => showDatePicker("registrationExpiry")}
+                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+              >
+                <Text
+                  style={[
+                    tw`text-base`,
+                    { color: registrationExpiry ? "#000" : "#0a09094d" },
+                  ]}
                 >
-                  <Text style={[tw`text-base`, { color: "#000" }]}>
-                    {registrationExpiry || "Select Date"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  {registrationExpiry || "Select Date"}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {/* Build & Compliance Dates */}
@@ -601,7 +638,12 @@ export default function InspectionWizardStepOne({ navigation }) {
                   onPress={() => showDatePicker("buildDate")}
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
                 >
-                  <Text style={[tw`text-base`, { color: "#000" }]}>
+                  <Text
+                    style={[
+                      tw`text-base`,
+                      { color: buildDate ? "#000" : "#0a09094d" },
+                    ]}
+                  >
                     {buildDate || "Select Date"}
                   </Text>
                 </TouchableOpacity>
@@ -613,7 +655,12 @@ export default function InspectionWizardStepOne({ navigation }) {
                   onPress={() => showDatePicker("complianceDate")}
                   style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
                 >
-                  <Text style={[tw`text-base`, { color: "#000" }]}>
+                  <Text
+                    style={[
+                      tw`text-base`,
+                      { color: complianceDate ? "#000" : "#0a09094d" },
+                    ]}
+                  >
                     {complianceDate || "Select Date"}
                   </Text>
                 </TouchableOpacity>

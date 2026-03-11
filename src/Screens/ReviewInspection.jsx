@@ -137,7 +137,8 @@ export default function ReviewInspection({ navigation }) {
         buildDate: toIsoDate(buildDate),
         complianceDate: toIsoDate(complianceDate),
 
-        inspectorEmail: inspection.inspectorEmail || "muhammadanasrashid18@gmail.com",
+        inspectorEmail:
+          inspection.inspectorEmail || "muhammadanasrashid18@gmail.com",
 
         frontImage: prepareImageAnalysis(images?.frontImage) || {
           original: "",
@@ -208,7 +209,7 @@ export default function ReviewInspection({ navigation }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": `Bearer ${token}`,   ← add when you have auth
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

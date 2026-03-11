@@ -76,7 +76,7 @@ export default function InspectionWizardStepThree({ navigation }) {
             </View>
 
             {/* Color Field */}
-            <View
+            {/* <View
               style={tw`mb-4 bg-white border border-gray-300 rounded-xl p-4`}
             >
               <Text style={tw`text-gray-400 mb-2`}>Color</Text>
@@ -89,7 +89,7 @@ export default function InspectionWizardStepThree({ navigation }) {
                 }
                 style={tw`border border-gray-300 rounded-lg p-3 bg-white text-gray-800`}
               />
-            </View>
+            </View> */}
 
             {/* Front Wheel Diameter */}
             <View
