@@ -2,62 +2,57 @@ export const INSPECTION_FLOW = [
   {
     key: "frontImage",
     title: "Front Image",
-    silhouette: require("../assets/frontBumper.png"),
+    silhouette: require("../assets/LineArt/FrontImage.png"),
   },
   {
-    key: "LeftHandFrontImage",
-    title: "Left Hand Front Image",
-    silhouette: require("../assets/LineArt/LHFImage.png"), //change
+    key: "LHFImage",
+    title: "LHF Image",
+    silhouette: require("../assets/LineArt/LHFImage.png"),
   },
   {
     key: "leftSideImage",
     title: "Left Side Image",
-    silhouette: require("../assets/LineArt/LHImage.png"), //change
+    silhouette: require("../assets/LineArt/LHImage.png"),
   },
   {
     key: "LHRImage",
     title: "LHR Image",
-    silhouette: require("../assets/lhr.png"), //change
+    silhouette: require("../assets/LineArt/LHRImage.png"),
   },
   {
     key: "rearImage",
     title: "Rear Bumper Image",
-    silhouette: require("../assets/RearBumper.png"),
+    silhouette: require("../assets/LineArt/BackImage.png"),
   },
   {
     key: "RHRImage",
     title: "RHR Image",
-    silhouette: require("../assets/rhrr.png"), //change
+    silhouette: require("../assets/LineArt/RHRImage.png"),
   },
   {
     key: "RightSideImage",
     title: "Right Side Image",
-    silhouette: require("../assets/LineArt/RHImage.png"), //change
+    silhouette: require("../assets/LineArt/RHImage.png"),
   },
   {
     key: "RHFImage",
     title: "RHF Image",
-    silhouette: require("../assets/LineArt/RHFImage.png"), //change
+    silhouette: require("../assets/LineArt/RHFImage.png"),
   },
   {
     key: "RoofImage",
     title: "Roof Image",
-    silhouette: require("../assets/roof.png"),
+    silhouette: require("../assets/LineArt/RoofImage.png"),
   },
   {
     key: "UnderbonnetImage",
-    title: "Under Bonnet Image",
-    silhouette: require("../assets/LineArt/UnderBonnetImage.png"), //change
+    title: "Bonnet Image",
+    silhouette: require("../assets/LineArt/UnderbonnetImage.png"),
   },
   {
     key: "InsideBonnetImage",
     title: "Inside Bonnet Image",
-    silhouette: require("../assets/LineArt/InsideBonnetImage.png"), //change
-  },
-  {
-    key: "BootImage",
-    title: "Boot Image",
-    silhouette: require("../assets/BOOT.png"), //change
+    silhouette: require("../assets/LineArt/InsideBonnetImage.png"),
   },
   {
     key: "DriversSeatImage",
@@ -67,7 +62,7 @@ export const INSPECTION_FLOW = [
   {
     key: "FrontPassengerSeatImage",
     title: "Front Passenger Seat Image",
-    silhouette: require("../assets/lhr.png"),
+    silhouette: require("../assets/LineArt/FrontPassengerSeatImage.png"),
   },
   {
     key: "RearSeatImage",
@@ -82,16 +77,16 @@ export const INSPECTION_FLOW = [
   {
     key: "OdoImage",
     title: "Odometer Image",
-    silhouette: require("../assets/dashBoard.png"),
+    silhouette: require("../assets/LineArt/OdoImage.png"),
   },
   {
     key: "InfotainmentImage",
     title: "Infotainment Image",
-    silhouette: require("../assets/LineArt/Infotainment image.png"),
+    silhouette: require("../assets/LineArt/InfotainmentImage.png"),
   },
   {
     key: "KeysImage",
     title: "Keys Image",
-    silhouette: require("../assets/LineArt/Keys image.png"),
+    silhouette: require("../assets/LineArt/KeysImage.png"),
   },
 ];
