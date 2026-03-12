@@ -120,7 +120,7 @@ export default function InspectionWizardStepOne({ navigation }) {
   const onMonthYearChange = (event, newDate) => {
     if (newDate) {
       setDate(newDate);
-      const formatted = `${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+      const formatted = `${String(newDate.getMonth() + 1).padStart(2, "0")}/${newDate.getFullYear()}`;
 
       dispatch(
         setInspectionData({
@@ -146,6 +146,39 @@ export default function InspectionWizardStepOne({ navigation }) {
     if (trimmedVin.length !== 17) {
       setVinError("VIN must be exactly 17 characters");
       return;
+    }
+
+    if (buildDate && complianceDate) {
+      const parseDate = (d) => {
+        if (d.includes("/")) {
+          const parts = d.split("/");
+          if (parts.length === 2) {
+            return { month: Number(parts[0]), year: Number(parts[1]) };
+          } else if (parts.length === 3) {
+            return { month: Number(parts[1]), year: Number(parts[2]) };
+          }
+        }
+        if (d.includes("-")) {
+          const parts = d.split("-");
+          if (parts.length === 3) {
+            return { month: Number(parts[1]), year: Number(parts[0]) };
+          }
+        }
+        return null;
+      };
+
+      const bD = parseDate(buildDate);
+      const cD = parseDate(complianceDate);
+
+      if (bD && cD) {
+        const bNum = bD.year * 12 + bD.month;
+        const cNum = cD.year * 12 + cD.month;
+
+        if (cNum <= bNum) {
+          Alert.alert("Validation Error", "Compliance date must be higher than the build date.");
+          return;
+        }
+      }
     }
 
     navigation.navigate("InspectionWizardStepThree");
@@ -393,6 +426,21 @@ export default function InspectionWizardStepOne({ navigation }) {
       const basic = await getVehicleBasicInfo();
 
       if (basic) {
+        const formatMonthYear = (d) => {
+          if (!d) return d;
+          if (d.includes("/")) {
+            const parts = d.split("/");
+            if (parts.length === 2) return `${String(parts[0]).padStart(2, "0")}/${parts[1]}`;
+            if (parts.length === 3) return `${String(parts[1]).padStart(2, "0")}/${parts[2]}`;
+          }
+          if (d.includes("-")) {
+            const parts = d.split("-");
+            if (parts.length === 3) return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
+            if (parts.length === 2) return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
+          }
+          return d;
+        };
+
         if (basic.year)
           dispatch(
             setInspectionData({ field: "year", value: String(basic.year) }),
@@ -410,13 +458,13 @@ export default function InspectionWizardStepOne({ navigation }) {
           );
         if (basic.buildDate)
           dispatch(
-            setInspectionData({ field: "buildDate", value: basic.buildDate }),
+            setInspectionData({ field: "buildDate", value: formatMonthYear(basic.buildDate) }),
           );
         if (basic.compliancePlate)
           dispatch(
             setInspectionData({
               field: "complianceDate",
-              value: basic.compliancePlate,
+              value: formatMonthYear(basic.compliancePlate),
             }),
           );
         if (basic.plate)
@@ -818,7 +866,12 @@ export default function InspectionWizardStepOne({ navigation }) {
 
                     <TouchableOpacity
                       onPress={() => {
-                        const formatted = date.toLocaleDateString("en-GB");
+                        let formatted;
+                        if (showPicker === "registrationExpiry") {
+                          formatted = date.toLocaleDateString("en-GB");
+                        } else {
+                          formatted = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+                        }
                         dispatch(
                           setInspectionData({
                             field: showPicker,
