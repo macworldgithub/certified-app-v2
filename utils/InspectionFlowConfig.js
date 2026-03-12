@@ -47,7 +47,7 @@ export const INSPECTION_FLOW = [
   {
     key: "UnderbonnetImage",
     title: "Bonnet Image",
-    silhouette: require("../assets/LineArt/UnderbonnetImage.png"),
+    silhouette: require("../assets/LineArt/UnderBonnetImage.png"),
   },
   {
     key: "InsideBonnetImage",
