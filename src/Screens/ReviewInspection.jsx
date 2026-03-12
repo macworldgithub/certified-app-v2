@@ -171,6 +171,10 @@ export default function ReviewInspection({ navigation }) {
           original: "",
           damages: [],
         },
+        engineImage: prepareImageAnalysis(images?.InsideBonnetImage) || {
+          original: "",
+          damages: [],
+        },
         plateImage: prepareImageAnalysis(images?.compliancePlateImage) || {
           original: "",
           damages: [],
