@@ -28,6 +28,10 @@ const initialState = {
   color: "", // From InspectionWizardStepThree
   frontWheelDiameter: "", // From InspectionWizardStepThree
   rearWheelDiameter: "", // From InspectionWizardStepThree
+  frontLeftWheelCondition: "", // From InspectionWizardStepThree
+  frontRightWheelCondition: "", // From InspectionWizardStepThree
+  rearLeftWheelCondition: "", // From InspectionWizardStepThree
+  rearRightWheelCondition: "", // From InspectionWizardStepThree
   keysPresent: "", // From InspectionWizardStepThree
   serviceBookPresent: "", // From InspectionWizardStepFour
   serviceHistoryPresent: "", // From InspectionWizardStepFour
@@ -200,6 +204,10 @@ const inspectionSlice = createSlice({
       state.color = "";
       state.frontWheelDiameter = "";
       state.rearWheelDiameter = "";
+      state.frontLeftWheelCondition = "";
+      state.frontRightWheelCondition = "";
+      state.rearLeftWheelCondition = "";
+      state.rearRightWheelCondition = "";
       state.keysPresent = "";
       state.serviceBookPresent = "";
       state.serviceHistoryPresent = "";

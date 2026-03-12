@@ -7,14 +7,14 @@ import {
   SafeAreaView,
   Alert,
   Image,
+  TextInput,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
-import { useDispatch } from "react-redux";
 
-import { resetInspection } from "../redux/slices/inspectionSlice";
+import { resetInspection, setInspectionData } from "../redux/slices/inspectionSlice";
 import API_BASE_URL from "../../utils/config";
 import SignedImage from "../components/SignedImage";
 
@@ -49,6 +49,10 @@ export default function ReviewInspection({ navigation }) {
     tyreConditionFrontRight,
     tyreConditionRearRight,
     tyreConditionRearLeft,
+    frontLeftWheelCondition,
+    frontRightWheelCondition,
+    rearLeftWheelCondition,
+    rearRightWheelCondition,
     damagePresent,
     damages,
     roadTest,
@@ -191,6 +195,11 @@ export default function ReviewInspection({ navigation }) {
         tyreConditionRearRight: tyreConditionRearRight?.trim() || "",
         tyreConditionRearLeft: tyreConditionRearLeft?.trim() || "",
 
+        frontLeftWheelCondition: frontLeftWheelCondition?.trim() || "",
+        frontRightWheelCondition: frontRightWheelCondition?.trim() || "",
+        rearLeftWheelCondition: rearLeftWheelCondition?.trim() || "",
+        rearRightWheelCondition: rearRightWheelCondition?.trim() || "",
+
         damagePresent: safeDamagePresent,
         roadTest: safeRoadTest,
         roadTestComments: roadTestComments?.trim() || "",
@@ -256,14 +265,53 @@ export default function ReviewInspection({ navigation }) {
     </View>
   );
 
-  const renderField = (label, value) => (
-    <View style={tw`py-2.5 border-b border-gray-100`}>
-      <Text style={tw`text-gray-500 text-sm mb-1`}>{label}</Text>
-      <Text style={tw`text-gray-800 font-medium text-base`}>
-        {value || "Not provided"}
-      </Text>
+  // Editable text field — dispatches to Redux on change
+  const renderEditField = (label, field, value, keyboardType = "default") => (
+    <View style={tw`py-2 border-b border-gray-100`}>
+      <Text style={tw`text-gray-400 text-xs mb-1`}>{label}</Text>
+      <TextInput
+        value={value || ""}
+        onChangeText={(text) =>
+          dispatch(setInspectionData({ field, value: text }))
+        }
+        keyboardType={keyboardType}
+        placeholder={`Enter ${label}`}
+        placeholderTextColor="#9CA3AF"
+        style={tw`text-gray-800 font-medium text-base py-1`}
+      />
     </View>
   );
+
+  // Toggle field — shows option buttons (e.g. Pass/Fail, Yes/No)
+  const renderToggleField = (label, field, value, options = ["Pass", "Fail"]) => (
+    <View style={tw`py-2.5 border-b border-gray-100`}>
+      <Text style={tw`text-gray-400 text-xs mb-2`}>{label}</Text>
+      <View style={tw`flex-row`}>
+        {options.map((opt) => (
+          <TouchableOpacity
+            key={opt}
+            onPress={() => dispatch(setInspectionData({ field, value: opt }))}
+            style={tw.style(
+              "mr-2 px-4 py-1.5 rounded-full border",
+              value === opt
+                ? "bg-green-700 border-green-700"
+                : "bg-white border-gray-300"
+            )}
+          >
+            <Text
+              style={tw.style(
+                "text-sm font-medium",
+                value === opt ? "text-white" : "text-gray-600"
+              )}
+            >
+              {opt}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
 
   const IMAGE_FIELDS = [
     { key: "frontImage", label: "Front Image" },
@@ -282,6 +330,8 @@ export default function ReviewInspection({ navigation }) {
     { key: "RearSeatImage", label: "Rear Seat Image" },
     { key: "compliancePlateImage", label: "Compliance Plate" },
     { key: "OdoImage", label: "Odometer Image" },
+    { key: "InfotainmentImage", label: "Infotainment Image" },
+    { key: "KeysImage", label: "Keys Image" },
   ];
 
   const uploadedCount = IMAGE_FIELDS.filter(
@@ -359,15 +409,14 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Vehicle Information",
             <>
-              {renderField("VIN", vin)}
-              {renderField("Make", make)}
-              {renderField("Model", model)}
-              {renderField("Year", year)}
-              {renderField("Mileage", mileAge)}
-              {renderField("Registration Plate", registrationPlate)}
-              {renderField("Registration Expiry", registrationExpiry)}
-              {renderField("Build Date", buildDate)}
-              {renderField("Compliance Date", complianceDate)}
+              {renderEditField("VIN", "vin", vin)}
+              {renderEditField("Make", "make", make)}
+              {renderEditField("Model", "model", model)}
+              {renderEditField("Year", "year", year)}
+              {renderEditField("Registration Plate", "registrationPlate", registrationPlate)}
+              {renderEditField("Registration Expiry", "registrationExpiry", registrationExpiry)}
+              {renderEditField("Build Date", "buildDate", buildDate)}
+              {renderEditField("Compliance Date", "complianceDate", complianceDate)}
             </>,
           )}
 
@@ -375,12 +424,12 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Basic Details",
             <>
-              {renderField("Odometer Reading", odometer)}
-              {renderField("Fuel Type", fuelType)}
-              {renderField("Drive Train", driveTrain)}
-              {renderField("Transmission", transmission)}
-              {renderField("Body Type", bodyType)}
-              {renderField("Color", color)}
+              {renderEditField("Odometer Reading", "mileAge", odometer || mileAge, "numeric")}
+              {renderToggleField("Fuel Type", "fuelType", fuelType, ["Petrol", "Diesel", "Electric", "Hybrid"])}
+              {renderToggleField("Drive Train", "driveTrain", driveTrain, ["FWD", "RWD", "AWD", "4WD"])}
+              {renderToggleField("Transmission", "transmission", transmission, ["Automatic", "Manual"])}
+              {renderEditField("Body Type", "bodyType", bodyType)}
+              {renderEditField("Color", "color", color)}
             </>,
           )}
 
@@ -388,9 +437,9 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Wheels & Keys",
             <>
-              {renderField("Front Wheel Diameter", frontWheelDiameter || "N/A")}
-              {renderField("Rear Wheel Diameter", rearWheelDiameter || "N/A")}
-              {renderField("Keys Present", keysPresent)}
+              {renderEditField("Front Wheel Diameter", "frontWheelDiameter", frontWheelDiameter)}
+              {renderEditField("Rear Wheel Diameter", "rearWheelDiameter", rearWheelDiameter)}
+              {renderToggleField("Keys Present", "keysPresent", keysPresent, ["1", "2", "3"])}
             </>,
           )}
 
@@ -398,10 +447,21 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Tyre Condition",
             <>
-              {renderField("Front Left", tyreConditionFrontLeft)}
-              {renderField("Front Right", tyreConditionFrontRight)}
-              {renderField("Rear Right", tyreConditionRearRight)}
-              {renderField("Rear Left", tyreConditionRearLeft)}
+              {renderToggleField("Front Left", "tyreConditionFrontLeft", tyreConditionFrontLeft)}
+              {renderToggleField("Front Right", "tyreConditionFrontRight", tyreConditionFrontRight)}
+              {renderToggleField("Rear Right", "tyreConditionRearRight", tyreConditionRearRight)}
+              {renderToggleField("Rear Left", "tyreConditionRearLeft", tyreConditionRearLeft)}
+            </>,
+          )}
+
+          {/* WHEEL CONDITION */}
+          {renderSection(
+            "Wheel Condition",
+            <>
+              {renderToggleField("Front Left", "frontLeftWheelCondition", frontLeftWheelCondition)}
+              {renderToggleField("Front Right", "frontRightWheelCondition", frontRightWheelCondition)}
+              {renderToggleField("Rear Right", "rearRightWheelCondition", rearRightWheelCondition)}
+              {renderToggleField("Rear Left", "rearLeftWheelCondition", rearLeftWheelCondition)}
             </>,
           )}
 
@@ -409,16 +469,16 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Service Documents",
             <>
-              {renderField("Service Book Present", serviceBookPresent)}
-              {renderField("Service History Present", serviceHistoryPresent)}
+              {renderToggleField("Service Book Present", "serviceBookPresent", serviceBookPresent, ["Yes", "No"])}
+              {renderToggleField("Service History Present", "serviceHistoryPresent", serviceHistoryPresent, ["Yes", "No"])}
             </>,
           )}
 
           {/* DAMAGE & ROAD TEST */}
-          {renderSection(
+          {/* {renderSection(
             "Damage & Road Test",
             <>
-              {renderField("Damage Present", damagePresent)}
+              {renderToggleField("Damage Present", "damagePresent", damagePresent, ["Yes", "No"])}
               {damagePresent === "Yes" && damages?.length > 0 && (
                 <View style={tw`mt-2`}>
                   <Text style={tw`text-gray-600 font-medium`}>Damages:</Text>
@@ -429,14 +489,16 @@ export default function ReviewInspection({ navigation }) {
                   ))}
                 </View>
               )}
-              {renderField("Road Test", roadTest)}
+              {renderToggleField("Road Test", "roadTest", roadTest, ["Yes", "No"])}
               {roadTest === "Yes" &&
-                renderField("Road Test Comments", roadTestComments)}
+                renderEditField("Road Test Comments", "roadTestComments", roadTestComments)}
             </>,
-          )}
+          )} */}
 
           {/* GENERAL COMMENTS */}
-          {renderSection("General Comments", renderField("", generalComments))}
+          {renderSection("General Comments",
+            renderEditField("Comments", "generalComments", generalComments)
+          )}
 
           {/* IMAGES REVIEW */}
           {renderSection(

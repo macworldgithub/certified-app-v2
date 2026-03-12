@@ -29,8 +29,15 @@ const wheelOptions = [
 
 export default function InspectionWizardStepThree({ navigation }) {
   const dispatch = useDispatch();
-  const { color, frontWheelDiameter, rearWheelDiameter, keysPresent } =
-    useSelector((state) => state.inspection);
+  const {
+    color,
+    frontWheelDiameter,
+    rearWheelDiameter,
+    frontLeftWheelCondition,
+    frontRightWheelCondition,
+    rearLeftWheelCondition,
+    rearRightWheelCondition,
+  } = useSelector((state) => state.inspection);
 
   const [showFrontDropdown, setShowFrontDropdown] = useState(false);
   const [showRearDropdown, setShowRearDropdown] = useState(false);
@@ -46,6 +53,59 @@ export default function InspectionWizardStepThree({ navigation }) {
   };
 
   const handleBack = () => navigation.goBack();
+
+  const renderWheelCondition = (label, field, value, imageSource) => (
+    <View style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-2`}>
+      <Text style={tw`text-gray-400 mb-3 font-medium`}>{label}</Text>
+      <View style={tw`flex-row items-center justify-between`}>
+        <View style={tw`flex-row flex-1`}>
+          <TouchableOpacity
+            style={tw.style(
+              "flex-1 items-center justify-center border rounded-lg py-4 mr-2",
+              value === "Pass"
+                ? "border-green-600 bg-green-50"
+                : "border-gray-300 bg-white"
+            )}
+            onPress={() => handleSelect(field, "Pass")}
+          >
+            <Text
+              style={tw.style(
+                "text-gray-700 font-medium",
+                value === "Pass" && "text-green-700"
+              )}
+            >
+              Pass
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={tw.style(
+              "flex-1 items-center justify-center border rounded-lg py-4 ml-2",
+              value === "Fail"
+                ? "border-green-600 bg-green-50"
+                : "border-gray-300 bg-white"
+            )}
+            onPress={() => handleSelect(field, "Fail")}
+          >
+            <Text
+              style={tw.style(
+                "text-gray-700 font-medium",
+                value === "Fail" && "text-green-700"
+              )}
+            >
+              Fail
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Image
+          source={imageSource}
+          style={tw`w-20 h-20 ml-4`}
+          resizeMode="contain"
+        />
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaWrapper>
@@ -129,7 +189,7 @@ export default function InspectionWizardStepThree({ navigation }) {
 
             {/* Rear Wheel Diameter */}
             <View
-              style={tw`mb-4 bg-white border border-gray-300 rounded-xl p-4`}
+              style={tw`mb-6 bg-white border border-gray-300 rounded-xl p-4`}
             >
               <Text style={tw`text-gray-400 mb-2`}>Rear Wheel Diameter</Text>
               <TouchableOpacity
@@ -162,6 +222,35 @@ export default function InspectionWizardStepThree({ navigation }) {
                 </View>
               )}
             </View>
+
+            {/* Wheel Conditions */}
+            {renderWheelCondition(
+              "Front Left Wheel",
+              "frontLeftWheelCondition",
+              frontLeftWheelCondition,
+              require("../../assets/tyreFrontLeft.png")
+            )}
+
+            {renderWheelCondition(
+              "Front Right Wheel",
+              "frontRightWheelCondition",
+              frontRightWheelCondition,
+              require("../../assets/tyreFrontRight.png")
+            )}
+
+            {renderWheelCondition(
+              "Rear Right Wheel",
+              "rearRightWheelCondition",
+              rearRightWheelCondition,
+              require("../../assets/tyreRearRight.png")
+            )}
+
+            {renderWheelCondition(
+              "Rear Left Wheel",
+              "rearLeftWheelCondition",
+              rearLeftWheelCondition,
+              require("../../assets/tyreRearLeft.png")
+            )}
 
             {/* Keys Present */}
             {/* <View
@@ -206,54 +295,6 @@ export default function InspectionWizardStepThree({ navigation }) {
                 ))}
               </View>
             </View> */}
-            <View
-              style={tw`mb-6 bg-white border border-gray-300 rounded-xl p-4`}
-            >
-              <Text style={tw`text-gray-400 mb-3`}>How Many Keys Present</Text>
-              <View style={tw`flex-row justify-between`}>
-                {[1, 2, 3].map((num) => (
-                  <TouchableOpacity
-                    key={num}
-                    style={tw.style(
-                      "flex-1 items-center justify-center border rounded-xl py-2 mx-2",
-                      keysPresent === `${num}`
-                        ? "border-green-400 bg-green-50"
-                        : "border-gray-300 bg-white",
-                    )}
-                    onPress={() =>
-                      dispatch(
-                        setInspectionData({
-                          field: "keysPresent",
-                          value: `${num}`,
-                        }),
-                      )
-                    }
-                  >
-                    <Image
-                      source={
-                        num === 1
-                          ? require("../../assets/singleKey.png")
-                          : num === 2
-                            ? require("../../assets/doubleKey.png")
-                            : require("../../assets/tripleKey.png")
-                      }
-                      style={tw`w-14 h-10 mb-3`}
-                      resizeMode="contain"
-                    />
-                    <Text
-                      style={tw.style(
-                        "font-medium text-base",
-                        keysPresent === `${num}`
-                          ? "text-green-700"
-                          : "text-gray-400",
-                      )}
-                    >
-                      {num} Key{num > 1 ? "s" : ""}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
           </ScrollView>
 
           {/* Next Button - fixed at bottom */}

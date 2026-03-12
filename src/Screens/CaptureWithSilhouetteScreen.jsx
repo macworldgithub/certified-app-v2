@@ -149,7 +149,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
   const handleYesDamage = () => {
     setDamageModalVisible(false);
 
-    navigation.navigate("ImageReview", {
+    navigation.replace("ImageReview", {
       partKey: step.key,
       title: step.title,
       stepIndex,
@@ -195,7 +195,15 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
         {/* Header */}
         <View style={tw`flex-row items-center justify-between px-4 py-4 z-20`}>
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              if (stepIndex > 0) {
+                navigation.replace("CaptureWithSilhouette", {
+                  stepIndex: stepIndex - 1,
+                });
+              } else {
+                navigation.goBack();
+              }
+            }}
             style={tw`w-11 h-11 text-color items-center justify-center`}
           >
             {/* <Ionicons name="arrow-back" size={22} color="white" /> */}

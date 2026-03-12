@@ -47,7 +47,7 @@ export default function ImageReviewScreen({ navigation, route }) {
     <SafeAreaWrapper>
       <View style={tw`flex-1 bg-gray-50`}>
         <ScrollView contentContainerStyle={tw`pb-32 px-4 pt-4`}>
-          <Header title={title || "Image Review"} onBack={() => navigation.goBack()} />
+          <Header title={title || "Image Review"} onBack={() => navigation.replace("CaptureWithSilhouette", { stepIndex })} />
 
           <ImageComparison
             partKey={partKey}

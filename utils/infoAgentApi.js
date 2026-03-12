@@ -36,40 +36,51 @@ export const fetchAndStoreInfoAgentToken = async () => {
   }
 };
 
-export const fetchVehicleReport = async (vin,rego) => {
-  console.log("2222");
+export const fetchVehicleReport = async (vin, plate) => {
+  console.log("fetchVehicleReport called with:", { vin, plate });
   const url =
     "https://api.dev.infoagent.com.au/ivds/v1/au/vehicle-report/enhanced-basic";
 
   try {
+    // Clear stale report before every new fetch so old data is never reused
+    await AsyncStorage.removeItem("vehicleReport");
+
     // Retrieve the token from AsyncStorage
     const token = await AsyncStorage.getItem("InfoAgentToken");
     if (!token) {
-      console.error("No InfoAgent token found in AsyncStorage.");
-      return;
+      throw new Error("No InfoAgent token found. Please try again.");
     }
 
-    const data = {
-      vin: vin,
-      rego: rego,
-    };
-    console.log("VIN", data);
+    // Build payload — only include the field that has a value
+    const data = {};
+    if (vin) data.vin = vin;
+    if (plate) {
+      data.plate = plate;
+      data.state = "NSW"; // Defaulting to NSW for now; ideally this should come from user input
+    }
+
+    console.log("Sending to InfoAgent API:", data);
+
     const response = await axios.post(url, data, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-    console.log("RES2", response);
 
-    // Save the response to AsyncStorage
+    console.log("InfoAgent response:", response.data);
+
+    // Save the fresh response to AsyncStorage
     await AsyncStorage.setItem("vehicleReport", JSON.stringify(response.data));
-    console.log("Response saved to AsyncStorage:", response.data);
+    console.log("Vehicle report saved to AsyncStorage.");
   } catch (error) {
-    console.error(
-      "Error fetching vehicle report:",
-      error.response?.data || error.message,
-    );
+    const msg =
+      error.response?.data?.message ||
+      error.response?.data ||
+      error.message ||
+      "Failed to fetch vehicle report";
+    console.error("Error fetching vehicle report:", msg);
+    throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
   }
 };
 

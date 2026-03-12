@@ -116,7 +116,7 @@ export default function EngineImage({ navigation }) {
         </ScrollView>
 
         {/* Next */}
-        <NextButton navigation={navigation} nextScreen="RightImage" />
+        <NextButton onNext={() => navigation.navigate("RightImage")} />
       </View>
     </SafeAreaWrapper>
   );

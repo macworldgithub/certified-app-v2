@@ -623,21 +623,24 @@ const DamageSection = ({ inspection, partKey }) => {
   );
 };
 
-const NextButton = ({ onNext, label = "Continue" }) => (
-  <View
-    style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white border-t border-gray-200`}
-  >
-    <TouchableOpacity
-      activeOpacity={0.9}
-      style={tw`bg-green-700 py-4 rounded-3xl shadow-lg`}
-      onPress={onNext}
+const NextButton = ({ onNext, navigation, nextScreen, label = "Continue" }) => {
+  const handlePress = onNext ?? (() => navigation?.navigate(nextScreen));
+  return (
+    <View
+      style={tw`absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white border-t border-gray-200`}
     >
-      <Text style={tw`text-white text-center text-lg font-extrabold`}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  </View>
-);
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={tw`bg-green-700 py-4 rounded-3xl shadow-lg`}
+        onPress={handlePress}
+      >
+        <Text style={tw`text-white text-center text-lg font-extrabold`}>
+          {label}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export = {
   Header,

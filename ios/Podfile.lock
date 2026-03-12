@@ -1440,6 +1440,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-month-year-picker (1.9.0):
+    - React
   - react-native-safe-area-context (5.6.2):
     - DoubleConversion
     - glog
@@ -2271,6 +2273,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-month-year-picker (from `../node_modules/react-native-month-year-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-vector-icons-fontawesome6 (from `../node_modules/@react-native-vector-icons/fontawesome6`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -2416,6 +2419,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-month-year-picker:
+    :path: "../node_modules/react-native-month-year-picker"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-vector-icons-fontawesome6:
@@ -2556,6 +2561,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: ff05e894231c44c21135d1d23a82b87656d98eeb
   react-native-blob-util: f3fef2f309da873e1dc2a5a7a6ed1f10f66b2003
   react-native-image-picker: db0b3e3c7ae57680876318d4f42e7dbedd72244a
+  react-native-month-year-picker: 8b72e984757e47e08fece220fa09fcdf1816203d
   react-native-safe-area-context: 0b8555c40461feb7198e999912a3446602e7c601
   react-native-vector-icons-fontawesome6: 1a73ea16a698f70851ad47e94521a99499e8e974
   React-NativeModulesApple: d94850b316446b0c39a82eb278d6efaa1a634055

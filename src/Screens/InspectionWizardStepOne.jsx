@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
   KeyboardAvoidingView,
+  Image,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -18,7 +19,7 @@ import { setInspectionData } from "../redux/slices/inspectionSlice";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
+import MonthYearPicker from "react-native-month-year-picker";
 // Import the infoAgent API helpers
 import {
   fetchAndStoreInfoAgentToken,
@@ -49,7 +50,6 @@ export default function InspectionWizardStepOne({ navigation }) {
   const dispatch = useDispatch();
   const {
     vin,
-    rego,
     year,
     make,
     model,
@@ -63,16 +63,17 @@ export default function InspectionWizardStepOne({ navigation }) {
     driveTrain,
     bodyType,
     color,
+    keysPresent,
   } = useSelector((state) => state.inspection);
 
   const isFormComplete =
     vin?.trim().length === 17 &&
-    rego?.trim() &&
-    year?.trim() &&
-    make?.trim() &&
-    mileAge?.toString().trim() &&
-    model?.trim() &&
-    registrationPlate?.trim() &&
+    year?.trim().length > 0 &&
+    make?.trim().length > 0 &&
+    model?.trim().length > 0 &&
+    registrationPlate?.trim().length > 0 &&
+    mileAge &&
+    !isNaN(Number(mileAge)) &&
     registrationExpiry &&
     buildDate &&
     complianceDate &&
@@ -80,11 +81,13 @@ export default function InspectionWizardStepOne({ navigation }) {
     transmission &&
     driveTrain &&
     bodyType &&
-    color;
+    color &&
+    keysPresent;
 
   const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
   const [date, setDate] = useState(new Date());
-  const [loading, setLoading] = useState(false);
+  const [vinLoading, setVinLoading] = useState(false);
+  const [regoLoading, setRegoLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
   const [vinError, setVinError] = useState("");
 
@@ -112,6 +115,22 @@ export default function InspectionWizardStepOne({ navigation }) {
       dispatch(setInspectionData({ field: showPicker, value: formatted }));
     }
     setShowPicker(null); // close after selection
+  };
+
+  const onMonthYearChange = (event, newDate) => {
+    if (newDate) {
+      setDate(newDate);
+      const formatted = `${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+
+      dispatch(
+        setInspectionData({
+          field: showPicker,
+          value: formatted,
+        }),
+      );
+    }
+
+    setShowPicker(null);
   };
 
   const validateAndGoNext = () => {
@@ -337,15 +356,26 @@ export default function InspectionWizardStepOne({ navigation }) {
   );
 
   // --- Active: fetch vehicle info flow ---
-  const handleFetchVehicleInfo = async () => {
-    // Basic validation
-    if (!vin || vin.trim().length === 0) {
-      Alert.alert(
-        "VIN required",
-        "Please enter a VIN/Chassis number before fetching.",
-      );
-      return;
+  // source: "vin" | "rego"
+  const handleFetchVehicleInfo = async (source = "vin") => {
+    // Validate the relevant field
+    if (source === "vin") {
+      if (!vin || vin.trim().length === 0) {
+        Alert.alert("VIN required", "Please enter a VIN/Chassis number before fetching.");
+        return;
+      }
+      if (vin.trim().length !== 17) {
+        Alert.alert("Invalid VIN", "VIN must be exactly 17 characters.");
+        return;
+      }
+    } else {
+      if (!registrationPlate || registrationPlate.trim().length === 0) {
+        Alert.alert("Registration Plate required", "Please enter a Registration Plate before fetching.");
+        return;
+      }
     }
+
+    const setLoading = source === "vin" ? setVinLoading : setRegoLoading;
 
     try {
       setLoading(true);
@@ -353,8 +383,11 @@ export default function InspectionWizardStepOne({ navigation }) {
       // 1) Ensure token present
       await fetchAndStoreInfoAgentToken();
 
-      // 2) Call vehicle report endpoint
-      await fetchVehicleReport(vin.trim());
+      // 2) Call vehicle report endpoint — pass both so the API can use whichever is provided
+      await fetchVehicleReport(
+        source === "vin" ? vin.trim() : undefined,
+        source === "rego" ? registrationPlate.trim() : undefined,
+      );
 
       // 3) Read basic info
       const basic = await getVehicleBasicInfo();
@@ -498,11 +531,11 @@ export default function InspectionWizardStepOne({ navigation }) {
                 />
 
                 <TouchableOpacity
-                  onPress={handleFetchVehicleInfo}
+                  onPress={() => handleFetchVehicleInfo("vin")}
                   style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
-                  disabled={loading}
+                  disabled={vinLoading || regoLoading}
                 >
-                  {loading ? (
+                  {vinLoading ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text style={tw`text-white font-semibold`}>Fetch</Text>
@@ -520,28 +553,31 @@ export default function InspectionWizardStepOne({ navigation }) {
             {/* Registration Plate */}
             <View style={tw`mt-6`}>
               <Text style={tw`text-gray-500 mb-2`}>Registration Plate</Text>
-              <TextInput
-                value={registrationPlate}
-                onChangeText={(val) =>
-                  handleTextChange("registrationPlate", val)
-                }
-                placeholder="Enter Registration Plate"
-                placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
-                autoCapitalize="characters"
-              />
 
-              <TouchableOpacity
-                onPress={handleFetchVehicleInfo}
-                style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={tw`text-white font-semibold`}>Fetch</Text>
-                )}
-              </TouchableOpacity>
+              <View style={tw`flex-row items-center`}>
+                <TextInput
+                  value={registrationPlate}
+                  onChangeText={(val) =>
+                    handleTextChange("registrationPlate", val)
+                  }
+                  placeholder="Enter Registration Plate"
+                  placeholderTextColor="#0a09094d"
+                  style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                  autoCapitalize="characters"
+                />
+
+                <TouchableOpacity
+                  onPress={() => handleFetchVehicleInfo("rego")}
+                  style={tw`ml-2 bg-green-700 px-4 py-3 rounded-lg`}
+                  disabled={vinLoading || regoLoading}
+                >
+                  {regoLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={tw`text-white font-semibold`}>Fetch</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Year */}
@@ -632,6 +668,7 @@ export default function InspectionWizardStepOne({ navigation }) {
 
             {/* Build & Compliance Dates */}
             <View style={tw`mt-6 flex-row justify-between`}>
+              {/* Build Date */}
               <View style={tw`flex-1 mr-2`}>
                 <Text style={tw`text-black mb-2`}>Build Date</Text>
                 <TouchableOpacity
@@ -644,11 +681,12 @@ export default function InspectionWizardStepOne({ navigation }) {
                       { color: buildDate ? "#000" : "#0a09094d" },
                     ]}
                   >
-                    {buildDate || "Select Date"}
+                    {buildDate || "Select Month / Year"}
                   </Text>
                 </TouchableOpacity>
               </View>
 
+              {/* Compliance Date */}
               <View style={tw`flex-1 ml-2`}>
                 <Text style={tw`text-black mb-2`}>Compliance Date</Text>
                 <TouchableOpacity
@@ -661,9 +699,56 @@ export default function InspectionWizardStepOne({ navigation }) {
                       { color: complianceDate ? "#000" : "#0a09094d" },
                     ]}
                   >
-                    {complianceDate || "Select Date"}
+                    {complianceDate || "Select Month / Year"}
                   </Text>
                 </TouchableOpacity>
+              </View>
+            </View>
+            {/* Keys Present */}
+            <View style={tw`mt-6 mb-4`}>
+              <Text style={tw`text-black mb-3`}>How Many Keys Present</Text>
+              <View style={tw`flex-row justify-between`}>
+                {[1, 2, 3].map((num) => (
+                  <TouchableOpacity
+                    key={num}
+                    style={tw.style(
+                      "flex-1 items-center justify-center border rounded-xl py-2 mx-2 bg-white",
+                      keysPresent === `${num}`
+                        ? "border-green-400 bg-green-50"
+                        : "border-gray-300",
+                    )}
+                    onPress={() =>
+                      dispatch(
+                        setInspectionData({
+                          field: "keysPresent",
+                          value: `${num}`,
+                        }),
+                      )
+                    }
+                  >
+                    <Image
+                      source={
+                        num === 1
+                          ? require("../../assets/singleKey.png")
+                          : num === 2
+                            ? require("../../assets/doubleKey.png")
+                            : require("../../assets/tripleKey.png")
+                      }
+                      style={tw`w-14 h-10 mb-3`}
+                      resizeMode="contain"
+                    />
+                    <Text
+                      style={tw.style(
+                        "font-medium text-base",
+                        keysPresent === `${num}`
+                          ? "text-green-700"
+                          : "text-gray-400",
+                      )}
+                    >
+                      {num} Key{num > 1 ? "s" : ""}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           </ScrollView>
@@ -684,9 +769,9 @@ export default function InspectionWizardStepOne({ navigation }) {
           </View>
 
           {/* Date Pickers... keep your date picker code here unchanged */}
-          {showPicker && Platform.OS === "android" && (
+          {/* Registration Expiry → Date Picker */}
+          {showPicker === "registrationExpiry" && Platform.OS === "android" && (
             <DateTimePicker
-              testID="dateTimePicker"
               value={date || new Date()}
               mode="date"
               display="calendar"
@@ -694,17 +779,35 @@ export default function InspectionWizardStepOne({ navigation }) {
             />
           )}
 
+          {/* Build Date & Compliance Date → Month Year Picker */}
+          {(showPicker === "buildDate" || showPicker === "complianceDate") &&
+            Platform.OS === "android" && (
+              <MonthYearPicker
+                onChange={onMonthYearChange}
+                value={date || new Date()}
+                minimumDate={new Date(2000, 0)}
+                maximumDate={new Date(2035, 11)}
+              />
+            )}
+
           {/* iOS Picker modal */}
           {showPicker && Platform.OS === "ios" && (
             <Modal transparent animationType="slide">
               <View style={tw`flex-1 justify-end bg-black/50`}>
                 <View style={tw`bg-white rounded-t-2xl p-4`}>
-                  <DateTimePicker
-                    value={date || new Date()}
-                    mode="date"
-                    display="spinner"
-                    onChange={onDateChange}
-                  />
+                  {showPicker === "registrationExpiry" ? (
+                    <DateTimePicker
+                      value={date || new Date()}
+                      mode="date"
+                      display="spinner"
+                      onChange={onDateChange}
+                    />
+                  ) : (
+                    <MonthYearPicker
+                      onChange={onMonthYearChange}
+                      value={date || new Date()}
+                    />
+                  )}
 
                   <View style={tw`flex-row justify-end mt-2`}>
                     <TouchableOpacity onPress={() => setShowPicker(null)}>

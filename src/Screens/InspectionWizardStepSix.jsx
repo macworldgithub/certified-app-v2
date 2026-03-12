@@ -511,7 +511,7 @@ export default function InspectionWizardStepSix({ navigation }) {
           <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
             {/* Damage Present */}
 
-            <View
+            {/* <View
               style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-4`}
             >
               <Text style={tw`text-gray-500 mb-1`}>
@@ -541,7 +541,6 @@ export default function InspectionWizardStepSix({ navigation }) {
                 ))}
               </View>
 
-              {/* Recorded Damages */}
               {damagePresent === "Yes" && (
                 <View style={tw`mt-6`}>
                   <View style={tw`flex-row justify-between items-center mb-2`}>
@@ -564,7 +563,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                   {damages.length > 0 ? (
                     damages.map((d, i) => (
                       <View
-                        key={d._id || d.key} // UNIQUE KEY: _id first, then key
+                        key={d._id || d.key} 
                         style={tw`border border-gray-300 rounded-lg p-3 mb-3 relative`}
                       >
                         {deletingIndex === i && (
@@ -618,7 +617,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                 </View>
               )}
 
-              {/* Road Test */}
+             
               <View
                 style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-4 mt-6`}
               >
@@ -656,7 +655,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                   />
                 </View>
               )}
-            </View>
+            </View> */}
             {/* General Comments */}
             <View
               style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-4`}
