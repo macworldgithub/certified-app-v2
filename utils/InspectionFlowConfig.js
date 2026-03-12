@@ -5,14 +5,14 @@ export const INSPECTION_FLOW = [
     silhouette: require("../assets/frontBumper.png"),
   },
   {
-    key: "LHFImage",
-    title: "LHF Image",
-    silhouette: require("../assets/lhf.png"), //change
+    key: "LeftHandFrontImage",
+    title: "Left Hand Front Image",
+    silhouette: require("../assets/LineArt/LHFImage.png"), //change
   },
   {
     key: "leftSideImage",
     title: "Left Side Image",
-    silhouette: require("../assets/leftside.png"), //change
+    silhouette: require("../assets/LineArt/LHImage.png"), //change
   },
   {
     key: "LHRImage",
@@ -32,12 +32,12 @@ export const INSPECTION_FLOW = [
   {
     key: "RightSideImage",
     title: "Right Side Image",
-    silhouette: require("../assets/rightside.png"), //change
+    silhouette: require("../assets/LineArt/RHImage.png"), //change
   },
   {
     key: "RHFImage",
     title: "RHF Image",
-    silhouette: require("../assets/rhf.png"), //change
+    silhouette: require("../assets/LineArt/RHFImage.png"), //change
   },
   {
     key: "RoofImage",
@@ -47,17 +47,22 @@ export const INSPECTION_FLOW = [
   {
     key: "UnderbonnetImage",
     title: "Under Bonnet Image",
-    silhouette: require("../assets/bonnet.png"), //change
+    silhouette: require("../assets/LineArt/UnderBonnetImage.png"), //change
   },
   {
     key: "InsideBonnetImage",
     title: "Inside Bonnet Image",
-    silhouette: require("../assets/InsideBoot.png"), //change
+    silhouette: require("../assets/LineArt/InsideBonnetImage.png"), //change
+  },
+  {
+    key: "BootImage",
+    title: "Boot Image",
+    silhouette: require("../assets/BOOT.png"), //change
   },
   {
     key: "DriversSeatImage",
     title: "Drivers Seat Image",
-    silhouette: require("../assets/lhf.png"),
+    silhouette: require("../assets/LineArt/DriversSeatImage.png"),
   },
   {
     key: "FrontPassengerSeatImage",
@@ -82,11 +87,11 @@ export const INSPECTION_FLOW = [
   {
     key: "InfotainmentImage",
     title: "Infotainment Image",
-    silhouette: require("../assets/dashBoard.png"),
+    silhouette: require("../assets/LineArt/Infotainment image.png"),
   },
   {
     key: "KeysImage",
     title: "Keys Image",
-    silhouette: require("../assets/OnBoard.png"),
+    silhouette: require("../assets/LineArt/Keys image.png"),
   },
 ];

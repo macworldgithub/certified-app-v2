@@ -14,7 +14,10 @@ import { useSelector, useDispatch } from "react-redux";
 import AppIcon from "../components/AppIcon";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 
-import { resetInspection, setInspectionData } from "../redux/slices/inspectionSlice";
+import {
+  resetInspection,
+  setInspectionData,
+} from "../redux/slices/inspectionSlice";
 import API_BASE_URL from "../../utils/config";
 import SignedImage from "../components/SignedImage";
 
@@ -126,7 +129,13 @@ export default function ReviewInspection({ navigation }) {
         damagePresent === "true";
       const safeRoadTest =
         roadTest === true || roadTest === "Yes" || roadTest === "true";
-
+      const safeBookImages = (inspection.bookImages || [])
+        .map((img) => {
+          if (typeof img === "string") return img;
+          if (img?.key) return img.key;
+          return null;
+        })
+        .filter(Boolean);
       const payload = {
         vin: vin?.trim() || "",
         make: make?.trim() || "",
@@ -187,7 +196,7 @@ export default function ReviewInspection({ navigation }) {
 
         keysPresent: safeKeysPresent,
         serviceBookPresent: safeServiceBook,
-        bookImages: inspection.bookImages || [],
+        bookImages: safeBookImages,
         serviceHistoryPresent: safeServiceHistory,
 
         tyreConditionFrontLeft: tyreConditionFrontLeft?.trim() || "",
@@ -283,7 +292,12 @@ export default function ReviewInspection({ navigation }) {
   );
 
   // Toggle field — shows option buttons (e.g. Pass/Fail, Yes/No)
-  const renderToggleField = (label, field, value, options = ["Pass", "Fail"]) => (
+  const renderToggleField = (
+    label,
+    field,
+    value,
+    options = ["Pass", "Fail"],
+  ) => (
     <View style={tw`py-2.5 border-b border-gray-100`}>
       <Text style={tw`text-gray-400 text-xs mb-2`}>{label}</Text>
       <View style={tw`flex-row`}>
@@ -295,13 +309,13 @@ export default function ReviewInspection({ navigation }) {
               "mr-2 px-4 py-1.5 rounded-full border",
               value === opt
                 ? "bg-green-700 border-green-700"
-                : "bg-white border-gray-300"
+                : "bg-white border-gray-300",
             )}
           >
             <Text
               style={tw.style(
                 "text-sm font-medium",
-                value === opt ? "text-white" : "text-gray-600"
+                value === opt ? "text-white" : "text-gray-600",
               )}
             >
               {opt}
@@ -311,7 +325,6 @@ export default function ReviewInspection({ navigation }) {
       </View>
     </View>
   );
-
 
   const IMAGE_FIELDS = [
     { key: "frontImage", label: "Front Image" },
@@ -413,10 +426,22 @@ export default function ReviewInspection({ navigation }) {
               {renderEditField("Make", "make", make)}
               {renderEditField("Model", "model", model)}
               {renderEditField("Year", "year", year)}
-              {renderEditField("Registration Plate", "registrationPlate", registrationPlate)}
-              {renderEditField("Registration Expiry", "registrationExpiry", registrationExpiry)}
+              {renderEditField(
+                "Registration Plate",
+                "registrationPlate",
+                registrationPlate,
+              )}
+              {renderEditField(
+                "Registration Expiry",
+                "registrationExpiry",
+                registrationExpiry,
+              )}
               {renderEditField("Build Date", "buildDate", buildDate)}
-              {renderEditField("Compliance Date", "complianceDate", complianceDate)}
+              {renderEditField(
+                "Compliance Date",
+                "complianceDate",
+                complianceDate,
+              )}
             </>,
           )}
 
@@ -424,10 +449,28 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Basic Details",
             <>
-              {renderEditField("Odometer Reading", "mileAge", odometer || mileAge, "numeric")}
-              {renderToggleField("Fuel Type", "fuelType", fuelType, ["Petrol", "Diesel", "Electric", "Hybrid"])}
-              {renderToggleField("Drive Train", "driveTrain", driveTrain, ["FWD", "RWD", "AWD", "4WD"])}
-              {renderToggleField("Transmission", "transmission", transmission, ["Automatic", "Manual"])}
+              {renderEditField(
+                "Odometer Reading",
+                "mileAge",
+                odometer || mileAge,
+                "numeric",
+              )}
+              {renderToggleField("Fuel Type", "fuelType", fuelType, [
+                "Petrol",
+                "Diesel",
+                "Electric",
+                "Hybrid",
+              ])}
+              {renderToggleField("Drive Train", "driveTrain", driveTrain, [
+                "FWD",
+                "RWD",
+                "AWD",
+                "4WD",
+              ])}
+              {renderToggleField("Transmission", "transmission", transmission, [
+                "Automatic",
+                "Manual",
+              ])}
               {renderEditField("Body Type", "bodyType", bodyType)}
               {renderEditField("Color", "color", color)}
             </>,
@@ -437,9 +480,21 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Wheels & Keys",
             <>
-              {renderEditField("Front Wheel Diameter", "frontWheelDiameter", frontWheelDiameter)}
-              {renderEditField("Rear Wheel Diameter", "rearWheelDiameter", rearWheelDiameter)}
-              {renderToggleField("Keys Present", "keysPresent", keysPresent, ["1", "2", "3"])}
+              {renderEditField(
+                "Front Wheel Diameter",
+                "frontWheelDiameter",
+                frontWheelDiameter,
+              )}
+              {renderEditField(
+                "Rear Wheel Diameter",
+                "rearWheelDiameter",
+                rearWheelDiameter,
+              )}
+              {renderToggleField("Keys Present", "keysPresent", keysPresent, [
+                "1",
+                "2",
+                "3",
+              ])}
             </>,
           )}
 
@@ -447,10 +502,26 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Tyre Condition",
             <>
-              {renderToggleField("Front Left", "tyreConditionFrontLeft", tyreConditionFrontLeft)}
-              {renderToggleField("Front Right", "tyreConditionFrontRight", tyreConditionFrontRight)}
-              {renderToggleField("Rear Right", "tyreConditionRearRight", tyreConditionRearRight)}
-              {renderToggleField("Rear Left", "tyreConditionRearLeft", tyreConditionRearLeft)}
+              {renderToggleField(
+                "Front Left",
+                "tyreConditionFrontLeft",
+                tyreConditionFrontLeft,
+              )}
+              {renderToggleField(
+                "Front Right",
+                "tyreConditionFrontRight",
+                tyreConditionFrontRight,
+              )}
+              {renderToggleField(
+                "Rear Right",
+                "tyreConditionRearRight",
+                tyreConditionRearRight,
+              )}
+              {renderToggleField(
+                "Rear Left",
+                "tyreConditionRearLeft",
+                tyreConditionRearLeft,
+              )}
             </>,
           )}
 
@@ -458,10 +529,26 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Wheel Condition",
             <>
-              {renderToggleField("Front Left", "frontLeftWheelCondition", frontLeftWheelCondition)}
-              {renderToggleField("Front Right", "frontRightWheelCondition", frontRightWheelCondition)}
-              {renderToggleField("Rear Right", "rearRightWheelCondition", rearRightWheelCondition)}
-              {renderToggleField("Rear Left", "rearLeftWheelCondition", rearLeftWheelCondition)}
+              {renderToggleField(
+                "Front Left",
+                "frontLeftWheelCondition",
+                frontLeftWheelCondition,
+              )}
+              {renderToggleField(
+                "Front Right",
+                "frontRightWheelCondition",
+                frontRightWheelCondition,
+              )}
+              {renderToggleField(
+                "Rear Right",
+                "rearRightWheelCondition",
+                rearRightWheelCondition,
+              )}
+              {renderToggleField(
+                "Rear Left",
+                "rearLeftWheelCondition",
+                rearLeftWheelCondition,
+              )}
             </>,
           )}
 
@@ -469,8 +556,18 @@ export default function ReviewInspection({ navigation }) {
           {renderSection(
             "Service Documents",
             <>
-              {renderToggleField("Service Book Present", "serviceBookPresent", serviceBookPresent, ["Yes", "No"])}
-              {renderToggleField("Service History Present", "serviceHistoryPresent", serviceHistoryPresent, ["Yes", "No"])}
+              {renderToggleField(
+                "Service Book Present",
+                "serviceBookPresent",
+                serviceBookPresent,
+                ["Yes", "No"],
+              )}
+              {renderToggleField(
+                "Service History Present",
+                "serviceHistoryPresent",
+                serviceHistoryPresent,
+                ["Yes", "No"],
+              )}
             </>,
           )}
 
@@ -496,8 +593,9 @@ export default function ReviewInspection({ navigation }) {
           )} */}
 
           {/* GENERAL COMMENTS */}
-          {renderSection("General Comments",
-            renderEditField("Comments", "generalComments", generalComments)
+          {renderSection(
+            "General Comments",
+            renderEditField("Comments", "generalComments", generalComments),
           )}
 
           {/* IMAGES REVIEW */}

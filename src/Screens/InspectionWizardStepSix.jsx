@@ -511,11 +511,11 @@ export default function InspectionWizardStepSix({ navigation }) {
           <ScrollView style={tw`px-6`} contentContainerStyle={tw`pb-20`}>
             {/* Damage Present */}
 
-            {/* <View
+            <View
               style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-4`}
             >
               <Text style={tw`text-gray-500 mb-1`}>
-                Is There Any Damage Present
+                Is there any furthur more damage present in your vehicle?
               </Text>
               <View style={tw`flex-row justify-between`}>
                 {["Yes", "No"].map((opt) => (
@@ -655,7 +655,7 @@ export default function InspectionWizardStepSix({ navigation }) {
                   />
                 </View>
               )}
-            </View> */}
+            </View>
             {/* General Comments */}
             <View
               style={tw`mb-2 bg-white border border-gray-300 rounded-xl p-4`}

@@ -69,10 +69,7 @@ const inspectionSlice = createSlice({
       } else if (field in state.images && value !== null) {
         state.images[field] = value;
       } else if (field === "bookImages") {
-        const raw = Array.isArray(value) ? value : [];
-        state.bookImages = raw
-          .map((item) => (typeof item === "string" ? { key: item } : item))
-          .filter((img) => img && img.key);
+        state.bookImages = Array.isArray(value) ? value : [];
       } else if (field === "damages") {
         if (Array.isArray(value)) {
           state.damages = value.map((d) => ({

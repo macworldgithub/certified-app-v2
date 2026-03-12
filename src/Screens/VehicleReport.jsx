@@ -217,14 +217,14 @@ export default function VehicleReport() {
 
         console.log("🧾 Storage permission result:", granted);
 
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert(
-            "Permission Denied",
-            "Storage access is required to save PDF files.",
-          );
-          setDownloadingId(null);
-          return;
-        }
+        // if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        //   Alert.alert(
+        //     "Permission Denied",
+        //     "Storage access is required to save PDF files.",
+        //   );
+        //   setDownloadingId(null);
+        //   return;
+        // }
       }
 
       // 🔍 Log API URL
