@@ -62,7 +62,7 @@ export const INSPECTION_FLOW = [
   {
     key: "FrontPassengerSeatImage",
     title: "Front Passenger Seat Image",
-    silhouette: require("../assets/LineArt/FrontPassengerSeatImage.png"),
+    silhouette: require("../assets/LineArt/FrontPassengerSeat.png"),
   },
   {
     key: "RearSeatImage",
