@@ -392,6 +392,7 @@
 
 // @ts-nocheck
 import React, { useState, useCallback, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -478,6 +479,13 @@ export default function InspectionList() {
   useEffect(() => {
     fetchInspections(query, 1, false);
   }, []);
+
+  // Refresh on focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchInspections(query, 1, false);
+    }, [query]),
+  );
 
   // Debounced search
   const debouncedFetch = useCallback(
@@ -630,6 +638,7 @@ export default function InspectionList() {
                 carModel={item.Model}
                 year={item.year}
                 mileage={item.mileAge}
+                rating={item.overallRating}
                 inspectorEmail={item.inspectorEmail}
                 onPress={() =>
                   navigation.navigate("ViewInspection", { id: item._id })

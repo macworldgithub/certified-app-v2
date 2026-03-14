@@ -65,6 +65,9 @@ const CarCard: React.FC<CarCardProps> = ({
           <Text style={styles.title}>
             {make} ({year})
           </Text>
+          {rating !== undefined && rating !== null && (
+            <Text style={styles.ratingText}>{rating}/10</Text>
+          )}
         </View>
         <Text style={styles.sub}>VIN: {vin}</Text>
         {Platform.OS === "android" ? (

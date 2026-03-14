@@ -184,7 +184,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       }
     }
 
-    navigation.navigate("InspectionWizardStepThree");
+    navigation.navigate("ReviewInspection");
   };
 
   // --- New: fetch vehicle info flow ---
@@ -551,7 +551,7 @@ export default function InspectionWizardStepOne({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0}
       >
-        <View style={tw`flex-1 bg-white`}>
+        <View style={tw`flex-1 bg-white pb-28`}>
           {/* Header */}
           <View style={tw`flex-row items-center mb-6 px-4 pt-4`}>
             <TouchableOpacity onPress={handleBack} style={tw`mr-4`}>

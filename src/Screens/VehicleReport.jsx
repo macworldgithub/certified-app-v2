@@ -12,6 +12,7 @@ import {
   StyleSheet,
   PermissionsAndroid,
 } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import tw from "tailwind-react-native-classnames";
 import debounce from "lodash.debounce";
 import axios from "axios";
@@ -24,6 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import API_BASE_URL from "../../utils/config";
 
 export default function VehicleReport() {
+  const navigation = useNavigation();
   const [data, setData] = useState([]);
   console.log(data, "DATA");
   const [query, setQuery] = useState("");
@@ -99,6 +101,13 @@ export default function VehicleReport() {
   useEffect(() => {
     fetchInspections(query, 1, false);
   }, []);
+
+  // Refresh on focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchInspections(query, 1, false);
+    }, [query]),
+  );
 
   // ✅ Debounced search
   const debouncedFetch = useCallback(

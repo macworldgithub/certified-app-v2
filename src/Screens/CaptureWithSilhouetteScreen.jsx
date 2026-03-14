@@ -58,7 +58,7 @@ export default function CaptureWithSilhouetteScreen({ navigation, route }) {
       console.log(fileType);
       // 1) Get presigned URL
       const presignedResp = await fetch(
-        `https://apiv2-backend.certifiedinspect.com.au/inspections/presigned`,
+        `certified-backend.omnisuiteai.com/inspections/presigned`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

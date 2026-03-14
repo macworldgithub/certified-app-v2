@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import SignedImage from "../components/SignedImage";
 
 export default function ReviewInspection({ navigation }) {
   const dispatch = useDispatch();
+  const [editingField, setEditingField] = useState(null);
   const inspection = useSelector((state) => state.inspection);
   console.log(inspection, "INSPECTION...");
   const { images } = inspection;
@@ -279,21 +280,36 @@ export default function ReviewInspection({ navigation }) {
   );
 
   // Editable text field — dispatches to Redux on change
-  const renderEditField = (label, field, value, keyboardType = "default") => (
-    <View style={tw`py-2 border-b border-gray-100`}>
-      <Text style={tw`text-gray-400 text-xs mb-1`}>{label}</Text>
-      <TextInput
-        value={value || ""}
-        onChangeText={(text) =>
-          dispatch(setInspectionData({ field, value: text }))
-        }
-        keyboardType={keyboardType}
-        placeholder={`Enter ${label}`}
-        placeholderTextColor="#9CA3AF"
-        style={tw`text-gray-800 font-medium text-base py-1`}
-      />
-    </View>
-  );
+  const renderEditField = (label, field, value, keyboardType = "default") => {
+    const isEditing = editingField === field;
+
+    return (
+      <View style={tw`py-2 border-b border-gray-100`}>
+        <View style={tw`flex-row justify-between items-center mb-1`}>
+          <Text style={tw`text-gray-400 text-xs`}>{label}</Text>
+
+          <TouchableOpacity onPress={() => setEditingField(field)}>
+            <AppIcon name="edit" size={16} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
+
+        <TextInput
+          value={value || ""}
+          editable={isEditing}
+          onChangeText={(text) =>
+            dispatch(setInspectionData({ field, value: text }))
+          }
+          keyboardType={keyboardType}
+          placeholder={`Enter ${label}`}
+          placeholderTextColor="#9CA3AF"
+          style={tw.style(
+            "text-base py-1",
+            isEditing ? "text-gray-800 font-medium" : "text-gray-500",
+          )}
+        />
+      </View>
+    );
+  };
 
   // Toggle field — shows option buttons (e.g. Pass/Fail, Yes/No)
   const renderToggleField = (
@@ -301,34 +317,47 @@ export default function ReviewInspection({ navigation }) {
     field,
     value,
     options = ["Pass", "Fail"],
-  ) => (
-    <View style={tw`py-2.5 border-b border-gray-100`}>
-      <Text style={tw`text-gray-400 text-xs mb-2`}>{label}</Text>
-      <View style={tw`flex-row`}>
-        {options.map((opt) => (
-          <TouchableOpacity
-            key={opt}
-            onPress={() => dispatch(setInspectionData({ field, value: opt }))}
-            style={tw.style(
-              "mr-2 px-4 py-1.5 rounded-full border",
-              value === opt
-                ? "bg-green-700 border-green-700"
-                : "bg-white border-gray-300",
-            )}
-          >
-            <Text
+  ) => {
+    const isEditing = editingField === field;
+
+    return (
+      <View style={tw`py-2.5 border-b border-gray-100`}>
+        <View style={tw`flex-row justify-between items-center mb-2`}>
+          <Text style={tw`text-gray-400 text-xs`}>{label}</Text>
+
+          <TouchableOpacity onPress={() => setEditingField(field)}>
+            <AppIcon name="edit" size={16} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={tw`flex-row flex-wrap`}>
+          {options.map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              disabled={!isEditing}
+              onPress={() => dispatch(setInspectionData({ field, value: opt }))}
               style={tw.style(
-                "text-sm font-medium",
-                value === opt ? "text-white" : "text-gray-600",
+                "mr-2 px-4 py-1.5 rounded-full border",
+                value === opt
+                  ? "bg-green-700 border-green-700"
+                  : "bg-white border-gray-300",
+                !isEditing && "opacity-50",
               )}
             >
-              {opt}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={tw.style(
+                  "text-sm font-medium",
+                  value === opt ? "text-white" : "text-gray-600",
+                )}
+              >
+                {opt}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const IMAGE_FIELDS = [
     { key: "frontImage", label: "Front Image" },
@@ -503,7 +532,7 @@ export default function ReviewInspection({ navigation }) {
           )}
 
           {/* TYRE CONDITION */}
-          {renderSection(
+          {/* {renderSection(
             "Tyre Condition",
             <>
               {renderToggleField(
@@ -527,7 +556,7 @@ export default function ReviewInspection({ navigation }) {
                 tyreConditionRearLeft,
               )}
             </>,
-          )}
+          )} */}
 
           {/* WHEEL CONDITION */}
           {renderSection(
@@ -576,10 +605,15 @@ export default function ReviewInspection({ navigation }) {
           )}
 
           {/* DAMAGE & ROAD TEST */}
-          {/* {renderSection(
+          {renderSection(
             "Damage & Road Test",
             <>
-              {renderToggleField("Damage Present", "damagePresent", damagePresent, ["Yes", "No"])}
+              {renderToggleField(
+                "Damage Present",
+                "damagePresent",
+                damagePresent,
+                ["Yes", "No"],
+              )}
               {damagePresent === "Yes" && damages?.length > 0 && (
                 <View style={tw`mt-2`}>
                   <Text style={tw`text-gray-600 font-medium`}>Damages:</Text>
@@ -590,11 +624,18 @@ export default function ReviewInspection({ navigation }) {
                   ))}
                 </View>
               )}
-              {renderToggleField("Road Test", "roadTest", roadTest, ["Yes", "No"])}
+              {renderToggleField("Road Test", "roadTest", roadTest, [
+                "Yes",
+                "No",
+              ])}
               {roadTest === "Yes" &&
-                renderEditField("Road Test Comments", "roadTestComments", roadTestComments)}
+                renderEditField(
+                  "Road Test Comments",
+                  "roadTestComments",
+                  roadTestComments,
+                )}
             </>,
-          )} */}
+          )}
 
           {/* GENERAL COMMENTS */}
           {renderSection(
