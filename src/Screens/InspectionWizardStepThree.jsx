@@ -37,6 +37,7 @@ export default function InspectionWizardStepThree({ navigation }) {
     frontRightWheelCondition,
     rearLeftWheelCondition,
     rearRightWheelCondition,
+    spareWheelCondition,
   } = useSelector((state) => state.inspection);
 
   const [showFrontDropdown, setShowFrontDropdown] = useState(false);
@@ -49,7 +50,7 @@ export default function InspectionWizardStepThree({ navigation }) {
   };
 
   const handleNext = () => {
-    navigation.navigate("InspectionWizardStepFive");
+    navigation.navigate("InspectionWizardStepFour");
   };
 
   const handleBack = () => navigation.goBack();
@@ -64,14 +65,14 @@ export default function InspectionWizardStepThree({ navigation }) {
               "flex-1 items-center justify-center border rounded-lg py-4 mr-2",
               value === "Pass"
                 ? "border-green-600 bg-green-50"
-                : "border-gray-300 bg-white"
+                : "border-gray-300 bg-white",
             )}
             onPress={() => handleSelect(field, "Pass")}
           >
             <Text
               style={tw.style(
                 "text-gray-700 font-medium",
-                value === "Pass" && "text-green-700"
+                value === "Pass" && "text-green-700",
               )}
             >
               Pass
@@ -83,14 +84,14 @@ export default function InspectionWizardStepThree({ navigation }) {
               "flex-1 items-center justify-center border rounded-lg py-4 ml-2",
               value === "Fail"
                 ? "border-green-600 bg-green-50"
-                : "border-gray-300 bg-white"
+                : "border-gray-300 bg-white",
             )}
             onPress={() => handleSelect(field, "Fail")}
           >
             <Text
               style={tw.style(
                 "text-gray-700 font-medium",
-                value === "Fail" && "text-green-700"
+                value === "Fail" && "text-green-700",
               )}
             >
               Fail
@@ -228,28 +229,34 @@ export default function InspectionWizardStepThree({ navigation }) {
               "Front Left Wheel",
               "frontLeftWheelCondition",
               frontLeftWheelCondition,
-              require("../../assets/tyreFrontLeft.png")
+              require("../../assets/tyreFrontLeft.png"),
             )}
 
             {renderWheelCondition(
               "Front Right Wheel",
               "frontRightWheelCondition",
               frontRightWheelCondition,
-              require("../../assets/tyreFrontRight.png")
+              require("../../assets/tyreFrontRight.png"),
             )}
 
             {renderWheelCondition(
               "Rear Right Wheel",
               "rearRightWheelCondition",
               rearRightWheelCondition,
-              require("../../assets/tyreRearRight.png")
+              require("../../assets/tyreRearRight.png"),
             )}
 
             {renderWheelCondition(
               "Rear Left Wheel",
               "rearLeftWheelCondition",
               rearLeftWheelCondition,
-              require("../../assets/tyreRearLeft.png")
+              require("../../assets/tyreRearLeft.png"),
+            )}
+            {renderWheelCondition(
+              "Spare Wheel (Optional)",
+              "spareWheelCondition",
+              spareWheelCondition,
+              require("../../assets/tyreSpare.png"),
             )}
 
             {/* Keys Present */}

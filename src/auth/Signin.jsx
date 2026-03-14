@@ -142,12 +142,13 @@ const Signin = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
-        contentContainerStyle={tw`flex-grow justify-start px-6 pt-10`}
+        contentContainerStyle={tw`flex-grow justify-center px-6 -mt-10`}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={tw`text-2xl font-bold text-gray-900 mb-1`}>
+        <Text style={tw`text-3xl font-bold text-gray-900 mb-1`}>
           Sign in to
         </Text>
-        <Text style={tw`text-2xl font-bold text-gray-900 mb-4`}>
+        <Text style={tw`text-3xl font-bold text-gray-900 mb-4`}>
           your account
         </Text>
 
@@ -163,7 +164,7 @@ const Signin = () => {
 
         {/* Email Input */}
         <View
-          style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-1 mb-4 bg-gray-100`}
+          style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-3 mb-2 bg-gray-100`}
         >
           <FontAwesome name="envelope" size={16} color="#6B7280" />
           <TextInput
@@ -179,7 +180,7 @@ const Signin = () => {
 
         {/* Password Input */}
         <View
-          style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-1 mb-4 bg-gray-100`}
+          style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-3 mb-4 bg-gray-100`}
         >
           <FontAwesome name="lock" size={16} color="#6B7280" />
           <TextInput

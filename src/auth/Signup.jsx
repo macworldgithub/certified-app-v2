@@ -69,9 +69,12 @@ export default function Signup() {
   };
 
   return (
-    <ScrollView contentContainerStyle={tw`flex-1 px-6 py-4 pt-12 bg-white`}>
-      <Text style={tw`text-2xl font-bold text-gray-900 mb-1`}>Create new</Text>
-      <Text style={tw`text-2xl font-bold text-gray-900 mb-4`}>account</Text>
+    <ScrollView
+      contentContainerStyle={tw`flex-grow justify-center px-6`}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={tw`text-3xl font-bold text-gray-900 mb-1`}>Create new</Text>
+      <Text style={tw`text-3xl font-bold text-gray-900 mb-4`}>account</Text>
       <Text style={tw`text-sm text-gray-500 mb-6`}>
         Already have an account?{" "}
         <Text
@@ -84,7 +87,7 @@ export default function Signup() {
 
       {/* Name Input */}
       <View
-        style={tw`flex-row items-center border-gray-300 border rounded-xl px-4 py-1 mb-2`}
+        style={tw`flex-row items-center border-gray-300 border rounded-xl px-4 py-3 mb-2`}
       >
         <Icon name="person-outline" size={20} color="gray" />
         <TextInput
@@ -97,7 +100,7 @@ export default function Signup() {
 
       {/* Email Input */}
       <View
-        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-1 mb-2`}
+        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-3 mb-2`}
       >
         <Icon name="mail-outline" size={20} color="gray" />
         <TextInput
@@ -111,7 +114,7 @@ export default function Signup() {
 
       {/* Password Input */}
       <View
-        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-1 mb-2`}
+        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-3 mb-2`}
       >
         <Icon name="lock-closed-outline" size={20} color="gray" />
         <TextInput
@@ -132,7 +135,7 @@ export default function Signup() {
 
       {/* Phone Input (optional) */}
       <View
-        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-1 mb-2`}
+        style={tw`flex-row items-center border border-gray-300 rounded-xl px-4 py-3 mb-6`}
       >
         <Icon name="call-outline" size={20} color="gray" />
         <TextInput
@@ -145,7 +148,7 @@ export default function Signup() {
       </View>
 
       {/* Remember Me */}
-      <View style={tw`flex-row items-center mb-6`}>
+      {/* <View style={tw`flex-row items-center mb-6`}>
         <TouchableOpacity
           onPress={() => setRememberMe(!rememberMe)}
           style={tw`mr-2`}
@@ -156,8 +159,8 @@ export default function Signup() {
             color={rememberMe ? "#007941" : "gray"}
           />
         </TouchableOpacity>
-        {/* <Text style={tw`text-sm text-gray-700`}>Remember me</Text> */}
-      </View>
+        <Text style={tw`text-sm text-gray-700`}>Remember me</Text>
+      </View> */}
 
       {/* Signup Button */}
       <TouchableOpacity

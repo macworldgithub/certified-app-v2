@@ -175,7 +175,10 @@ export default function InspectionWizardStepOne({ navigation }) {
         const cNum = cD.year * 12 + cD.month;
 
         if (cNum <= bNum) {
-          Alert.alert("Validation Error", "Compliance date must be higher than the build date.");
+          Alert.alert(
+            "Validation Error",
+            "Compliance date must be higher than the build date.",
+          );
           return;
         }
       }
@@ -394,7 +397,10 @@ export default function InspectionWizardStepOne({ navigation }) {
     // Validate the relevant field
     if (source === "vin") {
       if (!vin || vin.trim().length === 0) {
-        Alert.alert("VIN required", "Please enter a VIN/Chassis number before fetching.");
+        Alert.alert(
+          "VIN required",
+          "Please enter a VIN/Chassis number before fetching.",
+        );
         return;
       }
       if (vin.trim().length !== 17) {
@@ -403,7 +409,10 @@ export default function InspectionWizardStepOne({ navigation }) {
       }
     } else {
       if (!registrationPlate || registrationPlate.trim().length === 0) {
-        Alert.alert("Registration Plate required", "Please enter a Registration Plate before fetching.");
+        Alert.alert(
+          "Registration Plate required",
+          "Please enter a Registration Plate before fetching.",
+        );
         return;
       }
     }
@@ -430,13 +439,17 @@ export default function InspectionWizardStepOne({ navigation }) {
           if (!d) return d;
           if (d.includes("/")) {
             const parts = d.split("/");
-            if (parts.length === 2) return `${String(parts[0]).padStart(2, "0")}/${parts[1]}`;
-            if (parts.length === 3) return `${String(parts[1]).padStart(2, "0")}/${parts[2]}`;
+            if (parts.length === 2)
+              return `${String(parts[0]).padStart(2, "0")}/${parts[1]}`;
+            if (parts.length === 3)
+              return `${String(parts[1]).padStart(2, "0")}/${parts[2]}`;
           }
           if (d.includes("-")) {
             const parts = d.split("-");
-            if (parts.length === 3) return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
-            if (parts.length === 2) return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
+            if (parts.length === 3)
+              return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
+            if (parts.length === 2)
+              return `${String(parts[1]).padStart(2, "0")}/${parts[0]}`;
           }
           return d;
         };
@@ -458,7 +471,10 @@ export default function InspectionWizardStepOne({ navigation }) {
           );
         if (basic.buildDate)
           dispatch(
-            setInspectionData({ field: "buildDate", value: formatMonthYear(basic.buildDate) }),
+            setInspectionData({
+              field: "buildDate",
+              value: formatMonthYear(basic.buildDate),
+            }),
           );
         if (basic.compliancePlate)
           dispatch(
@@ -533,7 +549,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       <KeyboardAvoidingView
         style={tw`flex-1`}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0}
       >
         <View style={tw`flex-1 bg-white`}>
           {/* Header */}
@@ -548,8 +564,8 @@ export default function InspectionWizardStepOne({ navigation }) {
 
           {/* Scrollable content */}
           <ScrollView
-            style={tw`px-4`}
-            contentContainerStyle={tw`pb-10`}
+            style={tw`flex-1 px-4`}
+            contentContainerStyle={tw`pb-18`}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
@@ -753,7 +769,7 @@ export default function InspectionWizardStepOne({ navigation }) {
               </View>
             </View>
             {/* Keys Present */}
-            <View style={tw`mt-6 mb-4`}>
+            {/* <View style={tw`mt-6 mb-4`}>
               <Text style={tw`text-black mb-3`}>How Many Keys Present</Text>
               <View style={tw`flex-row justify-between`}>
                 {[1, 2, 3].map((num) => (
@@ -798,11 +814,16 @@ export default function InspectionWizardStepOne({ navigation }) {
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
+            </View> */}
           </ScrollView>
 
           {/* Bottom Button */}
-          <View style={tw` bottom-0 left-0 right-0 px-4 mb-2 bg-white`}>
+          <View
+            style={[
+              tw`absolute left-0 right-0 px-4 bg-white`,
+              { bottom: Platform.OS === "ios" ? 20 : 10 },
+            ]}
+          >
             <TouchableOpacity
               style={tw`${isFormComplete ? "bg-green-700" : "bg-gray-300"} py-3 rounded-xl`}
               onPress={validateAndGoNext}
@@ -839,7 +860,7 @@ export default function InspectionWizardStepOne({ navigation }) {
             )}
 
           {/* iOS Picker modal */}
-          {showPicker && Platform.OS === "ios" && (
+          {Platform.OS === "ios" && showPicker !== null && (
             <Modal transparent animationType="slide">
               <View style={tw`flex-1 justify-end bg-black/50`}>
                 <View style={tw`bg-white rounded-t-2xl p-4`}>
@@ -848,6 +869,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                       value={date || new Date()}
                       mode="date"
                       display="spinner"
+                      textColor="black"
+                      themeVariant="light"
                       onChange={onDateChange}
                     />
                   ) : (
