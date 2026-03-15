@@ -184,7 +184,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       }
     }
 
-    navigation.navigate("ReviewInspection");
+    navigation.navigate("InspectionWizardStepThree");
   };
 
   // --- New: fetch vehicle info flow ---

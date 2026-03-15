@@ -7,7 +7,7 @@ export const INSPECTION_FLOW = [
   {
     key: "LHFImage",
     title: "LHF Image",
-    silhouette: require("../assets/LineArt/LHFImage.png"), // change rew
+    silhouette: require("../assets/LineArt/LHF.png"),
   },
   {
     key: "leftSideImage",
@@ -17,7 +17,7 @@ export const INSPECTION_FLOW = [
   {
     key: "LHRImage",
     title: "LHR Image",
-    silhouette: require("../assets/LineArt/LHRImage.png"), //change req
+    silhouette: require("../assets/LineArt/LHR.png"),
   },
   {
     key: "rearImage",
