@@ -10,7 +10,7 @@ export const INSPECTION_FLOW = [
     silhouette: require("../assets/LineArt/LHF.png"),
   },
   {
-    key: "leftSideImage",
+    key: "leftImage",
     title: "Left Side Image",
     silhouette: require("../assets/CarViews/SideView.png"),
   },
@@ -30,7 +30,7 @@ export const INSPECTION_FLOW = [
     silhouette: require("../assets/CarViews/BackSideView.png"),
   },
   {
-    key: "RightSideImage",
+    key: "rightImage",
     title: "Right Side Image",
     silhouette: require("../assets/LineArt/RH.png"),
   },

@@ -116,20 +116,25 @@ export default function ReviewInspection({ navigation }) {
         keysPresent === "true" ||
         keysPresent === "Yes" ||
         keysPresent === "3";
+
       const safeServiceBook =
         serviceBookPresent === true ||
         serviceBookPresent === "true" ||
         serviceBookPresent === "Yes";
+
       const safeServiceHistory =
         serviceHistoryPresent === true ||
         serviceHistoryPresent === "true" ||
         serviceHistoryPresent === "Yes";
+
       const safeDamagePresent =
         damagePresent === true ||
         damagePresent === "Yes" ||
         damagePresent === "true";
+
       const safeRoadTest =
         roadTest === true || roadTest === "Yes" || roadTest === "true";
+
       const safeBookImages = (inspection.bookImages || [])
         .map((img) => {
           if (typeof img === "string") return img;
@@ -137,6 +142,39 @@ export default function ReviewInspection({ navigation }) {
           return null;
         })
         .filter(Boolean);
+
+      // ✅ ALL IMAGE KEYS (single source of truth)
+      const IMAGE_KEYS = [
+        "frontImage",
+        "LHFImage",
+        "leftImage",
+        "LHRImage",
+        "rearImage",
+        "RHRImage",
+        "rightImage",
+        "RHFImage",
+        "RoofImage",
+        "UnderbonnetImage",
+        "InsideBonnetImage",
+        "DriversSeatImage",
+        "FrontPassengerSeatImage",
+        "RearSeatImage",
+        "compliancePlateImage",
+        "OdoImage",
+        "InfotainmentImage",
+        "KeysImage",
+      ];
+
+      // ✅ Build images dynamically
+      const imagePayload = {};
+
+      IMAGE_KEYS.forEach((key) => {
+        imagePayload[key] = prepareImageAnalysis(images?.[key]) || {
+          original: "",
+          damages: [],
+        };
+      });
+
       const payload = {
         vin: vin?.trim() || "",
         make: make?.trim() || "",
@@ -154,39 +192,8 @@ export default function ReviewInspection({ navigation }) {
         inspectorEmail:
           inspection.inspectorEmail || "muhammadanasrashid18@gmail.com",
 
-        frontImage: prepareImageAnalysis(images?.frontImage) || {
-          original: "",
-          damages: [],
-        },
-        rearImage: prepareImageAnalysis(images?.rearImage) || {
-          original: "",
-          damages: [],
-        },
-        leftImage: prepareImageAnalysis(
-          images?.leftSideImage || images?.LHFImage,
-        ) || { original: "", damages: [] },
-        rightImage: prepareImageAnalysis(
-          images?.RightSideImage || images?.RHRImage,
-        ) || { original: "", damages: [] },
-        engineImage: prepareImageAnalysis(images?.UnderbonnetImage) || {
-          original: "",
-          damages: [],
-        },
-        engineImage: prepareImageAnalysis(images?.InsideBonnetImage) || {
-          original: "",
-          damages: [],
-        },
-        plateImage: prepareImageAnalysis(images?.compliancePlateImage) || {
-          original: "",
-          damages: [],
-        },
-        interiorFrontImage: prepareImageAnalysis(
-          images?.DriversSeatImage || images?.FrontPassengerSeatImage,
-        ) || { original: "", damages: [] },
-        interiorBackImage: prepareImageAnalysis(images?.RearSeatImage) || {
-          original: "",
-          damages: [],
-        },
+        // ✅ THIS IS THE MAIN FIX
+        ...imagePayload,
 
         odometer: safeOdometer,
 
@@ -218,21 +225,17 @@ export default function ReviewInspection({ navigation }) {
         roadTest: safeRoadTest,
         roadTestComments: roadTestComments?.trim() || "",
         generalComments: generalComments?.trim() || "",
-
-        // Optional – only if backend added this field recently
-        // overallRating: undefined,
-        // lastServiceDate: toIsoDate(lastServiceDate),
-        // serviceCenterName: "",
-        // odometerAtLastService: Number(odometerAtLastService) || undefined,
       };
 
-      console.log("Sending payload:", JSON.stringify(payload, null, 2));
+      console.log(
+        "FINAL PAYLOAD IMAGES:",
+        JSON.stringify(imagePayload, null, 2),
+      );
 
       const response = await fetch(`${API_BASE_URL}/inspections`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -250,7 +253,7 @@ export default function ReviewInspection({ navigation }) {
         );
       }
 
-      const result = await response.json();
+      await response.json();
 
       Alert.alert("Success", "Inspection submitted successfully!");
 
@@ -266,7 +269,7 @@ export default function ReviewInspection({ navigation }) {
         "Submission Failed",
         err.message?.includes("500")
           ? "Server error (500) – please check backend logs"
-          : err.message || "Cannot connect to server. Please try again later.",
+          : err.message || "Cannot connect to server.",
       );
     }
   };
@@ -362,11 +365,11 @@ export default function ReviewInspection({ navigation }) {
   const IMAGE_FIELDS = [
     { key: "frontImage", label: "Front Image" },
     { key: "LHFImage", label: "LHF Image" },
-    { key: "leftSideImage", label: "Left Side Image" },
+    { key: "leftImage", label: "Left Side Image" },
     { key: "LHRImage", label: "LHR Image" },
     { key: "rearImage", label: "Rear Image" },
     { key: "RHRImage", label: "RHR Image" },
-    { key: "RightSideImage", label: "Right Side Image" },
+    { key: "RightImage", label: "Right Side Image" },
     { key: "RHFImage", label: "RHF Image" },
     { key: "RoofImage", label: "Roof Image" },
     { key: "UnderbonnetImage", label: "Under Bonnet Image" },
