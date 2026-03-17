@@ -345,7 +345,7 @@ export default function InspectionWizardStepOne({ navigation }) {
       </Text>
 
       <TouchableOpacity
-        style={tw`flex-row justify-between items-center border border-gray-300 rounded-lg p-3 bg-white`}
+        style={tw`flex-row justify-between items-center border border-gray-300 rounded-lg px-3 bg-white h-12`}
         onPress={() => setShowDropdown(showDropdown === field ? null : field)}
       >
         <Text
@@ -585,9 +585,12 @@ export default function InspectionWizardStepOne({ navigation }) {
                   }}
                   placeholder="Enter VIN/Chassis Number"
                   placeholderTextColor="#0a09094d"
-                  style={tw`flex-1 border ${
-                    vinError ? "border-red-500" : "border-gray-300"
-                  } rounded-lg p-3 bg-white text-base`}
+                  style={[
+                    tw`flex-1 border ${
+                      vinError ? "border-red-500" : "border-gray-300"
+                    } rounded-lg px-3 bg-white h-12`,
+                    { fontSize: 16 },
+                  ]}
                   autoCapitalize="characters"
                   maxLength={17}
                 />
@@ -624,7 +627,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                   }
                   placeholder="Enter Registration Plate"
                   placeholderTextColor="#0a09094d"
-                  style={tw`flex-1 border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                  style={[
+                    tw`flex-1 border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                    { fontSize: 16 },
+                  ]}
                   autoCapitalize="characters"
                 />
 
@@ -650,7 +656,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                 onChangeText={(val) => handleTextChange("year", val)}
                 placeholder="Enter Year"
                 placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={[
+                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  { fontSize: 16 },
+                ]}
                 keyboardType="numeric"
               />
             </View>
@@ -663,7 +672,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                 onChangeText={(val) => handleTextChange("make", val)}
                 placeholder="Enter Make"
                 placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={[
+                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  { fontSize: 16 },
+                ]}
               />
             </View>
 
@@ -675,7 +687,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                 onChangeText={(val) => handleTextChange("model", val)}
                 placeholder="Enter Model"
                 placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={[
+                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  { fontSize: 16 },
+                ]}
               />
             </View>
 
@@ -693,7 +708,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                 onChangeText={(val) => handleTextChange("mileAge", val)}
                 placeholder="Enter Mileage"
                 placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={[
+                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  { fontSize: 16 },
+                ]}
               />
             </View>
 
@@ -705,7 +723,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                 onChangeText={(val) => handleTextChange("color", val)}
                 placeholder="Enter Color"
                 placeholderTextColor="#0a09094d"
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white text-base`}
+                style={[
+                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  { fontSize: 16 },
+                ]}
               />
             </View>
 
@@ -715,7 +736,7 @@ export default function InspectionWizardStepOne({ navigation }) {
 
               <TouchableOpacity
                 onPress={() => showDatePicker("registrationExpiry")}
-                style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                style={tw`border border-gray-300 rounded-lg px-3 justify-center bg-white h-12`}
               >
                 <Text
                   style={[
@@ -735,7 +756,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 <Text style={tw`text-black mb-2`}>Build Date</Text>
                 <TouchableOpacity
                   onPress={() => showDatePicker("buildDate")}
-                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                  style={tw`border border-gray-300 rounded-lg px-3 justify-center bg-white h-12`}
                 >
                   <Text
                     style={[
@@ -753,7 +774,7 @@ export default function InspectionWizardStepOne({ navigation }) {
                 <Text style={tw`text-black mb-2`}>Compliance Date</Text>
                 <TouchableOpacity
                   onPress={() => showDatePicker("complianceDate")}
-                  style={tw`border border-gray-300 rounded-lg p-3 bg-white`}
+                  style={tw`border border-gray-300 rounded-lg px-3 justify-center bg-white h-12`}
                 >
                   <Text
                     style={[
