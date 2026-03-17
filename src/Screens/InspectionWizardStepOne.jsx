@@ -63,7 +63,6 @@ export default function InspectionWizardStepOne({ navigation }) {
     driveTrain,
     bodyType,
     color,
-    keysPresent,
   } = useSelector((state) => state.inspection);
 
   const isFormComplete =
@@ -81,8 +80,7 @@ export default function InspectionWizardStepOne({ navigation }) {
     transmission &&
     driveTrain &&
     bodyType &&
-    color &&
-    keysPresent;
+    color;
 
   const [showPicker, setShowPicker] = useState(null); // "registrationExpiry" | "buildDate" | "complianceDate"
   const [date, setDate] = useState(new Date());

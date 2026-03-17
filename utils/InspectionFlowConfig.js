@@ -32,7 +32,7 @@ export const INSPECTION_FLOW = [
   {
     key: "RightSideImage",
     title: "Right Side Image",
-    silhouette: require("../assets/LineArt/RH.png"), 
+    silhouette: require("../assets/LineArt/RH.png"),
   },
   {
     key: "RHFImage",
