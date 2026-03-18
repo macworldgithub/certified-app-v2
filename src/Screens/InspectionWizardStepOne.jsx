@@ -185,6 +185,14 @@ export default function InspectionWizardStepOne({ navigation }) {
     navigation.navigate("InspectionWizardStepThree");
   };
 
+  const inputStyle = [
+    tw`border border-gray-300 rounded-lg px-3 bg-white`,
+    {
+      paddingVertical: Platform.OS === "ios" ? 14 : 8,
+      textAlignVertical: "center",
+    },
+  ];
+
   // --- New: fetch vehicle info flow ---
   // const handleFetchVehicleInfo = async () => {
   //   // Basic validation
@@ -586,9 +594,10 @@ export default function InspectionWizardStepOne({ navigation }) {
                   placeholder="Enter VIN/Chassis Number"
                   placeholderTextColor="#0a09094d"
                   style={[
+                    inputStyle,
                     tw`flex-1 border ${
                       vinError ? "border-red-500" : "border-gray-300"
-                    } rounded-lg px-3 bg-white h-12`,
+                    } rounded-lg px-3 bg-white`,
                     { fontSize: 16 },
                   ]}
                   autoCapitalize="characters"
@@ -628,7 +637,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                   placeholder="Enter Registration Plate"
                   placeholderTextColor="#0a09094d"
                   style={[
-                    tw`flex-1 border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                    inputStyle,
+                    tw`flex-1 border border-gray-300 rounded-lg px-3 bg-white`,
                     { fontSize: 16 },
                   ]}
                   autoCapitalize="characters"
@@ -657,7 +667,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                 placeholder="Enter Year"
                 placeholderTextColor="#0a09094d"
                 style={[
-                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  inputStyle,
+                  tw`border border-gray-300 rounded-lg px-3 bg-white`,
                   { fontSize: 16 },
                 ]}
                 keyboardType="numeric"
@@ -673,7 +684,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                 placeholder="Enter Make"
                 placeholderTextColor="#0a09094d"
                 style={[
-                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  inputStyle,
+                  tw`border border-gray-300 rounded-lg px-3 bg-white `,
                   { fontSize: 16 },
                 ]}
               />
@@ -688,7 +700,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                 placeholder="Enter Model"
                 placeholderTextColor="#0a09094d"
                 style={[
-                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  inputStyle,
+                  tw`border border-gray-300 rounded-lg px-3 bg-white `,
                   { fontSize: 16 },
                 ]}
               />
@@ -709,7 +722,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                 placeholder="Enter Mileage"
                 placeholderTextColor="#0a09094d"
                 style={[
-                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  inputStyle,
+                  tw`border border-gray-300 rounded-lg px-3 bg-white `,
                   { fontSize: 16 },
                 ]}
               />
@@ -724,7 +738,8 @@ export default function InspectionWizardStepOne({ navigation }) {
                 placeholder="Enter Color"
                 placeholderTextColor="#0a09094d"
                 style={[
-                  tw`border border-gray-300 rounded-lg px-3 bg-white h-12`,
+                  inputStyle,
+                  tw`border border-gray-300 rounded-lg px-3 bg-white `,
                   { fontSize: 16 },
                 ]}
               />
