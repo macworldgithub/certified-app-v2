@@ -397,7 +397,7 @@ export default function VehicleReport() {
 
         {/* Search Bar */}
         <TextInput
-          placeholder="Search by VIN, make, or model..."
+          placeholder="Search by VIN, Make, or Model..."
           value={query}
           onChangeText={handleChange}
           style={styles.search}
