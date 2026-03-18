@@ -32,6 +32,7 @@ export default function InspectionWizardStepFour({ navigation }) {
     serviceCenterName,
     odometerAtLastService,
     serviceRecordDocumentKey,
+    keysPresent,
   } = useSelector((state) => state.inspection);
 
   const inspectionId = useSelector((state) => state.inspection._id);
@@ -339,6 +340,57 @@ export default function InspectionWizardStepFour({ navigation }) {
                 />
               </View>
             )}
+
+            <View
+              style={tw`mb-4 bg-white border border-gray-300 rounded-xl p-4`}
+            >
+              <Text style={tw`text-gray-400 mb-3`}>How Many Keys Present</Text>
+
+              <View style={tw`flex-row justify-between`}>
+                {[1, 2, 3].map((num) => (
+                  <TouchableOpacity
+                    key={num}
+                    style={tw.style(
+                      "flex-1 items-center justify-center border rounded-xl py-3 mx-2 bg-white",
+                      keysPresent === `${num}`
+                        ? "border-green-600 bg-green-50"
+                        : "border-gray-300",
+                    )}
+                    onPress={() =>
+                      dispatch(
+                        setInspectionData({
+                          field: "keysPresent",
+                          value: `${num}`,
+                        }),
+                      )
+                    }
+                  >
+                    <Image
+                      source={
+                        num === 1
+                          ? require("../../assets/singleKey.png")
+                          : num === 2
+                            ? require("../../assets/doubleKey.png")
+                            : require("../../assets/tripleKey.png")
+                      }
+                      style={tw`w-14 h-10 mb-2`}
+                      resizeMode="contain"
+                    />
+
+                    <Text
+                      style={tw.style(
+                        "font-medium text-base",
+                        keysPresent === `${num}`
+                          ? "text-green-700"
+                          : "text-gray-500",
+                      )}
+                    >
+                      {num} Key{num > 1 ? "s" : ""}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           </ScrollView>
 
           {/* Fixed Next Button */}

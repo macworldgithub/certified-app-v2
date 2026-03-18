@@ -285,23 +285,36 @@ export default function ReviewInspection({ navigation }) {
   // Editable text field — dispatches to Redux on change
   const renderEditField = (label, field, value, keyboardType = "default") => {
     const isEditing = editingField === field;
+    const [tempValue, setTempValue] = useState(value || "");
 
     return (
       <View style={tw`py-2 border-b border-gray-100`}>
         <View style={tw`flex-row justify-between items-center mb-1`}>
           <Text style={tw`text-gray-400 text-xs`}>{label}</Text>
 
-          <TouchableOpacity onPress={() => setEditingField(field)}>
-            <AppIcon name="edit" size={16} color="#6B7280" />
-          </TouchableOpacity>
+          <View style={tw`flex-row items-center`}>
+            {!isEditing ? (
+              <TouchableOpacity onPress={() => setEditingField(field)}>
+                <AppIcon name="edit" size={16} color="#6B7280" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(setInspectionData({ field, value: tempValue }));
+                  setEditingField(null);
+                }}
+                style={tw`ml-2`}
+              >
+                <AppIcon name="check" size={18} color="#059669" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <TextInput
-          value={value || ""}
+          value={isEditing ? tempValue : value || ""}
           editable={isEditing}
-          onChangeText={(text) =>
-            dispatch(setInspectionData({ field, value: text }))
-          }
+          onChangeText={(text) => setTempValue(text)}
           keyboardType={keyboardType}
           placeholder={`Enter ${label}`}
           placeholderTextColor="#9CA3AF"
@@ -322,15 +335,30 @@ export default function ReviewInspection({ navigation }) {
     options = ["Pass", "Fail"],
   ) => {
     const isEditing = editingField === field;
+    const [tempValue, setTempValue] = useState(value);
 
     return (
       <View style={tw`py-2.5 border-b border-gray-100`}>
         <View style={tw`flex-row justify-between items-center mb-2`}>
           <Text style={tw`text-gray-400 text-xs`}>{label}</Text>
 
-          <TouchableOpacity onPress={() => setEditingField(field)}>
-            <AppIcon name="edit" size={16} color="#6B7280" />
-          </TouchableOpacity>
+          <View style={tw`flex-row items-center`}>
+            {!isEditing ? (
+              <TouchableOpacity onPress={() => setEditingField(field)}>
+                <AppIcon name="edit" size={16} color="#6B7280" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(setInspectionData({ field, value: tempValue }));
+                  setEditingField(null);
+                }}
+                style={tw`ml-2`}
+              >
+                <AppIcon name="check" size={18} color="#059669" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <View style={tw`flex-row flex-wrap`}>
@@ -338,10 +366,10 @@ export default function ReviewInspection({ navigation }) {
             <TouchableOpacity
               key={opt}
               disabled={!isEditing}
-              onPress={() => dispatch(setInspectionData({ field, value: opt }))}
+              onPress={() => setTempValue(opt)}
               style={tw.style(
                 "mr-2 px-4 py-1.5 rounded-full border",
-                value === opt
+                tempValue === opt
                   ? "bg-green-700 border-green-700"
                   : "bg-white border-gray-300",
                 !isEditing && "opacity-50",
@@ -350,7 +378,7 @@ export default function ReviewInspection({ navigation }) {
               <Text
                 style={tw.style(
                   "text-sm font-medium",
-                  value === opt ? "text-white" : "text-gray-600",
+                  tempValue === opt ? "text-white" : "text-gray-600",
                 )}
               >
                 {opt}
