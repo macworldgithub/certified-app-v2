@@ -21,6 +21,7 @@ import {
   XMarkIcon,
   ChevronRightIcon,
 } from "react-native-heroicons/outline";
+import API_BASE_URL from "../../utils/config";
 
 export default function CaptureWithSilhouetteScreen({ navigation, route }) {
   const dispatch = useDispatch();
