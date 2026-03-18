@@ -401,7 +401,7 @@ export default function VehicleReport() {
           value={query}
           onChangeText={handleChange}
           style={styles.search}
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor="black"
         />
 
         {/* List */}

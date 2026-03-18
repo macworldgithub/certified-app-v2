@@ -618,9 +618,10 @@ export default function InspectionList() {
         {/* Search */}
         <TextInput
           placeholder="Search by VIN, Make, Model..."
-          style={styles.search}
+          style={(styles.search)}
           value={query}
           onChangeText={handleChange}
+          placeholderTextColor="black"
         />
 
         {/* List */}
