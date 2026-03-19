@@ -3,6 +3,8 @@ import { View, Text, Animated } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
 import { useNavigation } from '@react-navigation/native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Splash() {
   const navigation = useNavigation();
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -13,8 +15,17 @@ export default function Splash() {
         toValue: 0,
         duration: 600,
         useNativeDriver: true,
-      }).start(() => {
-        navigation.replace('Onboarding');
+      }).start(async () => {
+        try {
+          const token = await AsyncStorage.getItem("authToken");
+          if (token) {
+            navigation.replace('MainTabs');
+          } else {
+            navigation.replace('Onboarding');
+          }
+        } catch (e) {
+          navigation.replace('Onboarding');
+        }
       });
     }, 4000); // 4 seconds
 

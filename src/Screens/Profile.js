@@ -170,6 +170,10 @@ import {
   ScrollView,
   Alert,
   TextInput,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
+  Linking,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -181,6 +185,7 @@ import API_BASE_URL from "../../utils/config";
 import AppIcon from "../components/AppIcon";
 
 export default function Profile() {
+  const navigation = useNavigation();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoNotifications, setPromoNotifications] = useState(false);
   const [name, setName] = useState("");
@@ -188,68 +193,65 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editOldPassword, setEditOldPassword] = useState("");
+  const [editNewPassword, setEditNewPassword] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const storedUser = await AsyncStorage.getItem("userData");
-
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          const parsed = JSON.parse(storedUser);
+          setUser(parsed);
+          setEditName(parsed.name || "");
         }
       } catch (err) {
         console.error("Failed to load user:", err);
       }
     };
-
     loadUser();
   }, []);
 
-  const navigation = useNavigation();
-
-  // ✅ Update Profile Handler
-  const handleUpdateProfile = async () => {
-    if (!name && !newPassword) {
-      Alert.alert("Error", "Enter name or new password to update.");
+  const handleSaveProfile = async () => {
+    if (!editName.trim() && !editNewPassword.trim()) {
+      Alert.alert("Error", "Enter a name or new password to update.");
       return;
     }
-
+    if (editNewPassword.trim() && !editOldPassword.trim()) {
+      Alert.alert("Error", "Old password is required to set a new password.");
+      return;
+    }
     try {
-      setLoading(true);
-
+      setSaveLoading(true);
       const token = await AsyncStorage.getItem("authToken");
       if (!token) {
         Alert.alert("Error", "No token found. Please sign in again.");
         return;
       }
-
-      // request body
       const body = {};
-      if (name) body.name = name;
-      if (newPassword) {
-        if (!oldPassword) {
-          Alert.alert(
-            "Error",
-            "Old password is required to set a new password.",
-          );
-          return;
-        }
-        body.oldPassword = oldPassword;
-        body.password = newPassword;
+      if (editName.trim()) body.name = editName.trim();
+      if (editNewPassword.trim()) {
+        body.oldPassword = editOldPassword.trim();
+        body.password = editNewPassword.trim();
       }
-
       const res = await axios.patch(`${API_BASE_URL}/user/profile`, body, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
+      // Update local storage & state with new name
+      const updatedUser = { ...user, name: editName.trim() };
+      setUser(updatedUser);
+      await AsyncStorage.setItem("userData", JSON.stringify(updatedUser));
+      setEditOldPassword("");
+      setEditNewPassword("");
+      setIsEditing(false);
       Alert.alert("Success", "Profile updated successfully!");
-      console.log("Profile Updated:", res.data);
-      setName("");
-      setOldPassword("");
-      setNewPassword("");
     } catch (err) {
       console.error("Profile Update Error:", err.response?.data || err.message);
       Alert.alert(
@@ -257,39 +259,19 @@ export default function Profile() {
         err.response?.data?.message || "Failed to update profile.",
       );
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
-  const handleLogoutAll = async () => {
+  const handleLogout = async () => {
     try {
-      const token = await AsyncStorage.getItem("authToken");
-
-      if (!token) {
-        Alert.alert("Error", "No token found. Please sign in again.");
-        return;
-      }
-
-      const res = await axios.post(
-        `${API_BASE_URL}/user/logout-all/request`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (res.data?.status === "OTP_SENT") {
-        Alert.alert("OTP Sent", res.data.message);
-        navigation.navigate("LogoutAllOTPVerify");
-      }
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("userData");
+      Alert.alert("Logout Successful", "You have been logged out successfully.");
+      navigation.replace("Signin");
     } catch (err) {
-      console.error("Logout All Error:", err.response?.data || err.message);
-      Alert.alert(
-        "Error",
-        err.response?.data?.message || "Failed to request logout all.",
-      );
+      console.error("Logout Error:", err);
+      Alert.alert("Error", "Failed to logout. Please try again.");
     }
   };
 
@@ -322,7 +304,10 @@ export default function Profile() {
         >
           <Text style={tw`text-yellow-600 font-semibold`}>My Account</Text>
 
-          <TouchableOpacity style={tw`flex-row items-center py-2`}>
+          <TouchableOpacity
+            style={tw`flex-row items-center py-2`}
+            onPress={() => setShowInfoModal(true)}
+          >
             <AppIcon name="user" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Personal information</Text>
           </TouchableOpacity>
@@ -431,20 +416,308 @@ export default function Profile() {
         >
           <Text style={tw`text-yellow-600 font-semibold`}>More</Text>
 
-          <TouchableOpacity style={tw`flex-row items-center py-3`}>
+          <TouchableOpacity
+            style={tw`flex-row items-center py-3`}
+            onPress={() => Linking.openURL('tel:+611800953304')}
+          >
             <AppIcon name="phone" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Help Center</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={tw`flex-row items-center py-3`}
-            onPress={handleLogoutAll}
+            onPress={handleLogout}
           >
             <AppIcon name="sign-out" size={20} color="red" />
             <Text style={tw`ml-3 text-red-500 font-semibold`}>Log Out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Personal Information Modal */}
+      <Modal
+        visible={showInfoModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => {
+          setShowInfoModal(false);
+          setIsEditing(false);
+        }}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1, justifyContent: "flex-end" }}
+        >
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            activeOpacity={1}
+            onPress={() => {
+              setShowInfoModal(false);
+              setIsEditing(false);
+            }}
+          />
+          <ScrollView
+            style={{
+              backgroundColor: "#fff",
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+            }}
+            contentContainerStyle={{
+              padding: 24,
+              paddingBottom: 14,
+            }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Header */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>
+                Personal Information
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+                {/* Edit / Cancel toggle */}
+                {!isEditing ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setEditName(user?.name || "");
+                      setEditOldPassword("");
+                      setEditNewPassword("");
+                      setIsEditing(true);
+                    }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#dcfce7",
+                      paddingHorizontal: 10,
+                      paddingVertical: 5,
+                      borderRadius: 8,
+                      marginRight: 8,
+                    }}
+                  >
+                    <AppIcon name="pencil" size={14} color="#16a34a" />
+                    <Text style={{ marginLeft: 5, color: "#16a34a", fontWeight: "600", fontSize: 13 }}>
+                      Edit
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => setIsEditing(false)}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#fee2e2",
+                      paddingHorizontal: 10,
+                      paddingVertical: 5,
+                      borderRadius: 8,
+                      marginRight: 8,
+                    }}
+                  >
+                    <AppIcon name="times" size={14} color="#dc2626" />
+                    <Text style={{ marginLeft: 5, color: "#dc2626", fontWeight: "600", fontSize: 13 }}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {/* Close X */}
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowInfoModal(false);
+                    setIsEditing(false);
+                  }}
+                >
+                  <AppIcon name="times" size={20} color="#64748b" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Divider */}
+            <View style={{ height: 1, backgroundColor: "#e2e8f0", marginBottom: 20 }} />
+
+            {/* Full Name */}
+            <View style={{ marginBottom: 14 }}>
+              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                Full Name
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: isEditing ? "#fff" : "#f8fafc",
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  paddingVertical: isEditing ? 0 : 12,
+                  borderWidth: 1,
+                  borderColor: isEditing ? "#16a34a" : "#e2e8f0",
+                }}
+              >
+                <AppIcon name="user" size={15} color="#2f855a" />
+                {isEditing ? (
+                  <TextInput
+                    style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                    value={editName}
+                    onChangeText={setEditName}
+                    placeholder="Enter name"
+                    placeholderTextColor="#94a3b8"
+                  />
+                ) : (
+                  <Text style={{ marginLeft: 10, fontSize: 15, color: "#0f172a" }}>
+                    {user?.name || "—"}
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {/* Email — always read-only */}
+            <View style={{ marginBottom: 14 }}>
+              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                Email Address
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "#f8fafc",
+                  borderRadius: 10,
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: "#e2e8f0",
+                }}
+              >
+                <AppIcon name="envelope" size={15} color="#2f855a" />
+                <Text style={{ marginLeft: 10, fontSize: 15, color: "#64748b" }}>
+                  {user?.email || "—"}
+                </Text>
+              </View>
+            </View>
+
+            {/* Role — always read-only */}
+            <View style={{ marginBottom: isEditing ? 14 : 24 }}>
+              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                Role
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "#f8fafc",
+                  borderRadius: 10,
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: "#e2e8f0",
+                }}
+              >
+                <AppIcon name="id-badge" size={15} color="#2f855a" />
+                <Text style={{ marginLeft: 10, fontSize: 15, color: "#64748b", textTransform: "capitalize" }}>
+                  {user?.role || "—"}
+                </Text>
+              </View>
+            </View>
+
+            {/* Password fields — only in edit mode */}
+            {isEditing && (
+              <>
+                <View style={{ marginBottom: 14 }}>
+                  <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                    Old Password (optional)
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#fff",
+                      borderRadius: 10,
+                      paddingHorizontal: 12,
+                      borderWidth: 1,
+                      borderColor: "#e2e8f0",
+                    }}
+                  >
+                    <AppIcon name="lock" size={15} color="#2f855a" />
+                    <TextInput
+                      style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                      value={editOldPassword}
+                      onChangeText={setEditOldPassword}
+                      placeholder="Current password"
+                      placeholderTextColor="#94a3b8"
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
+
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                    New Password (optional)
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#fff",
+                      borderRadius: 10,
+                      paddingHorizontal: 12,
+                      borderWidth: 1,
+                      borderColor: "#e2e8f0",
+                    }}
+                  >
+                    <AppIcon name="lock" size={15} color="#2f855a" />
+                    <TextInput
+                      style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                      value={editNewPassword}
+                      onChangeText={setEditNewPassword}
+                      placeholder="New password"
+                      placeholderTextColor="#94a3b8"
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
+
+                {/* Save Button */}
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: saveLoading ? "#86efac" : "#16a34a",
+                    paddingVertical: 14,
+                    borderRadius: 12,
+                    alignItems: "center",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                  onPress={handleSaveProfile}
+                  disabled={saveLoading}
+                >
+                  <AppIcon name="save" size={16} color="#fff" />
+                  <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15, marginLeft: 8 }}>
+                    {saveLoading ? "Saving..." : "Save Changes"}
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {/* Close button — only in view mode */}
+            {!isEditing && (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#f1f5f9",
+                  paddingVertical: 14,
+                  borderRadius: 12,
+                  alignItems: "center",
+                }}
+                onPress={() => setShowInfoModal(false)}
+              >
+                <Text style={{ color: "#475569", fontWeight: "600", fontSize: 15 }}>
+                  Close
+                </Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaWrapper>
   );
 }
+
