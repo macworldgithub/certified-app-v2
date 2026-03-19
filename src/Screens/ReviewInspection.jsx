@@ -242,8 +242,8 @@ export default function ReviewInspection({ navigation }) {
 
       const isEdit = !!_id;
       const apiUrl = isEdit
-        ? `http://localhost:8005/inspections/${_id}`
-        : `http://localhost:8005/inspections`;
+        ? `${API_BASE_URL}/inspections/${_id}`
+        : `${API_BASE_URL}/inspections`;
       const apiMethod = isEdit ? "PUT" : "POST";
 
       console.log("=== API CALL TRIGGERED ===");
