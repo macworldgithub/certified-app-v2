@@ -267,7 +267,10 @@ export default function Profile() {
     try {
       await AsyncStorage.removeItem("authToken");
       await AsyncStorage.removeItem("userData");
-      Alert.alert("Logout Successful", "You have been logged out successfully.");
+      Alert.alert(
+        "Logout Successful",
+        "You have been logged out successfully.",
+      );
       navigation.replace("Signin");
     } catch (err) {
       console.error("Logout Error:", err);
@@ -418,7 +421,7 @@ export default function Profile() {
 
           <TouchableOpacity
             style={tw`flex-row items-center py-3`}
-            onPress={() => Linking.openURL('tel:+611800953304')}
+            onPress={() => Linking.openURL("tel:+611800953304")}
           >
             <AppIcon name="phone" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Help Center</Text>
@@ -478,10 +481,14 @@ export default function Profile() {
                 marginBottom: 20,
               }}
             >
-              <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>
+              <Text
+                style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}
+              >
                 Personal Information
               </Text>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+              >
                 {/* Edit / Cancel toggle */}
                 {!isEditing ? (
                   <TouchableOpacity
@@ -502,7 +509,14 @@ export default function Profile() {
                     }}
                   >
                     <AppIcon name="pencil" size={14} color="#16a34a" />
-                    <Text style={{ marginLeft: 5, color: "#16a34a", fontWeight: "600", fontSize: 13 }}>
+                    <Text
+                      style={{
+                        marginLeft: 5,
+                        color: "#16a34a",
+                        fontWeight: "600",
+                        fontSize: 13,
+                      }}
+                    >
                       Edit
                     </Text>
                   </TouchableOpacity>
@@ -520,29 +534,41 @@ export default function Profile() {
                     }}
                   >
                     <AppIcon name="times" size={14} color="#dc2626" />
-                    <Text style={{ marginLeft: 5, color: "#dc2626", fontWeight: "600", fontSize: 13 }}>
+                    <Text
+                      style={{
+                        marginLeft: 5,
+                        color: "#dc2626",
+                        fontWeight: "600",
+                        fontSize: 13,
+                      }}
+                    >
                       Cancel
                     </Text>
                   </TouchableOpacity>
                 )}
-                {/* Close X */}
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowInfoModal(false);
-                    setIsEditing(false);
-                  }}
-                >
-                  <AppIcon name="times" size={20} color="#64748b" />
-                </TouchableOpacity>
               </View>
             </View>
 
             {/* Divider */}
-            <View style={{ height: 1, backgroundColor: "#e2e8f0", marginBottom: 20 }} />
+            <View
+              style={{
+                height: 1,
+                backgroundColor: "#e2e8f0",
+                marginBottom: 20,
+              }}
+            />
 
             {/* Full Name */}
             <View style={{ marginBottom: 14 }}>
-              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: "#64748b",
+                  marginBottom: 4,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.8,
+                }}
+              >
                 Full Name
               </Text>
               <View
@@ -560,14 +586,22 @@ export default function Profile() {
                 <AppIcon name="user" size={15} color="#2f855a" />
                 {isEditing ? (
                   <TextInput
-                    style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                    style={{
+                      flex: 1,
+                      marginLeft: 10,
+                      fontSize: 15,
+                      color: "#0f172a",
+                      paddingVertical: 12,
+                    }}
                     value={editName}
                     onChangeText={setEditName}
                     placeholder="Enter name"
                     placeholderTextColor="#94a3b8"
                   />
                 ) : (
-                  <Text style={{ marginLeft: 10, fontSize: 15, color: "#0f172a" }}>
+                  <Text
+                    style={{ marginLeft: 10, fontSize: 15, color: "#0f172a" }}
+                  >
                     {user?.name || "—"}
                   </Text>
                 )}
@@ -576,7 +610,15 @@ export default function Profile() {
 
             {/* Email — always read-only */}
             <View style={{ marginBottom: 14 }}>
-              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: "#64748b",
+                  marginBottom: 4,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.8,
+                }}
+              >
                 Email Address
               </Text>
               <View
@@ -591,7 +633,9 @@ export default function Profile() {
                 }}
               >
                 <AppIcon name="envelope" size={15} color="#2f855a" />
-                <Text style={{ marginLeft: 10, fontSize: 15, color: "#64748b" }}>
+                <Text
+                  style={{ marginLeft: 10, fontSize: 15, color: "#64748b" }}
+                >
                   {user?.email || "—"}
                 </Text>
               </View>
@@ -599,7 +643,15 @@ export default function Profile() {
 
             {/* Role — always read-only */}
             <View style={{ marginBottom: isEditing ? 14 : 24 }}>
-              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: "#64748b",
+                  marginBottom: 4,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.8,
+                }}
+              >
                 Role
               </Text>
               <View
@@ -614,7 +666,14 @@ export default function Profile() {
                 }}
               >
                 <AppIcon name="id-badge" size={15} color="#2f855a" />
-                <Text style={{ marginLeft: 10, fontSize: 15, color: "#64748b", textTransform: "capitalize" }}>
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 15,
+                    color: "#64748b",
+                    textTransform: "capitalize",
+                  }}
+                >
                   {user?.role || "—"}
                 </Text>
               </View>
@@ -624,7 +683,15 @@ export default function Profile() {
             {isEditing && (
               <>
                 <View style={{ marginBottom: 14 }}>
-                  <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#64748b",
+                      marginBottom: 4,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.8,
+                    }}
+                  >
                     Old Password (optional)
                   </Text>
                   <View
@@ -640,7 +707,13 @@ export default function Profile() {
                   >
                     <AppIcon name="lock" size={15} color="#2f855a" />
                     <TextInput
-                      style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                      style={{
+                        flex: 1,
+                        marginLeft: 10,
+                        fontSize: 15,
+                        color: "#0f172a",
+                        paddingVertical: 12,
+                      }}
                       value={editOldPassword}
                       onChangeText={setEditOldPassword}
                       placeholder="Current password"
@@ -651,7 +724,15 @@ export default function Profile() {
                 </View>
 
                 <View style={{ marginBottom: 20 }}>
-                  <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#64748b",
+                      marginBottom: 4,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.8,
+                    }}
+                  >
                     New Password (optional)
                   </Text>
                   <View
@@ -667,7 +748,13 @@ export default function Profile() {
                   >
                     <AppIcon name="lock" size={15} color="#2f855a" />
                     <TextInput
-                      style={{ flex: 1, marginLeft: 10, fontSize: 15, color: "#0f172a", paddingVertical: 12 }}
+                      style={{
+                        flex: 1,
+                        marginLeft: 10,
+                        fontSize: 15,
+                        color: "#0f172a",
+                        paddingVertical: 12,
+                      }}
                       value={editNewPassword}
                       onChangeText={setEditNewPassword}
                       placeholder="New password"
@@ -691,7 +778,14 @@ export default function Profile() {
                   disabled={saveLoading}
                 >
                   <AppIcon name="save" size={16} color="#fff" />
-                  <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15, marginLeft: 8 }}>
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontWeight: "700",
+                      fontSize: 15,
+                      marginLeft: 8,
+                    }}
+                  >
                     {saveLoading ? "Saving..." : "Save Changes"}
                   </Text>
                 </TouchableOpacity>
@@ -709,7 +803,9 @@ export default function Profile() {
                 }}
                 onPress={() => setShowInfoModal(false)}
               >
-                <Text style={{ color: "#475569", fontWeight: "600", fontSize: 15 }}>
+                <Text
+                  style={{ color: "#475569", fontWeight: "600", fontSize: 15 }}
+                >
                   Close
                 </Text>
               </TouchableOpacity>
@@ -720,4 +816,3 @@ export default function Profile() {
     </SafeAreaWrapper>
   );
 }
-
