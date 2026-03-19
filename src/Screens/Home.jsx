@@ -180,7 +180,7 @@
 //   );
 // }
 
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -188,12 +188,15 @@ import {
   TouchableOpacity,
   Platform,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import AppIcon from "../components/AppIcon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_BASE_URL from "../../utils/config";
 
 // --- DATA ---
 const inspectionsSummary = [
@@ -213,36 +216,51 @@ const quickActions = [
     subtitle: "Access inspection reports",
     icon: "file",
   },
-  {
-    title: "Transport",
-    subtitle: "Coordinate vehicle movement",
-    icon: "car",
-  },
+  // {
+  //   title: "Transport",
+  //   subtitle: "Coordinate vehicle movement",
+  //   icon: "car",
+  // },
 ];
 
-const recentInspections = [
-  {
-    car: "2020 Toyota Camry",
-    date: "2024-01-15",
-    status: "Completed",
-    score: "8.5/10",
-  },
-  {
-    car: "2021 Honda Civic",
-    date: "2024-01-14",
-    status: "In Progress",
-    score: null,
-  },
-  {
-    car: "2022 BMW X5",
-    date: "2024-01-13",
-    status: "In Progress",
-    score: null,
-  },
-];
+
 
 export default function Home() {
   const navigation = useNavigation();
+  const [recentInspections, setRecentInspections] = useState([]);
+  const [loadingInspections, setLoadingInspections] = useState(true);
+
+  const fetchRecentInspections = useCallback(async () => {
+    try {
+      setLoadingInspections(true);
+      const email = await AsyncStorage.getItem("userEmail");
+      const targetEmail = email || "muhammadanasrashid18@gmail.com";
+      const url = `${API_BASE_URL}/inspections?email=${encodeURIComponent(
+        targetEmail,
+      )}&sortBy=createdAt&sortOrder=desc&page=1&limit=5`;
+      const res = await fetch(url, { headers: { accept: "application/json" } });
+      const json = await res.json();
+      const items = json.items || [];
+      setRecentInspections(items);
+    } catch (err) {
+      console.error("Error fetching recent inspections:", err);
+    } finally {
+      setLoadingInspections(false);
+    }
+  }, []);
+
+  // Fetch on mount
+  useEffect(() => {
+    fetchRecentInspections();
+  }, [fetchRecentInspections]);
+
+  // Refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchRecentInspections();
+    }, [fetchRecentInspections]),
+  );
+
 
   return (
     <SafeAreaWrapper>
@@ -298,8 +316,8 @@ export default function Home() {
                 navigation.navigate("InspectionWizardStepOne");
               if (action.title === "View Reports")
                 navigation.navigate("Report");
-              if (action.title === "Transport")
-                navigation.navigate("TransportActive");
+              // if (action.title === "Transport")
+              //   navigation.navigate("TransportActive");
             }}
           >
             {/* ✅ CHANGED: replaced Ionicons with AppIcon (FontAwesome) */}
@@ -314,33 +332,52 @@ export default function Home() {
 
         {/* Recent Inspections */}
         <Text style={tw` font-bold text-lg mt-6`}>Recent Inspections</Text>
-        {recentInspections.map((inspection, index) => (
-          <View key={index} style={tw`bg-white p-4 mt-3 rounded-xl shadow`}>
-            <View style={tw`flex-row justify-between`}>
-              <View>
-                <Text style={tw`font-semibold`}>{inspection.car}</Text>
-                <Text style={tw`text-gray-500`}>{inspection.date}</Text>
-              </View>
-              <View style={tw`items-end`}>
-                <Text
-                  style={[
-                    tw`text-xs font-bold px-2 py-1 rounded-full`,
-                    inspection.status === "Completed"
-                      ? tw`bg-green-100 text-green-700`
-                      : tw`bg-yellow-100 text-yellow-700`,
-                  ]}
-                >
-                  {inspection.status}
-                </Text>
-                {inspection.score && (
-                  <Text style={tw`text-xs text-gray-500 mt-1`}>
-                    Score: {inspection.score}
+        {loadingInspections ? (
+          <ActivityIndicator
+            size="small"
+            color="#22c55e"
+            style={tw`mt-4`}
+          />
+        ) : recentInspections.length === 0 ? (
+          <Text style={tw`text-gray-500 text-sm mt-3`}>
+            No recent inspections found.
+          </Text>
+        ) : (
+          recentInspections.map((item, index) => (
+            <TouchableOpacity
+              key={item._id || index}
+              style={tw`bg-white p-4 mt-3 rounded-xl shadow`}
+              onPress={() => navigation.navigate("ViewInspection", { id: item._id })}
+              activeOpacity={0.75}
+            >
+              <View style={tw`flex-row justify-between`}>
+                <View style={tw`flex-1 pr-2`}>
+                  <Text style={tw`font-semibold`}>
+                    {item.make} {item.carModel} ({item.year})
                   </Text>
-                )}
+                  <Text style={tw`text-gray-500 text-xs mt-1`}>
+                    {item.createdAt?.split("T")[0]}
+                  </Text>
+                </View>
+                <View style={tw`items-end`}>
+                  <Text
+                    style={[
+                      tw`text-xs font-bold px-2 py-1 rounded-full`,
+                      tw`bg-green-100 text-green-700`,
+                    ]}
+                  >
+                    Completed
+                  </Text>
+                  {item.overallRating != null && (
+                    <Text style={tw`text-xs text-gray-500 mt-1`}>
+                      Score: {item.overallRating}/10
+                    </Text>
+                  )}
+                </View>
               </View>
-            </View>
-          </View>
-        ))}
+            </TouchableOpacity>
+          ))
+        )}
       </ScrollView>
     </SafeAreaWrapper>
   );

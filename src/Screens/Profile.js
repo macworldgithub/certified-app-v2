@@ -318,7 +318,7 @@ export default function Profile() {
 
         {/* My Account */}
         <View
-          style={tw`bg-white m-4 p-2 rounded-lg border border-gray-200 -mb-2`}
+          style={tw`bg-white m-4 p-2 rounded-lg border border-gray-200 mb-4`}
         >
           <Text style={tw`text-yellow-600 font-semibold`}>My Account</Text>
 
@@ -327,7 +327,7 @@ export default function Profile() {
             <Text style={tw`ml-3 text-gray-700`}>Personal information</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={tw`flex-row items-center justify-between py-2`}
           >
             <View style={tw`flex-row items-center`}>
@@ -335,21 +335,21 @@ export default function Profile() {
               <Text style={tw`ml-3 text-gray-700`}>Language</Text>
             </View>
             <Text style={tw`text-gray-500`}>English (US)</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={tw`flex-row items-center py-2`}>
             <AppIcon name="lock" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Privacy Policy</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={tw`flex-row items-center py-2`}>
+          {/* <TouchableOpacity style={tw`flex-row items-center py-2`}>
             <AppIcon name="gear" size={20} color="black" />
             <Text style={tw`ml-3 text-gray-700`}>Setting</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Update Profile Section */}
-        <View
+        {/* <View
           style={tw`bg-white m-4 p-3 rounded-lg border border-gray-200 mt-6`}
         >
           <Text style={tw`text-yellow-600 font-semibold mb-2`}>
@@ -388,7 +388,7 @@ export default function Profile() {
               {loading ? "Updating..." : "Update Profile"}
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Notifications */}
         <View
