@@ -104,7 +104,7 @@ export default function InspectionWizardStepFour({ navigation }) {
   };
 
   const handleNext = () => {
-    navigation.navigate("CaptureWithSilhouette", { stepIndex: 0 });
+    navigation.navigate("ReviewInspection");
   };
   const handleBack = () => navigation.goBack();
 

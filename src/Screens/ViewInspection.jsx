@@ -64,7 +64,7 @@ export default function ViewInspection() {
           <Text style={styles.subTitle}>VIN: {inspection.vin}</Text>
 
           <View style={styles.row}>
-            <Info label = "Year" value={inspection.year} />
+            <Info label="Year" value={inspection.year} />
             <Info label="Mileage" value={`${inspection.mileAge} km`} />
           </View>
 
@@ -106,7 +106,7 @@ export default function ViewInspection() {
           <Info label="Service Book" value={inspection.serviceBookPresent} />
           <Info label="History Available" value={inspection.serviceHistoryPresent} />
           <Info label="Last Service" value={inspection.lastServiceDate} />
-          <Info label="Service Center" value={inspection.serviceCenterName} />
+          {/* <Info label="Service Center" value={inspection.serviceCenterName} /> */}
           <Info label="Odometer at Service" value={inspection.odometerAtLastService} />
         </Section>
 

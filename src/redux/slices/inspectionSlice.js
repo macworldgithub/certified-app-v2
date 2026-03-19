@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
+  _id: "",
   vin: "", // From InspectionWizardStepOne
   year: "", // From InspectionWizardStepOne
   make: "", // From InspectionWizardStepOne
@@ -109,13 +110,30 @@ const inspectionSlice = createSlice({
       const payload = action.payload;
       const imageFields = [
         "frontImage",
-        "rearImage",
+        "LHFImage",
         "leftImage",
+        "LHRImage",
+        "rearImage",
+        "RHRImage",
         "rightImage",
+        "RHFImage",
+        "RoofImage",
+        "UnderbonnetImage",
+        "InsideBonnetImage",
+        "DriversSeatImage",
+        "FrontPassengerSeatImage",
+        "RearSeatImage",
+        "compliancePlateImage",
+        "OdoImage",
+        "InfotainmentImage",
+        "KeysImage",
         "engineImage",
         "VINPlate",
+        "plateImage",
         "InteriorFront",
         "InteriorBack",
+        "interiorFrontImage",
+        "interiorBackImage",
       ];
 
       imageFields.forEach((field) => {
@@ -164,6 +182,90 @@ const inspectionSlice = createSlice({
         delete otherPayload.fuelType; // Avoid double-assign if it exists elsewhere
       }
 
+      // Map Dates properly
+      const formatMonthYear = (d) => {
+        if (!d) return "";
+        // If it's YYYY-MM-DD
+        if (d.includes("-")) {
+          const parts = d.split("T")[0].split("-");
+          if (parts.length === 3) return `${parts[1]}/${parts[0]}`; // MM/YYYY
+        }
+        return d;
+      };
+
+      const formatDayMonthYear = (d) => {
+        if (!d) return "";
+        if (d.includes("-")) {
+          const parts = d.split("T")[0].split("-");
+          if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
+        }
+        return d;
+      };
+
+      if (otherPayload.buildDate) {
+        state.buildDate = formatMonthYear(otherPayload.buildDate);
+        delete otherPayload.buildDate;
+      }
+      if (otherPayload.complianceDate) {
+        state.complianceDate = formatMonthYear(otherPayload.complianceDate);
+        delete otherPayload.complianceDate;
+      }
+      if (otherPayload.registrationExpiry) {
+        state.registrationExpiry = formatDayMonthYear(otherPayload.registrationExpiry);
+        delete otherPayload.registrationExpiry;
+      }
+
+      // Map booleans/strings to UI toggles
+      const toYesNo = (val) => {
+        if (val === true || val === "true") return "Yes";
+        if (val === false || val === "false") return "No";
+        return val || "";
+      };
+
+      if (otherPayload.serviceBookPresent !== undefined) {
+        state.serviceBookPresent = toYesNo(otherPayload.serviceBookPresent);
+        delete otherPayload.serviceBookPresent;
+      }
+      if (otherPayload.serviceHistoryPresent !== undefined) {
+        state.serviceHistoryPresent = toYesNo(otherPayload.serviceHistoryPresent);
+        delete otherPayload.serviceHistoryPresent;
+      }
+      if (otherPayload.damagePresent !== undefined) {
+        state.damagePresent = toYesNo(otherPayload.damagePresent);
+        delete otherPayload.damagePresent;
+      }
+      if (otherPayload.roadTest !== undefined) {
+        state.roadTest = toYesNo(otherPayload.roadTest);
+        delete otherPayload.roadTest;
+      }
+
+      // keysPresent
+      if (otherPayload.keysPresent !== undefined) {
+        let kp = otherPayload.keysPresent;
+        if (kp === true || kp === "true") kp = "1"; // Default to 1 if it was just stored as true
+        if (kp === false || kp === "false") kp = "1"; // Just default to 1 since UI doesn't have 0 options
+        state.keysPresent = String(kp);
+        delete otherPayload.keysPresent;
+      }
+
+      // Map backend Tyre Conditions to frontend Wheel Conditions
+      if (otherPayload.tyreConditionFrontLeft) {
+        state.frontLeftWheelCondition = otherPayload.tyreConditionFrontLeft;
+        delete otherPayload.tyreConditionFrontLeft;
+      }
+      if (otherPayload.tyreConditionFrontRight) {
+        state.frontRightWheelCondition = otherPayload.tyreConditionFrontRight;
+        delete otherPayload.tyreConditionFrontRight;
+      }
+      if (otherPayload.tyreConditionRearRight) {
+        state.rearRightWheelCondition = otherPayload.tyreConditionRearRight;
+        delete otherPayload.tyreConditionRearRight;
+      }
+      if (otherPayload.tyreConditionRearLeft) {
+        state.rearLeftWheelCondition = otherPayload.tyreConditionRearLeft;
+        delete otherPayload.tyreConditionRearLeft;
+      }
+
       Object.assign(state, otherPayload);
     },
 
@@ -172,6 +274,7 @@ const inspectionSlice = createSlice({
 
     // Reset only specific wizard fields
     resetInspectionData: (state) => {
+      state._id = "";
       state.vin = "";
       state.year = "";
       state.make = "";

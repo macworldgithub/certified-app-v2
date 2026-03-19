@@ -197,6 +197,8 @@ import SafeAreaWrapper from "../components/SafeAreaWrapper";
 import AppIcon from "../components/AppIcon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API_BASE_URL from "../../utils/config";
+import { useDispatch } from "react-redux";
+import { resetInspection, resetInspectionData } from "../redux/slices/inspectionSlice";
 
 // --- DATA ---
 const inspectionsSummary = [
@@ -227,7 +229,9 @@ const quickActions = [
 
 export default function Home() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [recentInspections, setRecentInspections] = useState([]);
+  const [totalInspections, setTotalInspections] = useState(0);
   const [loadingInspections, setLoadingInspections] = useState(true);
 
   const fetchRecentInspections = useCallback(async () => {
@@ -241,6 +245,7 @@ export default function Home() {
       const res = await fetch(url, { headers: { accept: "application/json" } });
       const json = await res.json();
       const items = json.items || [];
+      setTotalInspections(json.total || 0);
       setRecentInspections(items);
     } catch (err) {
       console.error("Error fetching recent inspections:", err);
@@ -292,7 +297,11 @@ export default function Home() {
 
         {/* Stats */}
         <View style={tw`flex-row justify-between mt-4`}>
-          {inspectionsSummary.map((item, index) => (
+          {[
+            { label: "Inspection", value: totalInspections },
+            { label: "Accuracy", value: "92%" },
+            { label: "Avg. score", value: 8.4 },
+          ].map((item, index) => (
             <View
               key={index}
               style={tw`items-center border border-gray-300 rounded-lg p-3 flex-1 mx-1`}
@@ -312,8 +321,10 @@ export default function Home() {
             key={index}
             style={tw`flex-row items-center bg-white p-4 mt-2 rounded-xl shadow text-gray-900`}
             onPress={() => {
-              if (action.title === "New Inspection")
+              if (action.title === "New Inspection") {
+                dispatch(resetInspection());
                 navigation.navigate("InspectionWizardStepOne");
+              }
               if (action.title === "View Reports")
                 navigation.navigate("Report");
               // if (action.title === "Transport")

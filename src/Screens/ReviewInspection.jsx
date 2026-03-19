@@ -29,6 +29,7 @@ export default function ReviewInspection({ navigation }) {
   const { images } = inspection;
   console.log(images, "IMAGES...");
   const {
+    _id,
     vin,
     make,
     model,
@@ -96,10 +97,17 @@ export default function ReviewInspection({ navigation }) {
 
   function toIsoDate(d) {
     if (!d) return undefined;
-    // assuming input is DD/MM/YYYY
-    const [day, month, year] = d.split("/");
-    if (!day || !month || !year) return undefined;
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    if (d.includes("-")) return d; // already in ISO format
+
+    const parts = d.split("/");
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    } else if (parts.length === 2) {
+      const [month, year] = parts;
+      return `${year}-${month.padStart(2, "0")}-01`;
+    }
+    return undefined;
   }
 
   const handleSubmit = async () => {
@@ -110,22 +118,6 @@ export default function ReviewInspection({ navigation }) {
 
       const safeMileAge = Number(mileAge) || 0;
       const safeOdometer = odometer ? Number(odometer) : undefined;
-
-      const safeKeysPresent =
-        keysPresent === true ||
-        keysPresent === "true" ||
-        keysPresent === "Yes" ||
-        keysPresent === "3";
-
-      const safeServiceBook =
-        serviceBookPresent === true ||
-        serviceBookPresent === "true" ||
-        serviceBookPresent === "Yes";
-
-      const safeServiceHistory =
-        serviceHistoryPresent === true ||
-        serviceHistoryPresent === "true" ||
-        serviceHistoryPresent === "Yes";
 
       const safeDamagePresent =
         damagePresent === true ||
@@ -206,20 +198,41 @@ export default function ReviewInspection({ navigation }) {
         bodyType: bodyType?.trim() || "",
         color: color?.trim() || "",
 
-        keysPresent: safeKeysPresent,
-        serviceBookPresent: safeServiceBook,
+        frontWheelDiameter: frontWheelDiameter?.trim() || "",
+        rearWheelDiameter: rearWheelDiameter?.trim() || "",
+        keysPresent: keysPresent?.trim() || "1",
+
+        serviceBookPresent:
+          serviceBookPresent === "Yes" ||
+          serviceBookPresent === true ||
+          serviceBookPresent === "true",
         bookImages: safeBookImages,
-        serviceHistoryPresent: safeServiceHistory,
+        serviceHistoryPresent:
+          serviceHistoryPresent === "Yes" ||
+          serviceHistoryPresent === true ||
+          serviceHistoryPresent === "true",
+        lastServiceDate: toIsoDate(inspection.lastServiceDate) || "",
+        odometerAtLastService: Number(inspection.odometerAtLastService) || 0,
+        serviceCenterName: inspection.serviceCenterName?.trim() || "",
+        serviceRecordDocumentKey:
+          inspection.serviceRecordDocumentKey?.trim() || "",
 
-        tyreConditionFrontLeft: tyreConditionFrontLeft?.trim() || "",
-        tyreConditionFrontRight: tyreConditionFrontRight?.trim() || "",
-        tyreConditionRearRight: tyreConditionRearRight?.trim() || "",
-        tyreConditionRearLeft: tyreConditionRearLeft?.trim() || "",
+        // spareWheelCondition: inspection.spareWheelCondition?.trim() || "",
 
-        frontLeftWheelCondition: frontLeftWheelCondition?.trim() || "",
-        frontRightWheelCondition: frontRightWheelCondition?.trim() || "",
-        rearLeftWheelCondition: rearLeftWheelCondition?.trim() || "",
-        rearRightWheelCondition: rearRightWheelCondition?.trim() || "",
+        tyreConditionFrontLeft:
+          frontLeftWheelCondition?.trim() ||
+          tyreConditionFrontLeft?.trim() ||
+          "",
+        tyreConditionFrontRight:
+          frontRightWheelCondition?.trim() ||
+          tyreConditionFrontRight?.trim() ||
+          "",
+        tyreConditionRearRight:
+          rearRightWheelCondition?.trim() ||
+          tyreConditionRearRight?.trim() ||
+          "",
+        tyreConditionRearLeft:
+          rearLeftWheelCondition?.trim() || tyreConditionRearLeft?.trim() || "",
 
         damagePresent: safeDamagePresent,
         roadTest: safeRoadTest,
@@ -227,13 +240,21 @@ export default function ReviewInspection({ navigation }) {
         generalComments: generalComments?.trim() || "",
       };
 
-      console.log(
-        "FINAL PAYLOAD IMAGES:",
-        JSON.stringify(imagePayload, null, 2),
-      );
+      const isEdit = !!_id;
+      const apiUrl = isEdit
+        ? `http://localhost:8005/inspections/${_id}`
+        : `http://localhost:8005/inspections`;
+      const apiMethod = isEdit ? "PUT" : "POST";
 
-      const response = await fetch(`${API_BASE_URL}/inspections`, {
-        method: "POST",
+      console.log("=== API CALL TRIGGERED ===");
+      console.log("Method:", apiMethod);
+      console.log("Endpoint URL:", apiUrl);
+      console.log("Payload VIN:", payload.vin);
+      console.log("Is Edit Mode:", isEdit);
+      console.log("==========================");
+
+      const response = await fetch(apiUrl, {
+        method: apiMethod,
         headers: {
           "Content-Type": "application/json",
         },
@@ -707,7 +728,7 @@ export default function ReviewInspection({ navigation }) {
             style={tw`bg-green-700 py-4 rounded-xl items-center shadow-lg`}
           >
             <Text style={tw`text-white text-lg font-semibold`}>
-              Submit For Approval
+              {inspection._id ? "Save Changes" : "Submit For Approval"}
             </Text>
           </TouchableOpacity>
         </View>
