@@ -58,15 +58,11 @@ export default function ViewInspection() {
       <ScrollView contentContainerStyle={styles.container}>
         {/* 🚘 Vehicle Summary */}
         <View style={styles.card}>
-          <Text style={styles.title}>
-            {inspection.make} {inspection.carModel}
-          </Text>
-          <Text style={styles.subTitle}>VIN: {inspection.vin}</Text>
-
-          <View style={styles.row}>
-            <Info label="Year" value={inspection.year} />
-            <Info label="Mileage" value={`${inspection.mileAge} km`} />
-          </View>
+          <Info label="Make" value={inspection.make} />
+          <Info label="Model" value={inspection.carModel} />
+          <Info label="VIN" value={inspection.vin} />
+          <Info label="Year" value={inspection.year} />
+          <Info label="Mileage" value={`${inspection.mileAge} km`} />
 
           <View style={styles.badge}>
             <Text style={styles.badgeText}>
@@ -96,7 +92,10 @@ export default function ViewInspection() {
         {/* 🛞 Tyres */}
         <Section title="Tyre Condition">
           <Info label="Front Left" value={inspection.tyreConditionFrontLeft} />
-          <Info label="Front Right" value={inspection.tyreConditionFrontRight} />
+          <Info
+            label="Front Right"
+            value={inspection.tyreConditionFrontRight}
+          />
           <Info label="Rear Left" value={inspection.tyreConditionRearLeft} />
           <Info label="Rear Right" value={inspection.tyreConditionRearRight} />
         </Section>
@@ -104,10 +103,16 @@ export default function ViewInspection() {
         {/* 🧰 Service History */}
         <Section title="Service History">
           <Info label="Service Book" value={inspection.serviceBookPresent} />
-          <Info label="History Available" value={inspection.serviceHistoryPresent} />
+          <Info
+            label="History Available"
+            value={inspection.serviceHistoryPresent}
+          />
           <Info label="Last Service" value={inspection.lastServiceDate} />
           {/* <Info label="Service Center" value={inspection.serviceCenterName} /> */}
-          <Info label="Odometer at Service" value={inspection.odometerAtLastService} />
+          <Info
+            label="Odometer at Service"
+            value={inspection.odometerAtLastService}
+          />
         </Section>
 
         {/* 📝 Comments */}
@@ -192,6 +197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
+    marginLeft: -8,
   },
   badgeText: {
     color: "#166534",
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   label: {
     fontSize: 13,
